@@ -2,27 +2,27 @@ import { animate, inView, stagger } from 'motion';
 
 export function initAnimations() {
   // Fade Up
-  inView('[data-animate="fade-up"]', (info) => {
+  inView('[data-animate="fade-up"]', (element) => {
     // initial state is set via CSS or we can rely on motion
     animate(
-      info.target,
+      element,
       { opacity: [0, 1], y: [40, 0] },
       { duration: 0.7, ease: [0.16, 1, 0.3, 1] } // Custom spring-like bezier
     );
   });
 
   // Fade In
-  inView('[data-animate="fade-in"]', (info) => {
+  inView('[data-animate="fade-in"]', (element) => {
     animate(
-      info.target,
+      element,
       { opacity: [0, 1] },
       { duration: 0.8, ease: 'easeOut' }
     );
   });
 
   // Staggered Lists (Cards, grids, etc.)
-  inView('[data-animate="stagger-list"]', (info) => {
-    const items = info.target.children;
+  inView('[data-animate="stagger-list"]', (element) => {
+    const items = element.children;
     if (items.length > 0) {
       animate(
         items,
