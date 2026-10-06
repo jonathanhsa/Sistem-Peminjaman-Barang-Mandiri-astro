@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createWorker } from 'tesseract.js';
+import { BrowserMultiFormatReader } from '@zxing/library';
 
 export type ScannerStatus = 'idle' | 'requesting' | 'scanning' | 'processing' | 'success' | 'error';
 
@@ -26,6 +27,7 @@ export function useScanner(options: UseScannerOptions = {}) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const workerRef = useRef<any>(null);
+  const zxingRef = useRef<BrowserMultiFormatReader | null>(null);
   const isScanningRef = useRef<boolean>(false);
   const isProcessingRef = useRef<boolean>(false);
   const slowTimerRef = useRef<any>(null);
@@ -130,6 +132,24 @@ export function useScanner(options: UseScannerOptions = {}) {
         }
       } catch {}
     }
+
+    // Engine 1.5: ZXing BrowserMultiFormatReader
+    try {
+      if (!zxingRef.current) {
+        zxingRef.current = new BrowserMultiFormatReader();
+      }
+      const result = zxingRef.current.decode(video);
+      if (result && result.getText()) {
+        const raw = result.getText().trim();
+        if (raw.length > 0 && isScanningRef.current) {
+          setDetectedText(raw);
+          setStatus('success');
+          stopCamera();
+          optionsRef.current.onCodeDetected?.(raw);
+          return true;
+        }
+      }
+    } catch {}
 
     // Engine 2: Tesseract.js OCR
     try {
@@ -356,6 +376,22 @@ export function useScanner(options: UseScannerOptions = {}) {
                   }
                 } catch {}
               }
+
+              // Engine 1.5: ZXing
+              try {
+                if (!zxingRef.current) {
+                  zxingRef.current = new BrowserMultiFormatReader();
+                }
+                const result = zxingRef.current.decode(img);
+                if (result && result.getText()) {
+                  const raw = result.getText().trim();
+                  setDetectedText(raw);
+                  setStatus('success');
+                  optionsRef.current.onCodeDetected?.(raw);
+                  resolve(raw);
+                  return;
+                }
+              } catch {}
 
               // Engine 2: Tesseract OCR
               if (!workerRef.current) {
