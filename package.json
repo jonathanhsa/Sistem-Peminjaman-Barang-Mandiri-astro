@@ -11,7 +11,8 @@
     "build:cloudflare": "node -e \"process.env.DEPLOY_TARGET='cloudflare'; require('child_process').execSync('astro build', {stdio:'inherit', env: {...process.env, DEPLOY_TARGET:'cloudflare'}})\"",
     "preview": "astro preview",
     "astro": "astro",
-    "seed": "tsx src/db/seed.ts",
+    "seed": "wrangler d1 execute sipembar-db --file=./d1-schema.sql --local",
+    "seed:sqlite": "tsx src/db/seed.ts",
     "d1:init:local": "wrangler d1 execute sipembar-db --file=./d1-schema.sql --local",
     "d1:init:remote": "wrangler d1 execute sipembar-db --file=./d1-schema.sql --remote"
   },

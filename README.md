@@ -27,10 +27,11 @@ Sistem Peminjaman Barang Mandiri berbasis web modern yang dibangun dengan **Astr
 npm install
 ```
 
-### 3. Inisialisasi Database Lokal
+### 3. Inisialisasi Database Lokal (Cloudflare D1)
 ```bash
-# Mengisi data awal (seed database lokal)
+# Menyiapkan skema & seeding data awal ke Cloudflare D1 lokal
 npm run seed
+# atau: npm run d1:init:local
 ```
 
 ### 4. Menjalankan Server Development
@@ -49,9 +50,10 @@ Akses aplikasi melalui browser di `http://localhost:4321`.
 | `npm run build` | Melakukan build aplikasi untuk Node.js |
 | `npm run build:cloudflare` | Build khusus target Cloudflare Pages / Workers |
 | `npm run preview` | Meninjau hasil build lokal |
-| `npm run seed` | Menjalankan seeding data awal ke SQLite |
-| `npm run d1:init:local` | Inisialisasi skema ke Cloudflare D1 (lokal) |
-| `npm run d1:init:remote` | Inisialisasi skema ke Cloudflare D1 (remote) |
+| `npm run seed` | Inisialisasi skema & seed data ke Cloudflare D1 lokal |
+| `npm run seed:sqlite` | Seeding data ke SQLite lokal (`sqlite.db`) |
+| `npm run d1:init:local` | Inisialisasi skema & data ke Cloudflare D1 (lokal) |
+| `npm run d1:init:remote` | Inisialisasi skema & data ke Cloudflare D1 (remote) |
 
 ---
 
