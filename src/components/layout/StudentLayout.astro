@@ -223,5 +223,29 @@ const unreadCount = unreadNotifs.length;
         <span>Barcode</span>
       </a>
     </nav>
+
+    <script>
+      import anime from 'animejs';
+
+      // Desktop Nav Animation
+      anime({
+        targets: 'header nav a',
+        translateY: [-20, 0],
+        opacity: [0, 1],
+        delay: anime.stagger(100),
+        duration: 800,
+        easing: 'easeOutElastic(1, .8)'
+      });
+
+      // Mobile Nav Animation
+      anime({
+        targets: 'nav.fixed.bottom-0 a',
+        translateY: [20, 0],
+        opacity: [0, 1],
+        delay: anime.stagger(100),
+        duration: 800,
+        easing: 'easeOutElastic(1, .8)'
+      });
+    </script>
   </body>
 </html>

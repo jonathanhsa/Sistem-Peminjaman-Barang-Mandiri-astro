@@ -175,5 +175,19 @@ if (user.role !== 'admin') {
         <slot />
       </main>
     </div>
+
+    <script>
+      import anime from 'animejs';
+
+      // Admin Sidebar Nav Animation
+      anime({
+        targets: 'aside nav a',
+        translateX: [-20, 0],
+        opacity: [0, 1],
+        delay: anime.stagger(100),
+        duration: 800,
+        easing: 'easeOutQuint'
+      });
+    </script>
   </body>
 </html>
