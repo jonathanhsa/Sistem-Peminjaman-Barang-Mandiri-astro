@@ -4,22 +4,25 @@ import tailwindcss from '@tailwindcss/vite';
 import node from '@astrojs/node';
 import cloudflare from '@astrojs/cloudflare';
 
-const deployTarget = (process.env.DEPLOY_TARGET || '').trim().toLowerCase();
-const isCloudflare = deployTarget === 'cloudflare' || process.env.CF_PAGES === '1' || process.env.CLOUDFLARE === '1';
+const isNode = (process.env.TARGET || '').toLowerCase() === 'node';
 
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
-  adapter: isCloudflare
-    ? cloudflare()
-    : node({
+  adapter: isNode
+    ? node({
         mode: 'standalone',
+      })
+    : cloudflare({
+        platformProxy: {
+          enabled: true,
+        },
       }),
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
     ssr: {
-      external: isCloudflare ? [] : ['better-sqlite3'],
+      external: isNode ? ['better-sqlite3'] : [],
     },
   },
 });

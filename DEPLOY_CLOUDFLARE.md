@@ -50,10 +50,14 @@ Catat `database_id` yang dihasilkan, misalnya: `a1b2c3d4-e5f6-7890-abcd-ef123456
 Buka file `wrangler.jsonc` dan masukkan `database_id` Anda:
 ```jsonc
 {
+  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "sipembar-kampus",
+  "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
-  "pages_build_output_dir": "./dist",
+  "assets": {
+    "directory": "./dist/client"
+  },
   "d1_databases": [
     {
       "binding": "DB",
