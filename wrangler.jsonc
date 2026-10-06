@@ -9,6 +9,12 @@
   "assets": {
     "directory": "./dist/client"
   },
+  "kv_namespaces": [
+    {
+      "binding": "SESSION",
+      "id": "a60877ee948d432c8aa41fea51050fc5"
+    }
+  ],
   "d1_databases": [
     {
       "binding": "DB",
