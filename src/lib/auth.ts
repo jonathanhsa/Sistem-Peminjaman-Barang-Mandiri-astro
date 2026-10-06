@@ -21,6 +21,7 @@ export async function verifyPassword(plain: string, hashed: string): Promise<boo
 }
 
 export function createSession(cookies: AstroCookies, user: User) {
+  userCache.delete(cookies);
   const data: SessionData = {
     userId: user.id,
     role: user.role as 'student' | 'admin',
@@ -36,10 +37,24 @@ export function createSession(cookies: AstroCookies, user: User) {
 }
 
 export function destroySession(cookies: AstroCookies) {
+  userCache.delete(cookies);
   cookies.delete(SESSION_COOKIE, { path: '/' });
 }
 
-export async function getCurrentUser(cookies: AstroCookies): Promise<User | null> {
+// Astro creates one AstroCookies instance per request, so this caches the user
+// lookup for the lifetime of a single request (page + layout share the result).
+const userCache = new WeakMap<AstroCookies, Promise<User | null>>();
+
+export function getCurrentUser(cookies: AstroCookies): Promise<User | null> {
+  let pending = userCache.get(cookies);
+  if (!pending) {
+    pending = loadCurrentUser(cookies);
+    userCache.set(cookies, pending);
+  }
+  return pending;
+}
+
+async function loadCurrentUser(cookies: AstroCookies): Promise<User | null> {
   const cookie = cookies.get(SESSION_COOKIE);
   if (!cookie || !cookie.value) return null;
 

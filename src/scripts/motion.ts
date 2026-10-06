@@ -6,8 +6,8 @@ export function initAnimations() {
     // initial state is set via CSS or we can rely on motion
     animate(
       element,
-      { opacity: [0, 1], y: [40, 0] },
-      { duration: 0.7, ease: [0.16, 1, 0.3, 1] } // Custom spring-like bezier
+      { opacity: [0, 1], y: [8, 0] },
+      { duration: 0.25, ease: [0.16, 1, 0.3, 1] } // Custom spring-like bezier
     );
   });
 
@@ -16,7 +16,7 @@ export function initAnimations() {
     animate(
       element,
       { opacity: [0, 1] },
-      { duration: 0.8, ease: 'easeOut' }
+      { duration: 0.2, ease: 'easeOut' }
     );
   });
 
@@ -26,10 +26,10 @@ export function initAnimations() {
     if (items.length > 0) {
       animate(
         items,
-        { opacity: [0, 1], y: [30, 0] },
+        { opacity: [0, 1], y: [8, 0] },
         { 
-          delay: stagger(0.08, { startDelay: 0.1 }), 
-          duration: 0.6, 
+          delay: stagger(0.03), 
+          duration: 0.25, 
           ease: [0.16, 1, 0.3, 1]
         }
       );
