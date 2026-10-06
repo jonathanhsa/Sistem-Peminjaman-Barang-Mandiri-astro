@@ -18,6 +18,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     if (!identifier || !password) {
+      if (!contentType.includes('application/json')) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/login?error=${encodeURIComponent('NIM/NIP/Email dan Kata Sandi wajib diisi.')}` }
+        });
+      }
       return new Response(JSON.stringify({ error: 'NIM/NIP/Email dan Kata Sandi wajib diisi.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -26,6 +32,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     const authResult = await authenticateUser(identifier, password);
     if (authResult.error || !authResult.user) {
+      if (!contentType.includes('application/json')) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/login?error=${encodeURIComponent(authResult.error || 'Autentikasi gagal.')}` }
+        });
+      }
       return new Response(JSON.stringify({ error: authResult.error || 'Autentikasi gagal.' }), {
         status: 401,
         headers: { 'Content-Type': 'application/json' },
