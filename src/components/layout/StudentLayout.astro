@@ -231,21 +231,21 @@ const unreadCount = unreadNotifs.length;
       // Desktop Nav Animation
       anime({
         targets: 'header nav a',
-        translateY: [-20, 0],
+        translateY: [-6, 0],
         opacity: [0, 1],
-        delay: anime.stagger(100),
-        duration: 800,
-        easing: 'easeOutElastic(1, .8)'
+        delay: anime.stagger(40),
+        duration: 400,
+        easing: 'easeOutCubic'
       });
 
       // Mobile Nav Animation
       anime({
         targets: 'nav.fixed.bottom-0 a',
-        translateY: [20, 0],
+        translateY: [6, 0],
         opacity: [0, 1],
-        delay: anime.stagger(100),
-        duration: 800,
-        easing: 'easeOutElastic(1, .8)'
+        delay: anime.stagger(40),
+        duration: 400,
+        easing: 'easeOutCubic'
       });
     </script>
   </body>
