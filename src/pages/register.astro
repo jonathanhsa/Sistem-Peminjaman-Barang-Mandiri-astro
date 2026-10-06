@@ -25,10 +25,11 @@ const error = Astro.url.searchParams.get('error');
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
       rel="stylesheet"
     />
+    <script src="../scripts/motion.ts"></script>
   </head>
   <body class="bg-[#F6F5FF] text-[#1E1B3A] min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md">
-      <div class="text-center mb-6">
+      <div data-animate="fade-up" class="text-center mb-6">
         <div class="inline-block relative mb-2">
           <Mascot mood="happy" size={96} />
         </div>
@@ -36,7 +37,7 @@ const error = Astro.url.searchParams.get('error');
         <p class="text-xs text-gray-600 mt-1">Daftarkan akun untuk mulai meminjam mandiri</p>
       </div>
 
-      <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#1E1B3A]/10 shadow-xl">
+      <div data-animate="fade-up" class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#1E1B3A]/10 shadow-xl">
         {error && (
           <div class="mb-5 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
             {error}

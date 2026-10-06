@@ -26,7 +26,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
 <StudentLayout title="Katalog Barang & Buku" activeNav="katalog">
   <div class="space-y-6">
     <!-- Header & Search -->
-    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm space-y-4">
+    <div data-animate="fade-up" class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm space-y-4">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 class="text-xl md:text-2xl font-bold font-display text-[#1E1B3A]">Katalog Inventaris Kampus</h1>
@@ -73,7 +73,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
 
     <!-- Items Grid -->
     {filteredItems.length === 0 ? (
-      <div class="bg-white rounded-3xl p-12 text-center border-2 border-[#1E1B3A]/10 space-y-3">
+      <div data-animate="fade-in" class="bg-white rounded-3xl p-12 text-center border-2 border-[#1E1B3A]/10 space-y-3">
         <div class="w-16 h-16 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto text-2xl">
           🔍
         </div>
@@ -86,7 +86,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
         </a>
       </div>
     ) : (
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div data-animate="stagger-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredItems.map((item) => {
           const isAvailable = item.status === 'available' && item.stock > 0;
           return (

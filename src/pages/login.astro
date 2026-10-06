@@ -25,11 +25,12 @@ const error = Astro.url.searchParams.get('error');
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
       rel="stylesheet"
     />
+    <script src="../scripts/motion.ts"></script>
   </head>
   <body class="bg-[#F6F5FF] text-[#1E1B3A] min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md">
       <!-- Mascot & Brand Card -->
-      <div class="text-center mb-6">
+      <div data-animate="fade-up" class="text-center mb-6">
         <div class="inline-block relative mb-2">
           <Mascot mood="happy" size={110} />
         </div>
@@ -38,7 +39,7 @@ const error = Astro.url.searchParams.get('error');
       </div>
 
       <!-- Login Card -->
-      <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#1E1B3A]/10 shadow-xl relative">
+      <div data-animate="fade-up" class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#1E1B3A]/10 shadow-xl relative">
         <h2 class="text-xl font-bold font-display text-[#1E1B3A] mb-1">Selamat Datang! 👋</h2>
         <p class="text-xs text-gray-500 mb-6">Masukkan NIM / NIP dan kata sandi Anda</p>
 

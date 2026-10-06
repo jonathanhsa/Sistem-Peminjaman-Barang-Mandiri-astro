@@ -67,7 +67,7 @@ const activeBorrowings = processedBorrowings.filter(
 <StudentLayout title="Beranda Mahasiswa" activeNav="dashboard">
   <div class="space-y-6">
     {/* Welcome Hero Banner */}
-    <div class="relative bg-gradient-to-r from-[#3B3FD9] to-[#595DE8] rounded-3xl p-6 md:p-8 text-white shadow-xl overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 border-2 border-[#1E1B3A]/10">
+    <div data-animate="fade-up" class="relative bg-gradient-to-r from-[#3B3FD9] to-[#595DE8] rounded-3xl p-6 md:p-8 text-white shadow-xl overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 border-2 border-[#1E1B3A]/10">
       <div class="relative z-10 max-w-lg space-y-2 text-center md:text-left">
         <div class="inline-flex items-center gap-2 bg-[#FFD23F] text-[#1E1B3A] text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
           <span>✨ Halo, {user.name.split(' ')[0]}!</span>
@@ -101,7 +101,7 @@ const activeBorrowings = processedBorrowings.filter(
     </div>
 
     {/* Metrics Summary */}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div data-animate="stagger-list" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center gap-3.5">
         <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-[#3B3FD9] flex items-center justify-center font-bold text-xl">
           {activeCount}
@@ -152,7 +152,7 @@ const activeBorrowings = processedBorrowings.filter(
     </div>
 
     {/* Active Borrowings Section */}
-    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm space-y-4">
+    <div data-animate="fade-up" class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm space-y-4">
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-lg font-bold font-display text-[#1E1B3A]">Peminjaman Aktif & Berjalan</h2>
@@ -182,7 +182,7 @@ const activeBorrowings = processedBorrowings.filter(
           </a>
         </div>
       ) : (
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+        <div data-animate="stagger-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
           {activeBorrowings.map((b) => (
             <div class="p-4 rounded-2xl border-2 border-gray-100 hover:border-indigo-100 bg-[#FBFBFF] transition flex flex-col justify-between space-y-3 shadow-xs">
               <div class="flex items-start justify-between gap-3">
