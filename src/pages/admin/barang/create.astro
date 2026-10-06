@@ -1,0 +1,136 @@
+---
+import AdminLayout from '../../../components/layout/AdminLayout.astro';
+
+const error = Astro.url.searchParams.get('error');
+---
+
+<AdminLayout title="Tambah Inventaris Baru" activeNav="barang">
+  <div class="max-w-xl mx-auto space-y-6">
+    <div class="flex items-center justify-between">
+      <a href="/admin/barang" class="text-xs font-bold text-gray-500 hover:text-[#3B3FD9] flex items-center gap-1">
+        ← Kembali ke Daftar Inventaris
+      </a>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6 md:p-8 border-2 border-[#1E1B3A]/10 shadow-sm space-y-6">
+      <div>
+        <h1 class="text-xl font-bold font-display text-[#1E1B3A]">Tambah Barang Inventaris Baru</h1>
+        <p class="text-xs text-gray-500 mt-1">Daftarkan buku, perangkat laboratorium, atau inventaris kegiatan kampus</p>
+      </div>
+
+      {error && (
+        <div class="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
+          {error}
+        </div>
+      )}
+
+      <form method="POST" action="/api/items/create" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5" for="itemCode">
+            Kode Unik Inventaris (Serial / Barcode)
+          </label>
+          <input
+            id="itemCode"
+            name="itemCode"
+            type="text"
+            required
+            placeholder="Contoh: LIB-NEW-111 atau LAB-CAM-004"
+            class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm font-mono tracking-wider focus:outline-none focus:border-[#3B3FD9] uppercase"
+          />
+          <div class="flex items-center gap-2 mt-2">
+            <span class="text-[11px] text-gray-400">Pilihan cepat:</span>
+            <button
+              type="button"
+              onclick="document.getElementById('itemCode').value='LIB-';"
+              class="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+            >
+              LIB- (Buku)
+            </button>
+            <button
+              type="button"
+              onclick="document.getElementById('itemCode').value='LAB-';"
+              class="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+            >
+              LAB- (Alat Lab)
+            </button>
+            <button
+              type="button"
+              onclick="document.getElementById('itemCode').value='HMP-';"
+              class="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+            >
+              HMP- (Himpunan)
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5" for="name">
+            Nama Barang
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            required
+            placeholder="Contoh: Buku Dasar Pemrograman Python"
+            class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5" for="category">
+              Kategori
+            </label>
+            <select
+              id="category"
+              name="category"
+              class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+            >
+              <option value="Perpustakaan">Perpustakaan</option>
+              <option value="Lab Komputer">Lab Komputer</option>
+              <option value="Himpunan">Himpunan</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5" for="stock">
+              Jumlah Stok Fisik
+            </label>
+            <input
+              id="stock"
+              name="stock"
+              type="number"
+              min="0"
+              value="5"
+              required
+              class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5" for="status">
+            Status Ketersediaan
+          </label>
+          <select
+            id="status"
+            name="status"
+            class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+          >
+            <option value="available">Tersedia (Bisa dipinjam)</option>
+            <option value="maintenance">Maintenance / Perbaikan</option>
+            <option value="borrowed">Sedang Habis Dipinjam</option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-4 px-6 btn-sticker-primary text-sm font-bold tracking-wide mt-2"
+        >
+          Simpan Barang ke Inventaris
+        </button>
+      </form>
+    </div>
+  </div>
+</AdminLayout>

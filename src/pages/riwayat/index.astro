@@ -1,0 +1,152 @@
+---
+import StudentLayout from '../../components/layout/StudentLayout.astro';
+import { getCurrentUser } from '../../lib/auth';
+import { db, schema } from '../../db';
+import { eq, desc } from 'drizzle-orm';
+import { StatusBadge } from '../../components/borrowing/StatusBadge';
+import { CountdownBadge } from '../../components/borrowing/CountdownBadge';
+import { formatDate } from '../../lib/format-date';
+import { formatRupiah } from '../../lib/format-rupiah';
+import { CategoryIcon } from '../../components/illustrations/CategoryIcon';
+import { calculateFine } from '../../lib/fine';
+
+const user = await getCurrentUser(Astro.cookies);
+if (!user) return Astro.redirect('/login');
+
+const filter = (Astro.url.searchParams.get('status') || 'semua').toLowerCase();
+
+const borrowings = db
+  .select({
+    borrowing: schema.borrowings,
+    item: schema.items,
+  })
+  .from(schema.borrowings)
+  .innerJoin(schema.items, eq(schema.borrowings.itemId, schema.items.id))
+  .where(eq(schema.borrowings.userId, user.id))
+  .orderBy(desc(schema.borrowings.createdAt))
+  .all();
+
+const processed = borrowings.map(({ borrowing, item }) => {
+  let status = borrowing.status;
+  let fine = borrowing.fineAmount;
+
+  if (status === 'borrowed') {
+    const calc = calculateFine(borrowing.dueDate);
+    if (calc.isOverdue) {
+      status = 'overdue';
+      fine = Math.max(fine, calc.fineAmount);
+    }
+  }
+
+  return {
+    ...borrowing,
+    status,
+    fineAmount: fine,
+    item,
+  };
+});
+
+const filtered = processed.filter((b) => {
+  if (filter === 'berjalan') return b.status === 'borrowed' || b.status === 'pending';
+  if (filter === 'terlambat') return b.status === 'overdue';
+  if (filter === 'selesai') return b.status === 'returned';
+  return true;
+});
+---
+
+<StudentLayout title="Riwayat Peminjaman" activeNav="riwayat">
+  <div class="space-y-6">
+    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl md:text-2xl font-bold font-display text-[#1E1B3A]">Riwayat Transaksi Peminjaman</h1>
+        <p class="text-xs text-gray-500">Daftar semua permohonan pinjam, bukti QR, dan status barang inventaris</p>
+      </div>
+
+      <a
+        href="/pinjam"
+        class="px-4 py-2.5 rounded-2xl bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-xs flex items-center gap-1.5"
+      >
+        <span>⚡ Pinjam Barang Baru</span>
+      </a>
+    </div>
+
+    <!-- Filter Pills -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-1">
+      {[
+        { id: 'semua', label: 'Semua Transaksi' },
+        { id: 'berjalan', label: 'Sedang Berjalan' },
+        { id: 'terlambat', label: 'Terlambat / Denda' },
+        { id: 'selesai', label: 'Selesai Dikembalikan' },
+      ].map((tab) => (
+        <a
+          href={`/riwayat?status=${tab.id}`}
+          class={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition ${
+            filter === tab.id
+              ? 'bg-[#3B3FD9] text-white shadow-xs'
+              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100'
+          }`}
+        >
+          {tab.label}
+        </a>
+      ))}
+    </div>
+
+    <!-- Transaction List -->
+    {filtered.length === 0 ? (
+      <div class="bg-white rounded-3xl p-12 text-center border-2 border-[#1E1B3A]/10 space-y-3">
+        <div class="w-16 h-16 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto text-2xl">
+          📑
+        </div>
+        <h3 class="text-base font-bold text-[#1E1B3A]">Belum ada data riwayat</h3>
+        <p class="text-xs text-gray-500 max-w-sm mx-auto">
+          Tidak ada data transaksi yang cocok dengan filter yang dipilih.
+        </p>
+      </div>
+    ) : (
+      <div class="space-y-3">
+        {filtered.map((b) => (
+          <div class="bg-white rounded-3xl p-5 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition">
+            <div class="flex items-start gap-3.5">
+              <div class="w-12 h-12 rounded-2xl bg-[#F6F5FF] text-[#3B3FD9] flex items-center justify-center shrink-0 border border-indigo-100">
+                <CategoryIcon category={b.item.category} size={22} />
+              </div>
+              <div class="space-y-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-mono text-xs font-bold text-gray-600 bg-gray-100 px-2.5 py-0.5 rounded-lg">
+                    {b.borrowingCode}
+                  </span>
+                  <StatusBadge status={b.status} size="sm" />
+                  <CountdownBadge dueDate={b.dueDate} status={b.status} />
+                </div>
+                <h3 class="font-bold text-sm sm:text-base text-[#1E1B3A]">
+                  {b.item.name}
+                </h3>
+                <div class="flex items-center gap-4 text-xs text-gray-500 flex-wrap">
+                  <span>Pinjam: <strong>{formatDate(b.borrowDate)}</strong></span>
+                  <span>Batas: <strong class="text-rose-600">{formatDate(b.dueDate)}</strong></span>
+                  {b.fineAmount > 0 && (
+                    <span class="font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
+                      Denda: {formatRupiah(b.fineAmount)}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 self-end md:self-center shrink-0">
+              <a
+                href={`/riwayat/${b.borrowingCode}`}
+                class="px-4 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-[#3B3FD9] text-xs font-bold border border-indigo-200 transition flex items-center gap-1.5"
+              >
+                <span>Lihat QR Bukti</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</StudentLayout>

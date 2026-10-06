@@ -1,0 +1,122 @@
+---
+import '../styles/global.css';
+import { getCurrentUser } from '../lib/auth';
+import { Mascot } from '../components/illustrations/Mascot';
+
+const user = await getCurrentUser(Astro.cookies);
+if (user) {
+  if (user.role === 'admin') return Astro.redirect('/admin/dashboard');
+  return Astro.redirect('/dashboard');
+}
+
+const error = Astro.url.searchParams.get('error');
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Mahasiswa — SIPEMBAR Kampus</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-[#F6F5FF] text-[#1E1B3A] min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-6">
+        <div class="inline-block relative mb-2">
+          <Mascot mood="happy" size={96} />
+        </div>
+        <h1 class="text-2xl font-bold font-display text-[#1E1B3A] tracking-tight">Registrasi Mahasiswa</h1>
+        <p class="text-xs text-gray-600 mt-1">Daftarkan akun untuk mulai meminjam mandiri</p>
+      </div>
+
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#1E1B3A]/10 shadow-xl">
+        {error && (
+          <div class="mb-5 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
+            {error}
+          </div>
+        )}
+
+        <form method="POST" action="/api/auth/register" class="space-y-3.5">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1" for="name">
+              Nama Lengkap
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              placeholder="Contoh: Rina Fitriani"
+              class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1" for="nim_nip">
+              NIM Mahasiswa
+            </label>
+            <input
+              id="nim_nip"
+              name="nim_nip"
+              type="text"
+              required
+              placeholder="Contoh: 220101009"
+              class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1" for="email">
+              Email Kampus
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              placeholder="rina@kampus.ac.id"
+              class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1" for="password">
+              Kata Sandi
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              placeholder="Minimal 6 karakter"
+              class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="w-full py-3.5 px-4 btn-sticker-primary text-sm font-bold tracking-wide mt-2"
+          >
+            Daftar Sekarang
+          </button>
+        </form>
+
+        <div class="mt-5 text-center pt-4 border-t border-gray-100">
+          <p class="text-xs text-gray-500">
+            Sudah memiliki akun?{' '}
+            <a href="/login" class="text-[#3B3FD9] font-bold hover:underline">
+              Masuk di sini
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

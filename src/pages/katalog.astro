@@ -1,0 +1,153 @@
+---
+import StudentLayout from '../components/layout/StudentLayout.astro';
+import { db, schema } from '../db';
+import { CategoryIcon } from '../components/illustrations/CategoryIcon';
+
+const search = (Astro.url.searchParams.get('q') || '').trim().toLowerCase();
+const selectedCategory = (Astro.url.searchParams.get('cat') || 'Semua').trim();
+
+const allItems = db.select().from(schema.items).all();
+
+const filteredItems = allItems.filter((item) => {
+  const matchesSearch =
+    !search ||
+    item.name.toLowerCase().includes(search) ||
+    item.itemCode.toLowerCase().includes(search);
+
+  const matchesCategory =
+    selectedCategory === 'Semua' || item.category.toLowerCase() === selectedCategory.toLowerCase();
+
+  return matchesSearch && matchesCategory;
+});
+
+const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
+---
+
+<StudentLayout title="Katalog Barang & Buku" activeNav="katalog">
+  <div class="space-y-6">
+    <!-- Header & Search -->
+    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm space-y-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold font-display text-[#1E1B3A]">Katalog Inventaris Kampus</h1>
+          <p class="text-xs text-gray-500">Cari buku referensi, peralatan lab, dan perlengkapan kegiatan mahasiswa</p>
+        </div>
+
+        <!-- Search Form -->
+        <form method="GET" class="flex items-center gap-2 max-w-md w-full">
+          <input type="hidden" name="cat" value={selectedCategory} />
+          <div class="relative flex-1">
+            <input
+              type="text"
+              name="q"
+              value={search}
+              placeholder="Cari nama barang atau kode..."
+              class="w-full pl-10 pr-4 py-2.5 rounded-2xl border-2 border-gray-200 text-xs focus:outline-none focus:border-[#3B3FD9]"
+            />
+            <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <button type="submit" class="px-4 py-2.5 btn-sticker-primary text-xs font-bold shrink-0">
+            Cari
+          </button>
+        </form>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 pt-2">
+        {categories.map((cat) => (
+          <a
+            href={`/katalog?cat=${encodeURIComponent(cat)}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
+            class={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition ${
+              selectedCategory.toLowerCase() === cat.toLowerCase()
+                ? 'bg-[#3B3FD9] text-white shadow-xs'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            {cat}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Items Grid -->
+    {filteredItems.length === 0 ? (
+      <div class="bg-white rounded-3xl p-12 text-center border-2 border-[#1E1B3A]/10 space-y-3">
+        <div class="w-16 h-16 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto text-2xl">
+          🔍
+        </div>
+        <h3 class="text-base font-bold text-[#1E1B3A]">Barang tidak ditemukan</h3>
+        <p class="text-xs text-gray-500 max-w-sm mx-auto">
+          Tidak ada barang yang cocok dengan kata kunci "{search}". Coba gunakan kata kunci lain atau pilih kategori Semua.
+        </p>
+        <a href="/katalog" class="inline-block text-xs font-bold text-[#3B3FD9] hover:underline">
+          Reset Pencarian
+        </a>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredItems.map((item) => {
+          const isAvailable = item.status === 'available' && item.stock > 0;
+          return (
+            <div class="bg-white rounded-3xl p-5 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col justify-between hover:shadow-md transition space-y-4">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-gray-100 text-gray-700">
+                    {item.itemCode}
+                  </span>
+                  <span
+                    class={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
+                      item.status === 'maintenance'
+                        ? 'bg-amber-100 text-amber-800'
+                        : item.stock > 0
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-rose-100 text-rose-800'
+                    }`}
+                  >
+                    {item.status === 'maintenance'
+                      ? 'Perbaikan'
+                      : item.stock > 0
+                      ? `Tersedia (${item.stock})`
+                      : 'Habis'}
+                  </span>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 rounded-2xl bg-[#F6F5FF] text-[#3B3FD9] flex items-center justify-center shrink-0 border border-indigo-100">
+                    <CategoryIcon category={item.category} size={20} />
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-sm text-[#1E1B3A] line-clamp-2 leading-snug" title={item.name}>
+                      {item.name}
+                    </h3>
+                    <span class="text-[11px] text-gray-500">{item.category}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-xs text-gray-500 font-medium">Stok: {item.stock} unit</span>
+                {isAvailable ? (
+                  <a
+                    href={`/pinjam?code=${item.itemCode}`}
+                    class="px-3.5 py-2 rounded-xl bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-xs flex items-center gap-1.5"
+                  >
+                    <span>⚡ Pinjam</span>
+                  </a>
+                ) : (
+                  <button
+                    disabled
+                    class="px-3.5 py-2 rounded-xl bg-gray-100 text-gray-400 text-xs font-semibold cursor-not-allowed"
+                  >
+                    Tidak Tersedia
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </div>
+</StudentLayout>

@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: 'Fredoka', ui-rounded, 'Comic Sans MS', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  --color-ink: #1e1b3a;
+  --color-paper: #f6f5ff;
+  --color-primary: #3b3fd9;
+  --color-primary-hover: #3235b8;
+  --color-sticker: #ffd23f;
+  --color-sticker-shadow: #c69f1b;
+  --color-mint: #2ec4a0;
+  --color-mint-dark: #0e7f5f;
+  --color-mint-light: #e6faf5;
+  --color-coral: #ff6b6b;
+  --color-coral-dark: #c93545;
+  --color-coral-light: #fff0f0;
+  --color-lilac: #b8a9ff;
+  --color-lilac-light: #f2efff;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-heading);
+}
+
+/* Sticker Button Utilities */
+.btn-sticker-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 0 #24278f;
+  transition: all 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: 16px;
+  cursor: pointer;
+}
+.btn-sticker-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+.btn-sticker-primary:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #24278f;
+}
+
+.btn-sticker-yellow {
+  background-color: var(--color-sticker);
+  color: var(--color-ink);
+  box-shadow: 0 4px 0 #c69f1b;
+  transition: all 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: 16px;
+  cursor: pointer;
+}
+.btn-sticker-yellow:hover {
+  filter: brightness(1.05);
+}
+.btn-sticker-yellow:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #c69f1b;
+}
+
+.btn-sticker-mint {
+  background-color: var(--color-mint);
+  color: #ffffff;
+  box-shadow: 0 4px 0 var(--color-mint-dark);
+  transition: all 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: 16px;
+  cursor: pointer;
+}
+.btn-sticker-mint:hover {
+  filter: brightness(1.05);
+}
+.btn-sticker-mint:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--color-mint-dark);
+}
+
+.btn-sticker-coral {
+  background-color: var(--color-coral);
+  color: #ffffff;
+  box-shadow: 0 4px 0 var(--color-coral-dark);
+  transition: all 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: 16px;
+  cursor: pointer;
+}
+.btn-sticker-coral:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--color-coral-dark);
+}
+
+.card-friendly {
+  background-color: #ffffff;
+  border-radius: 24px;
+  border: 1.5px solid rgba(30, 27, 58, 0.1);
+  box-shadow: 0 8px 24px rgba(30, 27, 58, 0.04);
+}
+
+.badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.825rem;
+  font-weight: 600;
+}
+
+@keyframes scan {
+  0% { top: 5%; }
+  50% { top: 90%; }
+  100% { top: 5%; }
+}
+.animate-scan {
+  animation: scan 2.2s ease-in-out infinite;
+}

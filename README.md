@@ -1,46 +1,65 @@
-# Astro Starter Kit: Basics
+# 📦 Sistem Peminjaman Barang Mandiri (SIPEMBAR)
 
-```sh
-npm create astro@latest -- --template basics
+Sistem Peminjaman Barang Mandiri berbasis web modern yang dibangun dengan **Astro 5**, **React**, **Tailwind CSS v4**, dan **Drizzle ORM**. Mendukung database **SQLite** untuk development lokal dan **Cloudflare D1** untuk deployment serverless di Cloudflare Pages.
+
+---
+
+## ✨ Fitur Utama
+
+- 🔍 **Katalog & Pencarian Barang**: Eksplorasi ketersediaan barang secara real-time.
+- 📷 **Barcode / QR Code Scanner**: Scan langsung barang menggunakan kamera perangkat atau upload gambar untuk peminjaman cepat.
+- 📋 **Alur Peminjaman Mandiri**: Formulir peminjaman dengan verifikasi data dan status persetujuan.
+- ⏱️ **Riwayat & Pengembalian**: Lacak status peminjaman aktif, riwayat pengembalian, dan keterlambatan.
+- 🛡️ **Autentikasi & Hak Akses**: Role-based access control (User & Administrator).
+- ⚙️ **Panel Administrator**: Kelola inventaris barang, persetujuan peminjaman, pengguna, dan log aktivitas.
+- ☁️ **Hybrid Deployment Ready**: Dapat dijalankan di Node.js (SQLite) maupun Cloudflare Pages + D1.
+
+---
+
+## 🚀 Panduan Memulai (Development)
+
+### 1. Prasyarat
+- Node.js version `>= 22.12.0`
+- npm / pnpm / yarn
+
+### 2. Instalasi Dependensi
+```bash
+npm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+### 3. Inisialisasi Database Lokal
+```bash
+# Mengisi data awal (seed database lokal)
+npm run seed
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+### 4. Menjalankan Server Development
+```bash
+npm run dev
+```
+Akses aplikasi melalui browser di `http://localhost:4321`.
 
-## 🧞 Commands
+---
 
-All commands are run from the root of the project, from a terminal:
+## 🛠️ Script yang Tersedia
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+| Command | Keterangan |
+| :--- | :--- |
+| `npm run dev` | Menjalankan server dev Astro lokal |
+| `npm run build` | Melakukan build aplikasi untuk Node.js |
+| `npm run build:cloudflare` | Build khusus target Cloudflare Pages / Workers |
+| `npm run preview` | Meninjau hasil build lokal |
+| `npm run seed` | Menjalankan seeding data awal ke SQLite |
+| `npm run d1:init:local` | Inisialisasi skema ke Cloudflare D1 (lokal) |
+| `npm run d1:init:remote` | Inisialisasi skema ke Cloudflare D1 (remote) |
 
-## 👀 Want to learn more?
+---
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## 🌐 Deployment ke Cloudflare Pages
+
+Panduan lengkap mengenai setup Cloudflare D1 dan deployment dapat dilihat pada [DEPLOY_CLOUDFLARE.md](./DEPLOY_CLOUDFLARE.md).
+
+---
+
+## 📄 Lisensi
+MIT License

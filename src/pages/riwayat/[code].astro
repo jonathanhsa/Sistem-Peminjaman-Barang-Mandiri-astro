@@ -1,0 +1,80 @@
+---
+import StudentLayout from '../../components/layout/StudentLayout.astro';
+import { getCurrentUser } from '../../lib/auth';
+import { db, schema } from '../../db';
+import { eq } from 'drizzle-orm';
+import { QrReceipt } from '../../components/borrowing/QrReceipt';
+import { calculateFine } from '../../lib/fine';
+
+const user = await getCurrentUser(Astro.cookies);
+if (!user) return Astro.redirect('/login');
+
+const code = (Astro.params.code || '').trim().toUpperCase();
+
+const record = db
+  .select({
+    borrowing: schema.borrowings,
+    item: schema.items,
+    borrower: schema.users,
+  })
+  .from(schema.borrowings)
+  .innerJoin(schema.items, eq(schema.borrowings.itemId, schema.items.id))
+  .innerJoin(schema.users, eq(schema.borrowings.userId, schema.users.id))
+  .where(eq(schema.borrowings.borrowingCode, code))
+  .get();
+
+if (!record) {
+  return Astro.redirect('/riwayat');
+}
+
+// Student can only see their own borrowing, admin can view all
+if (user.role !== 'admin' && record.borrower.id !== user.id) {
+  return Astro.redirect('/riwayat');
+}
+
+let status = record.borrowing.status;
+let fineAmount = record.borrowing.fineAmount;
+
+if (status === 'borrowed') {
+  const calc = calculateFine(record.borrowing.dueDate);
+  if (calc.isOverdue) {
+    status = 'overdue';
+    fineAmount = Math.max(fineAmount, calc.fineAmount);
+  }
+}
+
+const borrowingData = {
+  ...record.borrowing,
+  status,
+  fineAmount,
+};
+---
+
+<StudentLayout title={`Bukti Peminjaman ${code}`} activeNav="riwayat">
+  <div class="max-w-xl mx-auto space-y-6">
+    <div class="flex items-center justify-between">
+      <a href="/riwayat" class="text-xs font-bold text-gray-500 hover:text-[#3B3FD9] flex items-center gap-1">
+        ← Kembali ke Riwayat
+      </a>
+      <span class="text-xs font-mono text-gray-400">ID #{borrowingData.id}</span>
+    </div>
+
+    {/* Digital Receipt React Island */}
+    <QrReceipt
+      client:load
+      borrowing={borrowingData}
+      user={record.borrower}
+      item={record.item}
+    />
+
+    {/* Helpful notice */}
+    <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 text-xs text-indigo-900 space-y-1">
+      <h4 class="font-bold flex items-center gap-1.5">
+        <span>ℹ️ Petunjuk Verifikasi:</span>
+      </h4>
+      <p>
+        Bawa smartphone Anda ke loket petugas inventaris. Petugas akan memindai QR code ini menggunakan menu <strong>Verifikasi Scan QR</strong> untuk menyetujui atau menyelesaikan pengembalian barang.
+      </p>
+    </div>
+  </div>
+</StudentLayout>

@@ -1,0 +1,65 @@
+---
+import StudentLayout from '../components/layout/StudentLayout.astro';
+import { getCurrentUser } from '../lib/auth';
+import { db, schema } from '../db';
+import { eq, and, gt, isNull, inArray } from 'drizzle-orm';
+import { BorrowForm } from '../components/borrowing/BorrowForm';
+
+const user = await getCurrentUser(Astro.cookies);
+if (!user) return Astro.redirect('/login');
+
+const initialCode = (Astro.url.searchParams.get('code') || '').trim();
+
+// Check user's unpaid fines
+const unpaidFineRecord = db
+  .select()
+  .from(schema.borrowings)
+  .where(
+    and(
+      eq(schema.borrowings.userId, user.id),
+      gt(schema.borrowings.fineAmount, 0),
+      isNull(schema.borrowings.finePaidAt)
+    )
+  )
+  .get();
+
+const hasUnpaidFine = !!unpaidFineRecord;
+const unpaidFineAmount = unpaidFineRecord ? unpaidFineRecord.fineAmount : 0;
+
+// Check user's active borrowings count
+const activeLoans = db
+  .select()
+  .from(schema.borrowings)
+  .where(
+    and(
+      eq(schema.borrowings.userId, user.id),
+      inArray(schema.borrowings.status, ['pending', 'borrowed', 'overdue'])
+    )
+  )
+  .all();
+
+const activeLoansCount = activeLoans.length;
+---
+
+<StudentLayout title="Form Pinjam Mandiri" activeNav="pinjam">
+  <div class="max-w-2xl mx-auto space-y-4">
+    <!-- Breadcrumb / Header link -->
+    <div class="flex items-center justify-between">
+      <a href="/dashboard" class="text-xs font-bold text-gray-500 hover:text-[#3B3FD9] flex items-center gap-1">
+        ← Kembali ke Beranda
+      </a>
+      <a href="/katalog" class="text-xs font-semibold text-[#3B3FD9] bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100 transition">
+        Lihat Katalog Barang →
+      </a>
+    </div>
+
+    <!-- Interactive Island -->
+    <BorrowForm
+      client:load
+      initialCode={initialCode}
+      hasUnpaidFine={hasUnpaidFine}
+      unpaidFineAmount={unpaidFineAmount}
+      activeLoansCount={activeLoansCount}
+    />
+  </div>
+</StudentLayout>

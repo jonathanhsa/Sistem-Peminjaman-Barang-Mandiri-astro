@@ -1,0 +1,85 @@
+---
+import StudentLayout from '../components/layout/StudentLayout.astro';
+import { getCurrentUser } from '../lib/auth';
+import { db, schema } from '../db';
+import { eq, desc } from 'drizzle-orm';
+import { formatDate } from '../lib/format-date';
+
+const user = await getCurrentUser(Astro.cookies);
+if (!user) return Astro.redirect('/login');
+
+const notifications = db
+  .select()
+  .from(schema.notifications)
+  .where(eq(schema.notifications.userId, user.id))
+  .orderBy(desc(schema.notifications.createdAt))
+  .all();
+
+const hasUnread = notifications.some((n) => !n.isRead);
+---
+
+<StudentLayout title="Notifikasi & Peringatan" activeNav="notifikasi">
+  <div class="max-w-2xl mx-auto space-y-6">
+    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm flex items-center justify-between">
+      <div>
+        <h1 class="text-xl md:text-2xl font-bold font-display text-[#1E1B3A]">Pemberitahuan & Peringatan</h1>
+        <p class="text-xs text-gray-500">Info jatuh tempo, persetujuan pinjam, dan denda</p>
+      </div>
+
+      {hasUnread && (
+        <form method="POST" action="/api/notifications/read-all">
+          <button
+            type="submit"
+            class="px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-[#3B3FD9] text-xs font-bold transition border border-indigo-200"
+          >
+            Tandai Semua Dibaca
+          </button>
+        </form>
+      )}
+    </div>
+
+    {notifications.length === 0 ? (
+      <div class="bg-white rounded-3xl p-12 text-center border-2 border-[#1E1B3A]/10 space-y-3">
+        <div class="w-16 h-16 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto text-2xl">
+          🔔
+        </div>
+        <h3 class="text-base font-bold text-[#1E1B3A]">Tidak ada pemberitahuan</h3>
+        <p class="text-xs text-gray-500 max-w-sm mx-auto">
+          Kotak notifikasi Anda bersih. Semua update penting akan tampil di sini.
+        </p>
+      </div>
+    ) : (
+      <div class="space-y-3">
+        {notifications.map((n) => (
+          <div
+            class={`bg-white rounded-2xl p-4 border-2 transition shadow-xs flex items-start gap-3.5 ${
+              !n.isRead ? 'border-[#3B3FD9]/30 bg-[#FBFBFF]' : 'border-gray-100'
+            }`}
+          >
+            <div
+              class={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-base ${
+                n.type === 'danger'
+                  ? 'bg-rose-100 text-rose-600'
+                  : n.type === 'warning'
+                  ? 'bg-amber-100 text-amber-600'
+                  : n.type === 'success'
+                  ? 'bg-emerald-100 text-emerald-600'
+                  : 'bg-indigo-100 text-[#3B3FD9]'
+              }`}
+            >
+              {n.type === 'danger' ? '⚠️' : n.type === 'warning' ? '⏳' : n.type === 'success' ? '✓' : 'ℹ️'}
+            </div>
+
+            <div class="flex-1 space-y-1">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-xs sm:text-sm text-[#1E1B3A]">{n.title}</h4>
+                <span class="text-[10px] text-gray-400">{formatDate(n.createdAt)}</span>
+              </div>
+              <p class="text-xs text-gray-600 leading-relaxed">{n.message}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</StudentLayout>

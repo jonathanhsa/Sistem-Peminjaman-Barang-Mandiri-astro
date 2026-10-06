@@ -1,0 +1,180 @@
+---
+import AdminLayout from '../../../components/layout/AdminLayout.astro';
+import { db, schema } from '../../../db';
+import { desc } from 'drizzle-orm';
+import { CategoryIcon } from '../../../components/illustrations/CategoryIcon';
+
+const search = (Astro.url.searchParams.get('q') || '').trim().toLowerCase();
+const category = (Astro.url.searchParams.get('cat') || 'Semua').trim();
+
+const allItems = db.select().from(schema.items).orderBy(desc(schema.items.createdAt)).all();
+
+const filteredItems = allItems.filter((i) => {
+  const matchesSearch =
+    !search ||
+    i.name.toLowerCase().includes(search) ||
+    i.itemCode.toLowerCase().includes(search);
+  const matchesCat = category === 'Semua' || i.category.toLowerCase() === category.toLowerCase();
+  return matchesSearch && matchesCat;
+});
+
+const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
+---
+
+<AdminLayout title="Kelola Inventaris Barang & Buku" activeNav="barang">
+  <div class="space-y-6">
+    <!-- Top Action Row -->
+    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl md:text-2xl font-bold font-display text-[#1E1B3A]">Daftar Inventaris Kampus</h1>
+        <p class="text-xs text-gray-500">Kelola buku perpustakaan, perlengkapan lab komputer, dan aset himpunan</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a
+          href="/test-barcode"
+          target="_blank"
+          class="px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold hover:bg-emerald-100 transition flex items-center gap-1.5"
+        >
+          <span>🖨️ Cetak Barcode Buku ↗</span>
+        </a>
+        <a
+          href="/admin/barang/create"
+          class="px-5 py-2.5 btn-sticker-primary text-xs font-bold flex items-center gap-2"
+        >
+          <span>+ Tambah Barang Baru</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="bg-white rounded-2xl p-4 border border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+        {categories.map((c) => (
+          <a
+            href={`/admin/barang?cat=${encodeURIComponent(c)}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
+            class={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
+              category.toLowerCase() === c.toLowerCase()
+                ? 'bg-[#3B3FD9] text-white shadow-xs'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            {c}
+          </a>
+        ))}
+      </div>
+
+      <form method="GET" class="w-full sm:max-w-xs">
+        <input type="hidden" name="cat" value={category} />
+        <input
+          type="text"
+          name="q"
+          value={search}
+          placeholder="Cari kode atau nama..."
+          class="w-full px-3.5 py-1.5 rounded-xl border border-gray-300 text-xs focus:outline-none focus:border-[#3B3FD9]"
+        />
+      </form>
+    </div>
+
+    <!-- Table of Items -->
+    <div class="bg-white rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="bg-[#F6F5FF] border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+              <th class="py-3.5 px-4">Kode Barang</th>
+              <th class="py-3.5 px-4">Nama Inventaris</th>
+              <th class="py-3.5 px-4">Kategori</th>
+              <th class="py-3.5 px-4">Stok Fisik</th>
+              <th class="py-3.5 px-4">Status</th>
+              <th class="py-3.5 px-4 text-right">Kelola</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {filteredItems.map((item) => (
+              <tr class="hover:bg-gray-50/80 transition">
+                <td class="py-4 px-4 font-mono font-bold text-indigo-700">
+                  {item.itemCode}
+                </td>
+                <td class="py-4 px-4 font-bold text-[#1E1B3A] max-w-xs">
+                  {item.name}
+                </td>
+                <td class="py-4 px-4">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700 font-medium">
+                    <CategoryIcon category={item.category} size={14} />
+                    <span>{item.category}</span>
+                  </span>
+                </td>
+                <td class="py-4 px-4 font-semibold text-gray-800">
+                  <span class={`font-mono text-sm ${item.stock <= 0 ? 'text-rose-600 font-bold' : ''}`}>
+                    {item.stock} unit
+                  </span>
+                </td>
+                <td class="py-4 px-4">
+                  <span
+                    class={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                      item.status === 'available' && item.stock > 0
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : item.status === 'maintenance'
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-rose-100 text-rose-800'
+                    }`}
+                  >
+                    {item.status === 'available'
+                      ? item.stock > 0
+                        ? 'Tersedia'
+                        : 'Habis'
+                      : item.status === 'maintenance'
+                      ? 'Perbaikan'
+                      : 'Dipinjam Penuh'}
+                  </span>
+                </td>
+                <td class="py-4 px-4 text-right">
+                  <div class="inline-flex items-center gap-2">
+                    {/* Quick Edit Stock Dialog or Form */}
+                    <form method="POST" action={`/api/items/${item.id}/update`} class="inline-flex items-center gap-1.5">
+                      <input type="hidden" name="name" value={item.name} />
+                      <input type="hidden" name="category" value={item.category} />
+                      <input type="hidden" name="status" value={item.status} />
+                      <input
+                        type="number"
+                        name="stock"
+                        value={item.stock}
+                        min="0"
+                        class="w-14 px-1.5 py-1 text-center font-mono text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-600"
+                        title="Ubah stok lalu klik simpan"
+                      />
+                      <button
+                        type="submit"
+                        class="px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-[11px] border border-indigo-200 transition"
+                      >
+                        Ubah
+                      </button>
+                    </form>
+
+                    {/* Delete Item Form */}
+                    <form
+                      method="POST"
+                      action={`/api/items/${item.id}/delete`}
+                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus barang ini dari database?');"
+                    >
+                      <button
+                        type="submit"
+                        class="p-1 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition"
+                        title="Hapus Barang"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</AdminLayout>

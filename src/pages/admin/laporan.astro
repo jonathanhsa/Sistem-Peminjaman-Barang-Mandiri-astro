@@ -1,0 +1,228 @@
+---
+import AdminLayout from '../../components/layout/AdminLayout.astro';
+import { db, schema } from '../../db';
+import { eq, desc } from 'drizzle-orm';
+import { formatDate } from '../../lib/format-date';
+import { formatRupiah } from '../../lib/format-rupiah';
+import { calculateFine } from '../../lib/fine';
+import { StatusBadge } from '../../components/borrowing/StatusBadge';
+
+const allBorrowings = db
+  .select({
+    borrowing: schema.borrowings,
+    item: schema.items,
+    user: schema.users,
+  })
+  .from(schema.borrowings)
+  .innerJoin(schema.items, eq(schema.borrowings.itemId, schema.items.id))
+  .innerJoin(schema.users, eq(schema.borrowings.userId, schema.users.id))
+  .orderBy(desc(schema.borrowings.createdAt))
+  .all();
+
+let totalTransactions = allBorrowings.length;
+let totalReturned = 0;
+let totalLate = 0;
+let totalFinesCollected = 0;
+let totalFinesOutstanding = 0;
+
+const categoryStats: Record<string, number> = {
+  Perpustakaan: 0,
+  'Lab Komputer': 0,
+  Himpunan: 0,
+};
+
+const rows = allBorrowings.map(({ borrowing, item, user }) => {
+  let status = borrowing.status;
+  let fine = borrowing.fineAmount;
+
+  if (status === 'borrowed') {
+    const calc = calculateFine(borrowing.dueDate);
+    if (calc.isOverdue) {
+      status = 'overdue';
+      fine = Math.max(fine, calc.fineAmount);
+    }
+  }
+
+  if (status === 'returned') totalReturned++;
+  if (status === 'overdue' || (status === 'returned' && fine > 0)) totalLate++;
+
+  if (fine > 0) {
+    if (borrowing.finePaidAt) totalFinesCollected += fine;
+    else totalFinesOutstanding += fine;
+  }
+
+  if (categoryStats[item.category] !== undefined) {
+    categoryStats[item.category]++;
+  } else {
+    categoryStats[item.category] = 1;
+  }
+
+  return {
+    ...borrowing,
+    status,
+    fineAmount: fine,
+    item,
+    user,
+  };
+});
+---
+
+<AdminLayout title="Rekapitulasi Laporan Peminjaman" activeNav="laporan">
+  <div class="space-y-6">
+    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl md:text-2xl font-bold font-display text-[#1E1B3A]">Laporan & Rekapitulasi Sirkulasi</h1>
+        <p class="text-xs text-gray-500">Statistik utilisasi aset kampus, kepatuhan batas waktu, dan akumulasi denda</p>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <button
+          onclick="window.print()"
+          class="px-4 py-2.5 rounded-xl bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>
+          <span>Cetak Laporan</span>
+        </button>
+
+        <button
+          onclick="downloadCsv()"
+          class="px-4 py-2.5 btn-sticker-primary text-xs font-bold flex items-center gap-1.5 shadow-xs"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          <span>Ekspor CSV</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Total Transaksi</span>
+        <span class="text-2xl font-extrabold text-[#1E1B3A] block mt-1">{totalTransactions}</span>
+        <span class="text-[11px] text-gray-500">{totalReturned} selesai dikembalikan</span>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Tingkat Keterlambatan</span>
+        <span class="text-2xl font-extrabold text-rose-600 block mt-1">
+          {totalTransactions > 0 ? Math.round((totalLate / totalTransactions) * 100) : 0}%
+        </span>
+        <span class="text-[11px] text-gray-500">{totalLate} kasus terlambat</span>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Denda Lunas / Diterima</span>
+        <span class="text-2xl font-extrabold text-emerald-600 block mt-1">
+          {formatRupiah(totalFinesCollected)}
+        </span>
+        <span class="text-[11px] text-gray-500">Telah disetor mahasiswa</span>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Denda Tertunggak</span>
+        <span class="text-2xl font-extrabold text-amber-600 block mt-1">
+          {formatRupiah(totalFinesOutstanding)}
+        </span>
+        <span class="text-[11px] text-gray-500">Belum diselesaikan</span>
+      </div>
+    </div>
+
+    <!-- Category Distribution Breakdown -->
+    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm space-y-3">
+      <h3 class="font-bold text-sm text-[#1E1B3A]">Distribusi Kategori Peminjaman</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {Object.entries(categoryStats).map(([cat, count]) => (
+          <div class="p-4 rounded-2xl bg-[#F6F5FF] border border-indigo-100 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-gray-600 block">{cat}</span>
+              <span class="text-lg font-extrabold text-[#3B3FD9]">{count} transaksi</span>
+            </div>
+            <span class="text-xs text-indigo-400 font-bold">
+              {totalTransactions > 0 ? Math.round((count / totalTransactions) * 100) : 0}%
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="bg-white rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="font-bold text-sm text-[#1E1B3A]">Daftar Rekap Transaksi Lengkap</h3>
+        <span class="text-xs text-gray-400">{rows.length} entri</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table id="reportTable" class="w-full text-left text-xs">
+          <thead>
+            <tr class="bg-[#F6F5FF] border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+              <th class="py-3.5 px-4">Kode Transaksi</th>
+              <th class="py-3.5 px-4">Peminjam</th>
+              <th class="py-3.5 px-4">Barang</th>
+              <th class="py-3.5 px-4">Kategori</th>
+              <th class="py-3.5 px-4">Tgl Pinjam</th>
+              <th class="py-3.5 px-4">Jatuh Tempo</th>
+              <th class="py-3.5 px-4">Status</th>
+              <th class="py-3.5 px-4 text-right">Denda</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {rows.map((r) => (
+              <tr class="hover:bg-gray-50 transition">
+                <td class="py-3 px-4 font-mono font-bold text-indigo-700">{r.borrowingCode}</td>
+                <td class="py-3 px-4 font-semibold text-[#1E1B3A]">{r.user.name} ({r.user.nim_nip})</td>
+                <td class="py-3 px-4 text-gray-700 font-medium">{r.item.name}</td>
+                <td class="py-3 px-4 text-gray-600">{r.item.category}</td>
+                <td class="py-3 px-4 text-gray-600">{formatDate(r.borrowDate)}</td>
+                <td class="py-3 px-4 text-gray-600">{formatDate(r.dueDate)}</td>
+                <td class="py-3 px-4">
+                  <StatusBadge status={r.status} size="sm" />
+                </td>
+                <td class="py-3 px-4 text-right font-semibold">
+                  {r.fineAmount > 0 ? (
+                    <span class={r.finePaidAt ? 'text-emerald-700' : 'text-rose-700'}>
+                      {formatRupiah(r.fineAmount)} {r.finePaidAt ? '(Lunas)' : ''}
+                    </span>
+                  ) : (
+                    '-'
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    function downloadCsv() {
+      const rows = [];
+      const table = document.getElementById('reportTable');
+      if (!table) return;
+
+      const headers = [];
+      table.querySelectorAll('th').forEach((th) => headers.push('"' + th.innerText.trim() + '"'));
+      rows.push(headers.join(','));
+
+      table.querySelectorAll('tbody tr').forEach((tr) => {
+        const rowData = [];
+        tr.querySelectorAll('td').forEach((td) => {
+          rowData.push('"' + td.innerText.replace(/"/g, '""').trim() + '"');
+        });
+        rows.push(rowData.join(','));
+      });
+
+      const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(rows.join('\n'));
+      const link = document.createElement('a');
+      link.setAttribute('href', csvContent);
+      link.setAttribute('download', `rekap-peminjaman-${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</AdminLayout>

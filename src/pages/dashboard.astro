@@ -1,0 +1,223 @@
+---
+import StudentLayout from '../components/layout/StudentLayout.astro';
+import { getCurrentUser } from '../lib/auth';
+import { db, schema } from '../db';
+import { eq, desc } from 'drizzle-orm';
+import { StatusBadge } from '../components/borrowing/StatusBadge';
+import { CountdownBadge } from '../components/borrowing/CountdownBadge';
+import { Mascot } from '../components/illustrations/Mascot';
+import { CategoryIcon } from '../components/illustrations/CategoryIcon';
+import { formatRupiah } from '../lib/format-rupiah';
+import { calculateFine } from '../lib/fine';
+
+const user = await getCurrentUser(Astro.cookies);
+if (!user) return Astro.redirect('/login');
+
+// Fetch user borrowings
+const userBorrowings = db
+  .select({
+    borrowing: schema.borrowings,
+    item: schema.items,
+  })
+  .from(schema.borrowings)
+  .innerJoin(schema.items, eq(schema.borrowings.itemId, schema.items.id))
+  .where(eq(schema.borrowings.userId, user.id))
+  .orderBy(desc(schema.borrowings.createdAt))
+  .all();
+
+// Compute dynamic fine and stats
+let activeCount = 0;
+let pendingCount = 0;
+let returnedCount = 0;
+let totalFineUnpaid = 0;
+
+const processedBorrowings = userBorrowings.map(({ borrowing, item }) => {
+  let status = borrowing.status;
+  let fine = borrowing.fineAmount;
+
+  if (status === 'borrowed') {
+    const calc = calculateFine(borrowing.dueDate);
+    if (calc.isOverdue) {
+      status = 'overdue';
+      fine = Math.max(fine, calc.fineAmount);
+    }
+  }
+
+  if (status === 'borrowed' || status === 'overdue') activeCount++;
+  else if (status === 'pending') pendingCount++;
+  else if (status === 'returned') returnedCount++;
+
+  if (fine > 0 && !borrowing.finePaidAt) {
+    totalFineUnpaid += fine;
+  }
+
+  return {
+    ...borrowing,
+    status,
+    fineAmount: fine,
+    item,
+  };
+});
+
+const activeBorrowings = processedBorrowings.filter(
+  (b) => b.status === 'borrowed' || b.status === 'overdue' || b.status === 'pending'
+);
+---
+
+<StudentLayout title="Beranda Mahasiswa" activeNav="dashboard">
+  <div class="space-y-6">
+    {/* Welcome Hero Banner */}
+    <div class="relative bg-gradient-to-r from-[#3B3FD9] to-[#595DE8] rounded-3xl p-6 md:p-8 text-white shadow-xl overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 border-2 border-[#1E1B3A]/10">
+      <div class="relative z-10 max-w-lg space-y-2 text-center md:text-left">
+        <div class="inline-flex items-center gap-2 bg-[#FFD23F] text-[#1E1B3A] text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
+          <span>✨ Halo, {user.name.split(' ')[0]}!</span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold font-display leading-tight">
+          Peminjaman Alat & Buku Tanpa Antre.
+        </h1>
+        <p class="text-xs md:text-sm text-white/80 leading-relaxed">
+          Gunakan kamera smartphone Anda untuk memindai barcode inventaris kampus, dapatkan QR receipt digital, dan tunjukkan ke petugas saat pengambilan.
+        </p>
+
+        <div class="pt-2 flex flex-wrap gap-2.5 justify-center md:justify-start">
+          <a
+            href="/pinjam"
+            class="px-5 py-3 rounded-2xl bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-md flex items-center gap-2"
+          >
+            <span>⚡ Mulai Pinjam Mandiri</span>
+          </a>
+          <a
+            href="/katalog"
+            class="px-5 py-3 rounded-2xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition backdrop-blur-sm"
+          >
+            Jelajahi Katalog
+          </a>
+        </div>
+      </div>
+
+      <div class="relative shrink-0 flex items-center justify-center">
+        <Mascot mood="happy" size={140} />
+      </div>
+    </div>
+
+    {/* Metrics Summary */}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-[#3B3FD9] flex items-center justify-center font-bold text-xl">
+          {activeCount}
+        </div>
+        <div>
+          <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Dipinjam</span>
+          <span class="text-base font-extrabold text-[#1E1B3A]">
+            {activeCount} Barang
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xl">
+          {pendingCount}
+        </div>
+        <div>
+          <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Menunggu ACC</span>
+          <span class="text-base font-extrabold text-[#1E1B3A]">
+            {pendingCount} Pengajuan
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-700 flex items-center justify-center font-bold text-xl">
+          {totalFineUnpaid > 0 ? '⚠️' : '0'}
+        </div>
+        <div>
+          <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Denda Tertunda</span>
+          <span class="text-sm font-extrabold text-[#1E1B3A]">
+            {totalFineUnpaid > 0 ? formatRupiah(totalFineUnpaid) : 'Rp 0 (Aman)'}
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xl">
+          {returnedCount}
+        </div>
+        <div>
+          <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Selesai Kembali</span>
+          <span class="text-base font-extrabold text-[#1E1B3A]">
+            {returnedCount} Transaksi
+          </span>
+        </div>
+      </div>
+    </div>
+
+    {/* Active Borrowings Section */}
+    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold font-display text-[#1E1B3A]">Peminjaman Aktif & Berjalan</h2>
+          <p class="text-xs text-gray-500">Barang yang sedang Anda bawa atau menunggu persetujuan petugas</p>
+        </div>
+        <a href="/riwayat" class="text-xs font-bold text-[#3B3FD9] hover:underline">
+          Lihat Semua →
+        </a>
+      </div>
+
+      {activeBorrowings.length === 0 ? (
+        <div class="py-10 text-center space-y-3">
+          <div class="w-16 h-16 rounded-full bg-indigo-50 text-[#3B3FD9] flex items-center justify-center mx-auto">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h3 class="font-bold text-sm text-[#1E1B3A]">Tidak ada peminjaman aktif</h3>
+          <p class="text-xs text-gray-500 max-w-sm mx-auto">
+            Anda belum meminjam barang inventaris kampus saat ini. Silakan scan barcode atau lihat katalog untuk mulai meminjam.
+          </p>
+          <a
+            href="/pinjam"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl btn-sticker-primary text-xs font-bold"
+          >
+            ⚡ Pinjam Barang Sekarang
+          </a>
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          {activeBorrowings.map((b) => (
+            <div class="p-4 rounded-2xl border-2 border-gray-100 hover:border-indigo-100 bg-[#FBFBFF] transition flex flex-col justify-between space-y-3 shadow-xs">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-10 h-10 rounded-xl bg-white border border-gray-200 text-indigo-700 flex items-center justify-center shadow-xs">
+                    <CategoryIcon category={b.item.category} size={20} />
+                  </div>
+                  <div>
+                    <span class="text-[10px] font-mono font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                      {b.item.itemCode}
+                    </span>
+                    <h4 class="font-bold text-sm text-[#1E1B3A] line-clamp-1 mt-0.5" title={b.item.name}>
+                      {b.item.name}
+                    </h4>
+                  </div>
+                </div>
+                <StatusBadge status={b.status} size="sm" />
+              </div>
+
+              <div class="flex items-center justify-between text-xs pt-2 border-t border-gray-100">
+                <CountdownBadge dueDate={b.dueDate} status={b.status} />
+                <a
+                  href={`/riwayat/${b.borrowingCode}`}
+                  class="font-bold text-xs text-[#3B3FD9] hover:underline flex items-center gap-1 bg-white px-3 py-1.5 rounded-xl border border-indigo-200 shadow-xs"
+                >
+                  <span>QR Bukti</span>
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</StudentLayout>

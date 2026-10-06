@@ -1,0 +1,179 @@
+---
+import '../../styles/global.css';
+import { getCurrentUser } from '../../lib/auth';
+import { Mascot } from '../illustrations/Mascot';
+
+interface Props {
+  title?: string;
+  activeNav?: 'dashboard' | 'barang' | 'peminjaman' | 'verifikasi' | 'laporan' | 'test-barcode';
+}
+
+const { title = 'Admin Inventaris — SIPEMBAR', activeNav = 'dashboard' } = Astro.props;
+
+const user = await getCurrentUser(Astro.cookies);
+if (!user) {
+  return Astro.redirect('/login');
+}
+if (user.role !== 'admin') {
+  return Astro.redirect('/dashboard');
+}
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} — Admin SIPEMBAR</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-[#F6F5FF] text-[#1E1B3A] min-h-screen flex flex-col md:flex-row">
+    <!-- Admin Sidebar -->
+    <aside class="w-full md:w-64 bg-white border-r border-[#1E1B3A]/10 flex flex-col shrink-0">
+      <!-- Brand Logo -->
+      <div class="p-5 border-b border-[#1E1B3A]/10 flex items-center justify-between">
+        <a href="/admin/dashboard" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-[#1E1B3A] flex items-center justify-center p-0.5 shadow-xs">
+            <Mascot mood="holding_card" size={36} />
+          </div>
+          <div>
+            <span class="font-display text-base font-bold tracking-tight text-[#1E1B3A] block leading-none">SIPEMBAR</span>
+            <span class="text-[10px] text-[#3B3FD9] font-bold uppercase tracking-wider">Portal Admin</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex-1 p-3 space-y-1.5 overflow-y-auto">
+        <a
+          href="/admin/dashboard"
+          class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
+            activeNav === 'dashboard'
+              ? 'bg-[#3B3FD9] text-white shadow-xs'
+              : 'text-gray-600 hover:bg-[#F6F5FF] hover:text-[#1E1B3A]'
+          }`}
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+          </svg>
+          <span>Dashboard Admin</span>
+        </a>
+
+        <a
+          href="/admin/barang"
+          class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
+            activeNav === 'barang'
+              ? 'bg-[#3B3FD9] text-white shadow-xs'
+              : 'text-gray-600 hover:bg-[#F6F5FF] hover:text-[#1E1B3A]'
+          }`}
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+          <span>Kelola Barang & Stok</span>
+        </a>
+
+        <a
+          href="/admin/peminjaman"
+          class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
+            activeNav === 'peminjaman'
+              ? 'bg-[#3B3FD9] text-white shadow-xs'
+              : 'text-gray-600 hover:bg-[#F6F5FF] hover:text-[#1E1B3A]'
+          }`}
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+          <span>Peminjaman & ACC</span>
+        </a>
+
+        <a
+          href="/admin/verifikasi"
+          class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
+            activeNav === 'verifikasi'
+              ? 'bg-[#FFD23F] text-[#1E1B3A] shadow-xs'
+              : 'text-gray-800 bg-[#FFD23F]/30 hover:bg-[#FFD23F]/70'
+          }`}
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+          </svg>
+          <span>Verifikasi Scan QR</span>
+        </a>
+
+        <a
+          href="/admin/laporan"
+          class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
+            activeNav === 'laporan'
+              ? 'bg-[#3B3FD9] text-white shadow-xs'
+              : 'text-gray-600 hover:bg-[#F6F5FF] hover:text-[#1E1B3A]'
+          }`}
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span>Laporan & Ekspor</span>
+        </a>
+
+        <div class="pt-4 border-t border-gray-100">
+          <a
+            href="/test-barcode"
+            target="_blank"
+            class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            <span>Buka Lembar Barcode ↗</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Admin User Footer -->
+      <div class="p-4 border-t border-[#1E1B3A]/10 bg-gray-50 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-[#3B3FD9] text-white flex items-center justify-center text-xs font-bold">
+            P
+          </div>
+          <div>
+            <span class="text-xs font-bold text-[#1E1B3A] block truncate max-w-[110px]">{user.name}</span>
+            <span class="text-[10px] text-gray-500 font-mono">Petugas</span>
+          </div>
+        </div>
+        <form method="POST" action="/api/auth/logout">
+          <button
+            type="submit"
+            class="p-2 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition"
+            title="Keluar"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top Bar for mobile/breadcrumb -->
+      <header class="h-16 bg-white border-b border-[#1E1B3A]/10 px-6 flex items-center justify-between">
+        <h1 class="text-base font-bold text-[#1E1B3A] font-display">{title}</h1>
+        <div class="text-xs text-gray-500 font-medium">
+          Tahun Ajaran 2026/2027
+        </div>
+      </header>
+
+      <!-- Page Content Slot -->
+      <main class="flex-1 p-6 max-w-7xl w-full">
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>

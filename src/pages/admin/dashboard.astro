@@ -1,0 +1,219 @@
+---
+import AdminLayout from '../../components/layout/AdminLayout.astro';
+import { db, schema } from '../../db';
+import { eq, desc } from 'drizzle-orm';
+import { StatusBadge } from '../../components/borrowing/StatusBadge';
+import { CountdownBadge } from '../../components/borrowing/CountdownBadge';
+import { formatRupiah } from '../../lib/format-rupiah';
+import { calculateFine } from '../../lib/fine';
+
+// Statistics
+const allItems = db.select().from(schema.items).all();
+const totalItemsCount = allItems.length;
+const totalStock = allItems.reduce((acc, curr) => acc + curr.stock, 0);
+
+const allBorrowings = db
+  .select({
+    borrowing: schema.borrowings,
+    item: schema.items,
+    user: schema.users,
+  })
+  .from(schema.borrowings)
+  .innerJoin(schema.items, eq(schema.borrowings.itemId, schema.items.id))
+  .innerJoin(schema.users, eq(schema.borrowings.userId, schema.users.id))
+  .orderBy(desc(schema.borrowings.createdAt))
+  .all();
+
+let pendingCount = 0;
+let borrowedCount = 0;
+let overdueCount = 0;
+let totalUnpaidFine = 0;
+
+const processedBorrowings = allBorrowings.map(({ borrowing, item, user }) => {
+  let status = borrowing.status;
+  let fine = borrowing.fineAmount;
+
+  if (status === 'borrowed') {
+    const calc = calculateFine(borrowing.dueDate);
+    if (calc.isOverdue) {
+      status = 'overdue';
+      fine = Math.max(fine, calc.fineAmount);
+    }
+  }
+
+  if (status === 'pending') pendingCount++;
+  else if (status === 'borrowed') borrowedCount++;
+  else if (status === 'overdue') overdueCount++;
+
+  if (fine > 0 && !borrowing.finePaidAt) {
+    totalUnpaidFine += fine;
+  }
+
+  return {
+    ...borrowing,
+    status,
+    fineAmount: fine,
+    item,
+    user,
+  };
+});
+
+const recentBorrowings = processedBorrowings.slice(0, 6);
+---
+
+<AdminLayout title="Dashboard Petugas Inventaris" activeNav="dashboard">
+  <div class="space-y-6">
+    <!-- Top Stats Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">Total Jenis Barang</span>
+          <span class="text-2xl font-extrabold text-[#1E1B3A]">{totalItemsCount}</span>
+          <span class="text-xs text-gray-500 block mt-0.5">({totalStock} total unit fisik)</span>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-[#3B3FD9] flex items-center justify-center font-bold text-xl">
+          📦
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wider block">Menunggu Persetujuan</span>
+          <span class="text-2xl font-extrabold text-amber-900">{pendingCount}</span>
+          <a href="/admin/peminjaman" class="text-xs text-amber-700 font-bold block mt-0.5 hover:underline">
+            Tinjau sekarang →
+          </a>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-xl">
+          ⏳
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">Sedang Dipinjam</span>
+          <span class="text-2xl font-extrabold text-[#1E1B3A]">{borrowedCount + overdueCount}</span>
+          <span class="text-xs text-rose-600 font-semibold block mt-0.5">
+            ({overdueCount} unit terlambat)
+          </span>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-[#3B3FD9] flex items-center justify-center font-bold text-xl">
+          🤝
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold text-rose-700 uppercase tracking-wider block">Denda Belum Bayar</span>
+          <span class="text-xl font-extrabold text-rose-800">{formatRupiah(totalUnpaidFine)}</span>
+          <span class="text-xs text-gray-500 block mt-0.5">Rp 1.000 / hari terlambat</span>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xl">
+          💰
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Action Banner -->
+    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="space-y-1 text-center md:text-left">
+        <h2 class="text-lg font-bold font-display text-[#1E1B3A]">Loket Layanan Petugas Cepat</h2>
+        <p class="text-xs text-gray-500">Scan QR receipt mahasiswa saat mereka datang ke loket inventaris</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a
+          href="/admin/verifikasi"
+          class="px-5 py-3 rounded-2xl bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-sm flex items-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+          </svg>
+          <span>Buka Scanner QR Verifikasi</span>
+        </a>
+        <a
+          href="/admin/barang/create"
+          class="px-4 py-3 rounded-2xl btn-sticker-primary text-xs font-bold"
+        >
+          + Tambah Barang Baru
+        </a>
+      </div>
+    </div>
+
+    <!-- Recent Transactions Table -->
+    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold font-display text-[#1E1B3A]">Transaksi Terbaru</h2>
+          <p class="text-xs text-gray-500">6 permohonan dan transaksi peminjaman terakhir</p>
+        </div>
+        <a href="/admin/peminjaman" class="text-xs font-bold text-[#3B3FD9] hover:underline">
+          Lihat Semua Transaksi →
+        </a>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
+              <th class="py-3 px-3">Kode Transaksi</th>
+              <th class="py-3 px-3">Mahasiswa</th>
+              <th class="py-3 px-3">Barang</th>
+              <th class="py-3 px-3">Status</th>
+              <th class="py-3 px-3">Batas Waktu</th>
+              <th class="py-3 px-3 text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {recentBorrowings.map((b) => (
+              <tr class="hover:bg-gray-50/70 transition">
+                <td class="py-3.5 px-3 font-mono font-bold text-indigo-700">
+                  {b.borrowingCode}
+                </td>
+                <td class="py-3.5 px-3">
+                  <span class="font-bold text-[#1E1B3A] block">{b.user.name}</span>
+                  <span class="text-[10px] text-gray-400 font-mono">{b.user.nim_nip}</span>
+                </td>
+                <td class="py-3.5 px-3">
+                  <span class="font-medium text-gray-800 block line-clamp-1 max-w-[200px]" title={b.item.name}>
+                    {b.item.name}
+                  </span>
+                  <span class="text-[10px] text-gray-400 font-mono">{b.item.itemCode}</span>
+                </td>
+                <td class="py-3.5 px-3">
+                  <StatusBadge status={b.status} size="sm" />
+                </td>
+                <td class="py-3.5 px-3">
+                  <CountdownBadge dueDate={b.dueDate} status={b.status} />
+                </td>
+                <td class="py-3.5 px-3 text-right">
+                  {b.status === 'pending' ? (
+                    <form method="POST" action={`/api/borrowings/${b.id}/approve`} class="inline-block">
+                      <button
+                        type="submit"
+                        class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-[11px] hover:bg-emerald-700 transition shadow-xs"
+                      >
+                        Setujui
+                      </button>
+                    </form>
+                  ) : b.status === 'borrowed' || b.status === 'overdue' ? (
+                    <form method="POST" action={`/api/borrowings/${b.id}/return`} class="inline-block">
+                      <button
+                        type="submit"
+                        class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-[11px] hover:bg-indigo-700 transition shadow-xs"
+                      >
+                        Kembalikan
+                      </button>
+                    </form>
+                  ) : (
+                    <span class="text-gray-400 font-medium">Selesai</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</AdminLayout>

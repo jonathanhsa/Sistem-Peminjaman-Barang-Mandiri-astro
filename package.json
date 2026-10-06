@@ -8,13 +8,42 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:cloudflare": "node -e \"process.env.DEPLOY_TARGET='cloudflare'; require('child_process').execSync('astro build', {stdio:'inherit', env: {...process.env, DEPLOY_TARGET:'cloudflare'}})\"",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "seed": "tsx src/db/seed.ts",
+    "d1:init:local": "wrangler d1 execute sipembar-db --file=./d1-schema.sql --local",
+    "d1:init:remote": "wrangler d1 execute sipembar-db --file=./d1-schema.sql --remote"
   },
   "dependencies": {
-    "astro": "^7.3.5"
+    "@astrojs/node": "^11.1.6",
+    "@astrojs/react": "^7.0.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "astro": "^7.3.5",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "canvas-confetti": "^1.9.4",
+    "drizzle-orm": "^0.45.3",
+    "lucide-react": "^1.52.0",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.3",
+    "tesseract.js": "^7.0.0"
   },
   "allowScripts": {
     "esbuild": true
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/cloudflare": "^14.3.3",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/canvas-confetti": "^1.9.0",
+    "drizzle-kit": "^0.31.11",
+    "tsx": "^4.23.15",
+    "typescript": "~5.7.3"
   }
 }

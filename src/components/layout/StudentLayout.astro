@@ -1,0 +1,227 @@
+---
+import '../../styles/global.css';
+import { getCurrentUser } from '../../lib/auth';
+import { db, schema } from '../../db';
+import { eq, and } from 'drizzle-orm';
+import { Mascot } from '../illustrations/Mascot';
+
+interface Props {
+  title?: string;
+  activeNav?: 'dashboard' | 'katalog' | 'pinjam' | 'riwayat' | 'test-barcode' | 'notifikasi';
+}
+
+const { title = 'Sistem Peminjaman Mandiri Kampus', activeNav = 'dashboard' } = Astro.props;
+
+const user = await getCurrentUser(Astro.cookies);
+if (!user) {
+  return Astro.redirect('/login');
+}
+if (user.role === 'admin') {
+  return Astro.redirect('/admin/dashboard');
+}
+
+// Get unread notification count
+const unreadNotifs = db
+  .select()
+  .from(schema.notifications)
+  .where(and(eq(schema.notifications.userId, user.id), eq(schema.notifications.isRead, false)))
+  .all();
+const unreadCount = unreadNotifs.length;
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} — SIPEMBAR</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-[#F6F5FF] text-[#1E1B3A] min-h-screen flex flex-col pb-24 md:pb-8">
+    <!-- Top Header -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#1E1B3A]/10 shadow-xs">
+      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Brand Logo & Mascot */}
+        <a href="/dashboard" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-2xl bg-[#3B3FD9] flex items-center justify-center p-0.5 shadow-xs group-hover:scale-105 transition">
+            <Mascot mood="happy" size={36} />
+          </div>
+          <div>
+            <span class="font-display text-lg font-bold tracking-tight text-[#1E1B3A] block leading-none">SIPEMBAR</span>
+            <span class="text-[10px] text-gray-500 font-medium">Peminjaman Mandiri</span>
+          </div>
+        </a>
+
+        {/* Desktop Navigation */}
+        <nav class="hidden md:flex items-center gap-1.5 bg-[#F6F5FF] p-1 rounded-2xl border border-[#1E1B3A]/10">
+          <a
+            href="/dashboard"
+            class={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+              activeNav === 'dashboard'
+                ? 'bg-[#3B3FD9] text-white shadow-xs'
+                : 'text-gray-600 hover:text-[#1E1B3A] hover:bg-white/60'
+            }`}
+          >
+            Beranda
+          </a>
+          <a
+            href="/katalog"
+            class={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+              activeNav === 'katalog'
+                ? 'bg-[#3B3FD9] text-white shadow-xs'
+                : 'text-gray-600 hover:text-[#1E1B3A] hover:bg-white/60'
+            }`}
+          >
+            Katalog
+          </a>
+          <a
+            href="/pinjam"
+            class={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+              activeNav === 'pinjam'
+                ? 'bg-[#FFD23F] text-[#1E1B3A] shadow-xs'
+                : 'text-[#1E1B3A] bg-[#FFD23F]/60 hover:bg-[#FFD23F]'
+            }`}
+          >
+            <span>⚡ Pinjam Mandiri</span>
+          </a>
+          <a
+            href="/riwayat"
+            class={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+              activeNav === 'riwayat'
+                ? 'bg-[#3B3FD9] text-white shadow-xs'
+                : 'text-gray-600 hover:text-[#1E1B3A] hover:bg-white/60'
+            }`}
+          >
+            Riwayat
+          </a>
+          <a
+            href="/test-barcode"
+            class={`px-3 py-2 rounded-xl text-xs font-bold transition ${
+              activeNav === 'test-barcode'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-gray-600 hover:text-[#1E1B3A] hover:bg-white/60'
+            }`}
+          >
+            Lembar Barcode
+          </a>
+        </nav>
+
+        {/* User Badge & Actions */}
+        <div class="flex items-center gap-2.5">
+          <!-- Notification Bell -->
+          <a
+            href="/notifikasi"
+            class="relative p-2.5 rounded-xl bg-[#F6F5FF] text-gray-700 hover:bg-gray-100 transition border border-[#1E1B3A]/10"
+            title="Notifikasi"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            {unreadCount > 0 && (
+              <span class="absolute -top-1 -right-1 w-4 h-4 bg-[#FF6B6B] text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                {unreadCount}
+              </span>
+            )}
+          </a>
+
+          <!-- Profile Badge -->
+          <div class="hidden sm:flex items-center gap-2 pl-2 border-l border-gray-200">
+            <div class="text-right">
+              <span class="text-xs font-bold text-[#1E1B3A] block leading-tight">{user.name}</span>
+              <span class="text-[10px] text-gray-500 font-mono">{user.nim_nip}</span>
+            </div>
+          </div>
+
+          <!-- Logout Button -->
+          <form method="POST" action="/api/auth/logout">
+            <button
+              type="submit"
+              class="p-2.5 rounded-xl bg-gray-100 text-gray-600 hover:text-red-600 hover:bg-red-50 transition border border-gray-200"
+              title="Keluar"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container Slot -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
+      <slot />
+    </main>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#1E1B3A]/10 px-2 py-1.5 shadow-lg flex items-center justify-around">
+      <a
+        href="/dashboard"
+        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition ${
+          activeNav === 'dashboard' ? 'text-[#3B3FD9]' : 'text-gray-500'
+        }`}
+      >
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        <span>Beranda</span>
+      </a>
+
+      <a
+        href="/katalog"
+        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition ${
+          activeNav === 'katalog' ? 'text-[#3B3FD9]' : 'text-gray-500'
+        }`}
+      >
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+        </svg>
+        <span>Katalog</span>
+      </a>
+
+      {/* Primary Action Button: Pinjam Mandiri */}
+      <a
+        href="/pinjam"
+        class="flex flex-col items-center -top-4 relative py-1 px-3 bg-[#FFD23F] text-[#1E1B3A] rounded-2xl shadow-md border-2 border-[#1E1B3A]/15 active:scale-95 transition"
+      >
+        <div class="w-8 h-8 rounded-full bg-[#1E1B3A] text-white flex items-center justify-center mb-0.5">
+          <svg class="w-4 h-4 text-[#FFD23F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+        <span class="text-[10px] font-extrabold uppercase tracking-tight">Pinjam</span>
+      </a>
+
+      <a
+        href="/riwayat"
+        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition ${
+          activeNav === 'riwayat' ? 'text-[#3B3FD9]' : 'text-gray-500'
+        }`}
+      >
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Riwayat</span>
+      </a>
+
+      <a
+        href="/test-barcode"
+        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition ${
+          activeNav === 'test-barcode' ? 'text-emerald-700 font-bold' : 'text-gray-500'
+        }`}
+      >
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+        </svg>
+        <span>Barcode</span>
+      </a>
+    </nav>
+  </body>
+</html>
