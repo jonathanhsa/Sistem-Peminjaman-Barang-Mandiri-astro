@@ -62,7 +62,7 @@ Buka file `wrangler.jsonc` dan masukkan `database_id` Anda:
     {
       "binding": "DB",
       "database_name": "sipembar-db",
-      "database_id": "MASUKKAN_DATABASE_ID_ANDA_DISINI"
+      "database_id": "cafe920e-405c-4709-b599-9d534047ce22"
     }
   ]
 }

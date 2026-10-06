@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "sipembar-kampus",
+  "name": "sistem-peminjaman-barang-mandiri-astro",
   "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": [
@@ -13,7 +13,7 @@
     {
       "binding": "DB",
       "database_name": "sipembar-db",
-      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+      "database_id": "cafe920e-405c-4709-b599-9d534047ce22"
     }
   ]
 }
