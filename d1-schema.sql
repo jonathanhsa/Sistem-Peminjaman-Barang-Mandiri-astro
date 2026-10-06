@@ -54,11 +54,11 @@ CREATE TABLE notifications (
 );
 
 -- Seed Initial Users (Default Password: "password")
--- bcrypt hash of "password": $2a$10$wE9K2sFj7f5QYFvB2/yW/eVXyJ516K6z7J6x/6Ceq1Zl.pQfG6P3G
+-- bcrypt hash of "password": $2b$10$A578PchThiRNypresZjaCOq0wxYJi0NjWT29xzVnuNGLFwuGL1/pS
 INSERT INTO users (id, name, email, nim_nip, role, password) VALUES
-  (1, 'Petugas Inventaris Kampus', 'admin@kampus.ac.id', '198501012010121001', 'admin', '$2a$10$E5z9.5hXp4aJ3lK8N8m6r.P6r2b4aW7n5t6z7J6x/6Ceq1Zl.pQfG'),
-  (2, 'Jonathan Mahasiswa', 'mahasiswa@kampus.ac.id', '220101001', 'student', '$2a$10$E5z9.5hXp4aJ3lK8N8m6r.P6r2b4aW7n5t6z7J6x/6Ceq1Zl.pQfG'),
-  (3, 'Budi Santoso', 'budi@kampus.ac.id', '220101002', 'student', '$2a$10$E5z9.5hXp4aJ3lK8N8m6r.P6r2b4aW7n5t6z7J6x/6Ceq1Zl.pQfG');
+  (1, 'Petugas Inventaris Kampus', 'admin@kampus.ac.id', '198501012010121001', 'admin', '$2b$10$A578PchThiRNypresZjaCOq0wxYJi0NjWT29xzVnuNGLFwuGL1/pS'),
+  (2, 'Jonathan Mahasiswa', 'mahasiswa@kampus.ac.id', '220101001', 'student', '$2b$10$A578PchThiRNypresZjaCOq0wxYJi0NjWT29xzVnuNGLFwuGL1/pS'),
+  (3, 'Budi Santoso', 'budi@kampus.ac.id', '220101002', 'student', '$2b$10$A578PchThiRNypresZjaCOq0wxYJi0NjWT29xzVnuNGLFwuGL1/pS');
 
 -- Seed 16 Catalog Items (10 Perpustakaan Books + Lab + Himpunan)
 INSERT INTO items (id, item_code, name, category, stock, status) VALUES
