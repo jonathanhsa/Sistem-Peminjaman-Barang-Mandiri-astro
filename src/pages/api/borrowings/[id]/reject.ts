@@ -20,7 +20,7 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
     });
   }
 
-  const borrowing = db.select().from(schema.borrowings).where(eq(schema.borrowings.id, id)).get();
+  const borrowing = await db.select().from(schema.borrowings).where(eq(schema.borrowings.id, id)).get();
   if (!borrowing) {
     return new Response(JSON.stringify({ error: 'Peminjaman tidak ditemukan.' }), {
       status: 404,
@@ -29,7 +29,7 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
   }
 
   // Reject sets status to returned or cancels without modifying stock
-  db.update(schema.borrowings)
+  await db.update(schema.borrowings)
     .set({
       status: 'returned',
       returnDate: new Date().toISOString(),
@@ -38,10 +38,10 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
     .where(eq(schema.borrowings.id, id))
     .run();
 
-  const item = db.select().from(schema.items).where(eq(schema.items.id, borrowing.itemId)).get();
+  const item = await db.select().from(schema.items).where(eq(schema.items.id, borrowing.itemId)).get();
 
   // Notify student
-  db.insert(schema.notifications)
+  await db.insert(schema.notifications)
     .values({
       userId: borrowing.userId,
       title: 'Pengajuan Ditolak',

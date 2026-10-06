@@ -21,7 +21,7 @@ export const POST: APIRoute = async ({ params, request, cookies, redirect }) => 
     });
   }
 
-  const borrowing = db.select().from(schema.borrowings).where(eq(schema.borrowings.id, id)).get();
+  const borrowing = await db.select().from(schema.borrowings).where(eq(schema.borrowings.id, id)).get();
   if (!borrowing) {
     return new Response(JSON.stringify({ error: 'Peminjaman tidak ditemukan.' }), {
       status: 404,
@@ -59,7 +59,7 @@ export const POST: APIRoute = async ({ params, request, cookies, redirect }) => 
   const finePaidAt = finalFine > 0 && markFinePaid ? returnDate : borrowing.finePaidAt;
 
   // 1. Update borrowing to returned
-  db.update(schema.borrowings)
+  await db.update(schema.borrowings)
     .set({
       status: 'returned',
       returnDate,
@@ -71,15 +71,15 @@ export const POST: APIRoute = async ({ params, request, cookies, redirect }) => 
 
   // 2. Increase item stock by 1 (only if it was borrowed / overdue)
   if (borrowing.status === 'borrowed' || borrowing.status === 'overdue') {
-    db.update(schema.items)
+    await db.update(schema.items)
       .set({ stock: sql`stock + 1` })
       .where(eq(schema.items.id, borrowing.itemId))
       .run();
   }
 
   // 3. Notify student
-  const item = db.select().from(schema.items).where(eq(schema.items.id, borrowing.itemId)).get();
-  db.insert(schema.notifications)
+  const item = await db.select().from(schema.items).where(eq(schema.items.id, borrowing.itemId)).get();
+  await db.insert(schema.notifications)
     .values({
       userId: borrowing.userId,
       title: 'Pengembalian Barang Berhasil',

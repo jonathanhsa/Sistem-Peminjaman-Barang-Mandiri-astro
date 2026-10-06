@@ -20,7 +20,7 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
     });
   }
 
-  const borrowing = db.select().from(schema.borrowings).where(eq(schema.borrowings.id, id)).get();
+  const borrowing = await db.select().from(schema.borrowings).where(eq(schema.borrowings.id, id)).get();
   if (!borrowing) {
     return new Response(JSON.stringify({ error: 'Peminjaman tidak ditemukan.' }), {
       status: 404,
@@ -36,7 +36,7 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
   }
 
   // Check item stock
-  const item = db.select().from(schema.items).where(eq(schema.items.id, borrowing.itemId)).get();
+  const item = await db.select().from(schema.items).where(eq(schema.items.id, borrowing.itemId)).get();
   if (!item || item.stock <= 0) {
     return new Response(JSON.stringify({ error: 'Stok barang tidak mencukupi untuk disetujui.' }), {
       status: 400,
@@ -45,18 +45,18 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
   }
 
   // Approve: update status to 'borrowed' and decrease stock by 1
-  db.update(schema.borrowings)
+  await db.update(schema.borrowings)
     .set({ status: 'borrowed' })
     .where(eq(schema.borrowings.id, id))
     .run();
 
-  db.update(schema.items)
+  await db.update(schema.items)
     .set({ stock: sql`stock - 1` })
     .where(eq(schema.items.id, borrowing.itemId))
     .run();
 
   // Notify student
-  db.insert(schema.notifications)
+  await db.insert(schema.notifications)
     .values({
       userId: borrowing.userId,
       title: 'Peminjaman Disetujui',

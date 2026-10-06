@@ -13,7 +13,7 @@ export const GET: APIRoute = async ({ request }) => {
     });
   }
 
-  const item = db
+  const item = await db
     .select()
     .from(schema.items)
     .where(eq(schema.items.itemCode, code.toUpperCase()))

@@ -9,7 +9,7 @@ export const POST: APIRoute = async ({ cookies, redirect }) => {
     return redirect('/login', 302);
   }
 
-  db.update(schema.notifications)
+  await db.update(schema.notifications)
     .set({ isRead: true })
     .where(eq(schema.notifications.userId, user.id))
     .run();

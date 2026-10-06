@@ -7,7 +7,7 @@ import { formatRupiah } from '../../lib/format-rupiah';
 import { calculateFine } from '../../lib/fine';
 import { StatusBadge } from '../../components/borrowing/StatusBadge';
 
-const allBorrowings = db
+const allBorrowings = await db
   .select({
     borrowing: schema.borrowings,
     item: schema.items,

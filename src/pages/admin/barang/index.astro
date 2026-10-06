@@ -7,7 +7,7 @@ import { CategoryIcon } from '../../../components/illustrations/CategoryIcon';
 const search = (Astro.url.searchParams.get('q') || '').trim().toLowerCase();
 const category = (Astro.url.searchParams.get('cat') || 'Semua').trim();
 
-const allItems = db.select().from(schema.items).orderBy(desc(schema.items.createdAt)).all();
+const allItems = await db.select().from(schema.items).orderBy(desc(schema.items.createdAt)).all();
 
 const filteredItems = allItems.filter((i) => {
   const matchesSearch =

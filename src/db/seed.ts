@@ -1,5 +1,12 @@
 import bcrypt from 'bcryptjs';
-import { db, schema, sqlite } from './index';
+import * as schema from './schema';
+import Database from 'better-sqlite3';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import path from 'node:path';
+
+const dbPath = process.env.DATABASE_URL || path.resolve(process.cwd(), 'sqlite.db');
+const sqlite = new Database(dbPath);
+const db = drizzle(sqlite, { schema });
 
 export const SEED_USERS = [
   {

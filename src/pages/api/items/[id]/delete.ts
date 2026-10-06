@@ -15,7 +15,7 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
   const id = parseInt(params.id || '0', 10);
 
   // Check if item has active loans
-  const activeLoans = db
+  const activeLoans = await db
     .select()
     .from(schema.borrowings)
     .where(
@@ -34,8 +34,8 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
   }
 
   // Delete borrowings history or set foreign keys
-  db.delete(schema.borrowings).where(eq(schema.borrowings.itemId, id)).run();
-  db.delete(schema.items).where(eq(schema.items.id, id)).run();
+  await db.delete(schema.borrowings).where(eq(schema.borrowings.itemId, id)).run();
+  await db.delete(schema.items).where(eq(schema.items.id, id)).run();
 
   return redirect('/admin/barang', 302);
 };

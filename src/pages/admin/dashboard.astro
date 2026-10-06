@@ -8,11 +8,11 @@ import { formatRupiah } from '../../lib/format-rupiah';
 import { calculateFine } from '../../lib/fine';
 
 // Statistics
-const allItems = db.select().from(schema.items).all();
+const allItems = await db.select().from(schema.items).all();
 const totalItemsCount = allItems.length;
 const totalStock = allItems.reduce((acc, curr) => acc + curr.stock, 0);
 
-const allBorrowings = db
+const allBorrowings = await db
   .select({
     borrowing: schema.borrowings,
     item: schema.items,

@@ -15,7 +15,7 @@ if (!user) return Astro.redirect('/login');
 
 const filter = (Astro.url.searchParams.get('status') || 'semua').toLowerCase();
 
-const borrowings = db
+const borrowings = await db
   .select({
     borrowing: schema.borrowings,
     item: schema.items,

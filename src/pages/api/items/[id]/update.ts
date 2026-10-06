@@ -26,7 +26,7 @@ export const POST: APIRoute = async ({ params, request, cookies, redirect }) => 
     });
   }
 
-  db.update(schema.items)
+  await db.update(schema.items)
     .set({
       name,
       category,

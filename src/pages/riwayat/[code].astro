@@ -11,7 +11,7 @@ if (!user) return Astro.redirect('/login');
 
 const code = (Astro.params.code || '').trim().toUpperCase();
 
-const record = db
+const record = await db
   .select({
     borrowing: schema.borrowings,
     item: schema.items,

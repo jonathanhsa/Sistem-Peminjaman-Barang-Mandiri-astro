@@ -10,7 +10,7 @@ import { calculateFine } from '../../lib/fine';
 
 const tab = (Astro.url.searchParams.get('tab') || 'pending').toLowerCase();
 
-const borrowings = db
+const borrowings = await db
   .select({
     borrowing: schema.borrowings,
     item: schema.items,

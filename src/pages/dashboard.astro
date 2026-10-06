@@ -14,7 +14,7 @@ const user = await getCurrentUser(Astro.cookies);
 if (!user) return Astro.redirect('/login');
 
 // Fetch user borrowings
-const userBorrowings = db
+const userBorrowings = await db
   .select({
     borrowing: schema.borrowings,
     item: schema.items,

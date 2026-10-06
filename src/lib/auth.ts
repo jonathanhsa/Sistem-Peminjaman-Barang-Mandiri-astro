@@ -48,7 +48,7 @@ export async function getCurrentUser(cookies: AstroCookies): Promise<User | null
     const data = JSON.parse(raw) as SessionData;
     if (!data.userId) return null;
 
-    const user = db.select().from(schema.users).where(eq(schema.users.id, data.userId)).get();
+    const user = await db.select().from(schema.users).where(eq(schema.users.id, data.userId)).get();
     return user || null;
   } catch (e) {
     return null;
@@ -57,7 +57,7 @@ export async function getCurrentUser(cookies: AstroCookies): Promise<User | null
 
 export async function authenticateUser(identifier: string, pass: string): Promise<{ user?: User; error?: string }> {
   const trimmed = identifier.trim();
-  const user = db
+  const user = await db
     .select()
     .from(schema.users)
     .where(or(eq(schema.users.nim_nip, trimmed), eq(schema.users.email, trimmed)))

@@ -11,7 +11,7 @@ if (!user) return Astro.redirect('/login');
 const initialCode = (Astro.url.searchParams.get('code') || '').trim();
 
 // Check user's unpaid fines
-const unpaidFineRecord = db
+const unpaidFineRecord = await db
   .select()
   .from(schema.borrowings)
   .where(
@@ -27,7 +27,7 @@ const hasUnpaidFine = !!unpaidFineRecord;
 const unpaidFineAmount = unpaidFineRecord ? unpaidFineRecord.fineAmount : 0;
 
 // Check user's active borrowings count
-const activeLoans = db
+const activeLoans = await db
   .select()
   .from(schema.borrowings)
   .where(

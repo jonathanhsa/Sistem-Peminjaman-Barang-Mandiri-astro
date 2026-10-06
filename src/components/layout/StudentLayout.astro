@@ -21,7 +21,7 @@ if (user.role === 'admin') {
 }
 
 // Get unread notification count
-const unreadNotifs = db
+const unreadNotifs = await db
   .select()
   .from(schema.notifications)
   .where(and(eq(schema.notifications.userId, user.id), eq(schema.notifications.isRead, false)))

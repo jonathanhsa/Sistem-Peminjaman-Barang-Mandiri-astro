@@ -48,7 +48,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     // 1. Find item
-    const item = db
+    const item = await db
       .select()
       .from(schema.items)
       .where(eq(schema.items.itemCode, itemCode.trim().toUpperCase()))
@@ -75,7 +75,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     // 3. Check unpaid fines
-    const unpaidFine = db
+    const unpaidFine = await db
       .select()
       .from(schema.borrowings)
       .where(
@@ -98,7 +98,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     // 4. Check active borrowing limit (max 3 active: pending, borrowed, overdue)
-    const activeBorrowings = db
+    const activeBorrowings = await db
       .select()
       .from(schema.borrowings)
       .where(
@@ -126,13 +126,13 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     let borrowingCode = generateBorrowingCode();
     // Ensure uniqueness
     while (
-      db.select().from(schema.borrowings).where(eq(schema.borrowings.borrowingCode, borrowingCode)).get()
+      await db.select().from(schema.borrowings).where(eq(schema.borrowings.borrowingCode, borrowingCode)).get()
     ) {
       borrowingCode = generateBorrowingCode();
     }
 
     // Insert borrowing
-    const newBorrowing = db
+    const [newBorrowing] = await db
       .insert(schema.borrowings)
       .values({
         borrowingCode,
@@ -144,11 +144,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         fineAmount: 0,
         notes: notes.trim() || null,
       })
-      .returning()
-      .get();
+      .returning();
 
     // Create notification
-    db.insert(schema.notifications)
+    await db.insert(schema.notifications)
       .values({
         userId: user.id,
         title: 'Pengajuan Peminjaman Berhasil',

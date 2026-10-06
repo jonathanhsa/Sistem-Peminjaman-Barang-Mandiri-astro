@@ -27,7 +27,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   }
 
   // Check unique code
-  const existing = db.select().from(schema.items).where(eq(schema.items.itemCode, itemCode)).get();
+  const existing = await db.select().from(schema.items).where(eq(schema.items.itemCode, itemCode)).get();
   if (existing) {
     return new Response(JSON.stringify({ error: 'Kode barang sudah ada di inventaris.' }), {
       status: 409,
@@ -35,7 +35,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     });
   }
 
-  db.insert(schema.items)
+  await db.insert(schema.items)
     .values({
       itemCode,
       name,

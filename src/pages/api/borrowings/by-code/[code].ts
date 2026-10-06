@@ -13,7 +13,7 @@ export const GET: APIRoute = async ({ params }) => {
     });
   }
 
-  const borrowing = db
+  const borrowing = await db
     .select()
     .from(schema.borrowings)
     .where(eq(schema.borrowings.borrowingCode, code))
@@ -26,13 +26,13 @@ export const GET: APIRoute = async ({ params }) => {
     });
   }
 
-  const user = db
+  const user = await db
     .select({ name: schema.users.name, nim_nip: schema.users.nim_nip, email: schema.users.email })
     .from(schema.users)
     .where(eq(schema.users.id, borrowing.userId))
     .get();
 
-  const item = db
+  const item = await db
     .select({ item_code: schema.items.itemCode, name: schema.items.name, category: schema.items.category })
     .from(schema.items)
     .where(eq(schema.items.id, borrowing.itemId))

@@ -6,7 +6,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Mascot } from '../components/illustrations/Mascot';
 
 // Fetch the 10 library books for barcode testing
-const allItems = db.select().from(schema.items).all();
+const allItems = await db.select().from(schema.items).all();
 const libraryBooks = allItems.filter((i) => i.itemCode.startsWith('LIB-'));
 ---
 

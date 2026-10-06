@@ -40,7 +40,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     // Check if email or nim_nip already exists
-    const existing = db
+    const existing = await db
       .select()
       .from(schema.users)
       .where(or(eq(schema.users.email, email), eq(schema.users.nim_nip, nim_nip)))
@@ -54,7 +54,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     const hashedPassword = await hashPassword(password);
-    const insertResult = db
+    const [insertResult] = await db
       .insert(schema.users)
       .values({
         name,
@@ -63,13 +63,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         role: 'student',
         password: hashedPassword,
       })
-      .returning()
-      .get();
+      .returning();
 
     createSession(cookies, insertResult);
 
     // Send welcome notification
-    db.insert(schema.notifications)
+    await db.insert(schema.notifications)
       .values({
         userId: insertResult.id,
         title: 'Selamat Datang!',

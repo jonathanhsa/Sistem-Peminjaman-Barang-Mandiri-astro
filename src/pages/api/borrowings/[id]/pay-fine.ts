@@ -15,14 +15,14 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
   const id = parseInt(params.id || '0', 10);
   const now = new Date().toISOString();
 
-  db.update(schema.borrowings)
+  await db.update(schema.borrowings)
     .set({ finePaidAt: now })
     .where(eq(schema.borrowings.id, id))
     .run();
 
-  const borrowing = db.select().from(schema.borrowings).where(eq(schema.borrowings.id, id)).get();
+  const borrowing = await db.select().from(schema.borrowings).where(eq(schema.borrowings.id, id)).get();
   if (borrowing) {
-    db.insert(schema.notifications)
+    await db.insert(schema.notifications)
       .values({
         userId: borrowing.userId,
         title: 'Denda Telah Dilunasi',
