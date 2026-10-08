@@ -66,44 +66,62 @@ const activeBorrowings = processedBorrowings.filter(
 
 <StudentLayout title="Beranda Mahasiswa" activeNav="dashboard">
   <div class="space-y-6">
-    {/* Welcome Hero Banner */}
-    <div data-animate="fade-up" class="relative bg-gradient-to-r from-[#3B3FD9] to-[#595DE8] rounded-3xl p-6 md:p-8 text-white shadow-xl overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 border-2 border-[#1E1B3A]/10">
-      <div class="relative z-10 max-w-lg space-y-2 text-center md:text-left">
-        <div class="inline-flex items-center gap-2 bg-[#FFD23F] text-[#1E1B3A] text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
-          <span>✨ Halo, {user.name.split(' ')[0]}!</span>
+    {/* Welcome Hero Banner with Authentication Aesthetic */}
+    <div data-animate="fade-up" class="relative bg-[#1E1B3A] rounded-3xl p-6 md:p-9 text-white shadow-xl overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 border border-gray-100">
+      {/* Background Bookshelf Accents with Soft Gradient */}
+      <div class="absolute inset-0 z-0 opacity-20 pointer-events-none overflow-hidden">
+        <img
+          src="/images/bookshelf-bg.jpg"
+          alt="Bookshelf"
+          class="w-full h-full object-cover object-center filter blur-xs"
+        />
+        <div class="absolute inset-0 bg-gradient-to-r from-[#1E1B3A] via-[#1E1B3A]/90 to-transparent"></div>
+      </div>
+
+      <div class="relative z-10 max-w-lg space-y-3 text-center md:text-left">
+        <div class="inline-flex items-center gap-2 bg-amber-500/20 text-amber-300 border border-amber-400/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">
+          <span>Halo, {user.name.split(' ')[0]}!</span>
         </div>
-        <h1 class="text-2xl md:text-3xl font-extrabold font-display leading-tight">
-          Peminjaman Alat & Buku Tanpa Antre.
-        </h1>
-        <p class="text-xs md:text-sm text-white/80 leading-relaxed">
-          Gunakan kamera smartphone Anda untuk memindai barcode inventaris kampus, dapatkan QR receipt digital, dan tunjukkan ke petugas saat pengambilan.
+        <div>
+          <h1 class="text-2xl md:text-3xl font-extrabold font-display leading-tight tracking-tight">
+            Peminjaman Alat & Buku Mandiri
+          </h1>
+          <div class="w-11 h-1 bg-[#FF6B6B] rounded-full mt-2 mx-auto md:mx-0"></div>
+        </div>
+        <p class="text-xs md:text-sm text-gray-300 leading-relaxed font-normal pt-1">
+          Pindai barcode pada buku atau peralatan inventaris kampus, dapatkan tiket QR digital secara instan, dan tunjukkan ke petugas saat verifikasi.
         </p>
 
-        <div class="pt-2 flex flex-wrap gap-2.5 justify-center md:justify-start">
+        <div class="pt-3 flex flex-wrap gap-3 justify-center md:justify-start">
           <a
             href="/pinjam"
-            class="px-5 py-3 rounded-2xl bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-md flex items-center gap-2"
+            class="btn-coral px-6 py-3 rounded-full text-xs font-bold tracking-wide flex items-center gap-2 cursor-pointer"
           >
-            <span>⚡ Mulai Pinjam Mandiri</span>
+            <span>Mulai Pinjam Mandiri</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
           </a>
           <a
             href="/katalog"
-            class="px-5 py-3 rounded-2xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition backdrop-blur-sm"
+            class="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition backdrop-blur-sm border border-white/15"
           >
             Jelajahi Katalog
           </a>
         </div>
       </div>
 
-      <div class="relative shrink-0 flex items-center justify-center">
-        <Mascot mood="happy" size={140} />
+      <div class="relative z-10 shrink-0 flex items-center justify-center">
+        <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center p-3 shadow-2xl">
+          <Mascot mood="happy" size={110} />
+        </div>
       </div>
     </div>
 
     {/* Metrics Summary */}
     <div data-animate="stagger-list" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center gap-3.5">
-        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-[#3B3FD9] flex items-center justify-center font-bold text-xl">
+      <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] flex items-center gap-3.5 hover:shadow-md transition">
+        <div class="w-12 h-12 rounded-2xl bg-rose-50 text-[#FF6B6B] flex items-center justify-center font-bold text-xl">
           {activeCount}
         </div>
         <div>
@@ -114,8 +132,8 @@ const activeBorrowings = processedBorrowings.filter(
         </div>
       </div>
 
-      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center gap-3.5">
-        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xl">
+      <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] flex items-center gap-3.5 hover:shadow-md transition">
+        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-xl">
           {pendingCount}
         </div>
         <div>
@@ -126,8 +144,8 @@ const activeBorrowings = processedBorrowings.filter(
         </div>
       </div>
 
-      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center gap-3.5">
-        <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-700 flex items-center justify-center font-bold text-xl">
+      <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] flex items-center gap-3.5 hover:shadow-md transition">
+        <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xl">
           {totalFineUnpaid > 0 ? '⚠️' : '0'}
         </div>
         <div>
@@ -138,8 +156,8 @@ const activeBorrowings = processedBorrowings.filter(
         </div>
       </div>
 
-      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center gap-3.5">
-        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xl">
+      <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] flex items-center gap-3.5 hover:shadow-md transition">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xl">
           {returnedCount}
         </div>
         <div>
@@ -152,20 +170,21 @@ const activeBorrowings = processedBorrowings.filter(
     </div>
 
     {/* Active Borrowings Section */}
-    <div data-animate="fade-up" class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm space-y-4">
+    <div data-animate="fade-up" class="bg-white rounded-3xl p-6 border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] space-y-4">
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-lg font-bold font-display text-[#1E1B3A]">Peminjaman Aktif & Berjalan</h2>
-          <p class="text-xs text-gray-500">Barang yang sedang Anda bawa atau menunggu persetujuan petugas</p>
+          <div class="w-8 h-1 bg-[#FF6B6B] rounded-full mt-1"></div>
+          <p class="text-xs text-gray-500 mt-1">Barang yang sedang Anda bawa atau menunggu persetujuan petugas</p>
         </div>
-        <a href="/riwayat" class="text-xs font-bold text-[#3B3FD9] hover:underline">
+        <a href="/riwayat" class="text-xs font-bold text-[#FF6B6B] hover:underline">
           Lihat Semua →
         </a>
       </div>
 
       {activeBorrowings.length === 0 ? (
         <div class="py-10 text-center space-y-3">
-          <div class="w-16 h-16 rounded-full bg-indigo-50 text-[#3B3FD9] flex items-center justify-center mx-auto">
+          <div class="w-16 h-16 rounded-full bg-rose-50 text-[#FF6B6B] flex items-center justify-center mx-auto">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
             </svg>
@@ -176,18 +195,18 @@ const activeBorrowings = processedBorrowings.filter(
           </p>
           <a
             href="/pinjam"
-            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl btn-sticker-primary text-xs font-bold"
+            class="btn-coral inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold cursor-pointer"
           >
-            ⚡ Pinjam Barang Sekarang
+            Pinjam Barang Sekarang
           </a>
         </div>
       ) : (
         <div data-animate="stagger-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
           {activeBorrowings.map((b) => (
-            <div class="p-4 rounded-2xl border-2 border-gray-100 hover:border-indigo-100 bg-[#FBFBFF] transition flex flex-col justify-between space-y-3 shadow-xs">
+            <div class="p-5 rounded-2xl border border-gray-100 hover:border-rose-200 bg-[#FBFBFF] transition flex flex-col justify-between space-y-3.5 shadow-2xs hover:shadow-sm">
               <div class="flex items-start justify-between gap-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-10 h-10 rounded-xl bg-white border border-gray-200 text-indigo-700 flex items-center justify-center shadow-xs">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-white border border-gray-200 text-[#1E1B3A] flex items-center justify-center shadow-xs">
                     <CategoryIcon category={b.item.category} size={20} />
                   </div>
                   <div>
@@ -202,11 +221,11 @@ const activeBorrowings = processedBorrowings.filter(
                 <StatusBadge status={b.status} size="sm" />
               </div>
 
-              <div class="flex items-center justify-between text-xs pt-2 border-t border-gray-100">
+              <div class="flex items-center justify-between text-xs pt-2.5 border-t border-gray-100">
                 <CountdownBadge dueDate={b.dueDate} status={b.status} />
                 <a
                   href={`/riwayat/${b.borrowingCode}`}
-                  class="font-bold text-xs text-[#3B3FD9] hover:underline flex items-center gap-1 bg-white px-3 py-1.5 rounded-xl border border-indigo-200 shadow-xs"
+                  class="font-bold text-xs text-[#FF6B6B] hover:bg-rose-50 flex items-center gap-1 bg-white px-3 py-1.5 rounded-xl border border-rose-200 shadow-2xs transition"
                 >
                   <span>QR Bukti</span>
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

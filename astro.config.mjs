@@ -8,11 +8,16 @@ export default defineConfig({
   output: 'server',
   adapter: cloudflare(),
   prefetch: {
-    prefetchAll: true,
     defaultStrategy: 'hover',
   },
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      exclude: ['qrcode.react', '@zxing/library', '@zxing/browser', 'tesseract.js'],
+    },
+    ssr: {
+      noExternal: ['lucide-react', 'qrcode.react', '@zxing/library', '@zxing/browser'],
+    },
   },
 });

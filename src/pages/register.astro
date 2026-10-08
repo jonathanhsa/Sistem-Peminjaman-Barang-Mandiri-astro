@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { getCurrentUser } from '../lib/auth';
 import { Mascot } from '../components/illustrations/Mascot';
+import { ClientRouter } from 'astro:transitions';
 
 const user = await getCurrentUser(Astro.cookies);
 if (user) {
@@ -17,7 +18,7 @@ const error = Astro.url.searchParams.get('error');
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Daftar Mahasiswa — SIPEMBAR Kampus</title>
+    <title>Sign up — SIPEMBAR Kampus</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,98 +27,288 @@ const error = Astro.url.searchParams.get('error');
       rel="stylesheet"
     />
     <script src="../scripts/motion.ts"></script>
+    <ClientRouter />
+    <style>
+      /* Smooth input focus underline transitions */
+      .underline-input-group {
+        position: relative;
+        transition: all 0.2s ease;
+      }
+      .underline-input-group::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #FF6B6B;
+        transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .underline-input-group:focus-within::after {
+        width: 100%;
+      }
+      .underline-input-group:focus-within svg.input-icon {
+        color: #FF6B6B;
+      }
+      /* Custom Coral Button */
+      .btn-coral {
+        background-color: #FF6B6B;
+        color: #ffffff;
+        box-shadow: 0 4px 14px rgba(255, 107, 107, 0.35);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .btn-coral:hover {
+        background-color: #f75555;
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.45);
+        transform: translateY(-1px);
+      }
+      .btn-coral:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+      }
+    </style>
   </head>
-  <body class="bg-[#F6F5FF] text-[#1E1B3A] min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
-      <div data-animate="fade-up" class="text-center mb-6">
-        <div class="inline-block relative mb-2">
-          <Mascot mood="happy" size={96} />
+  <body class="bg-[#F8F7FF] text-[#1E1B3A] min-h-screen antialiased selection:bg-[#FF6B6B] selection:text-white">
+    <div class="min-h-screen w-full flex flex-col lg:flex-row">
+      
+      <!-- ============================================================ -->
+      <!-- MOBILE ONLY: Top Bookshelf Hero Background with Organic Wave -->
+      <!-- ============================================================ -->
+      <div class="relative w-full h-[30vh] min-h-[200px] max-h-[270px] lg:hidden overflow-hidden bg-stone-900 shrink-0">
+        <!-- Pure Bookshelf Image -->
+        <img
+          src="/images/bookshelf-bg.jpg"
+          alt="Rak Buku Perpustakaan SIPEMBAR"
+          class="w-full h-full object-cover object-center filter brightness-[0.95]"
+        />
+
+        <!-- Organic Wave Curve Transition at Bottom of Hero -->
+        <div class="absolute -bottom-[1px] left-0 right-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
+          <svg viewBox="0 0 500 80" preserveAspectRatio="none" class="w-full h-16 sm:h-20 text-white fill-current block">
+            <path d="M 0,30 C 140,5 280,80 500,25 L 500,80 L 0,80 Z"></path>
+          </svg>
         </div>
-        <h1 class="text-2xl font-bold font-display text-[#1E1B3A] tracking-tight">Registrasi Mahasiswa</h1>
-        <p class="text-xs text-gray-600 mt-1">Daftarkan akun untuk mulai meminjam mandiri</p>
       </div>
 
-      <div data-animate="fade-up" class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#1E1B3A]/10 shadow-xl">
-        {error && (
-          <div class="mb-5 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
-            {error}
+      <!-- ============================================================ -->
+      <!-- AUTHENTICATION SECTION (Left on Desktop, Bottom Card on Mobile) -->
+      <!-- ============================================================ -->
+      <div class="flex-1 w-full lg:w-[46%] xl:w-[42%] bg-white flex flex-col justify-between px-6 sm:px-12 lg:px-14 xl:px-18 pt-6 pb-12 sm:py-10 lg:py-12 relative z-20 min-h-[calc(100vh-210px)] lg:min-h-screen shadow-[12px_0_35px_rgba(0,0,0,0.06)]">
+        
+        <!-- Desktop Brand Header (Hidden on Mobile) -->
+        <div class="hidden lg:flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200/60 flex items-center justify-center shadow-xs">
+            <Mascot mood="happy" size={28} />
           </div>
-        )}
-
-        <form method="POST" action="/api/auth/register" class="space-y-3.5">
           <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1" for="name">
-              Nama Lengkap
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              required
-              placeholder="Contoh: Rina Fitriani"
-              class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
-            />
+            <h2 class="font-display font-bold text-lg text-gray-900 leading-tight">SIPEMBAR</h2>
+            <p class="text-[11px] text-gray-500 font-medium">Sistem Peminjaman Barang Mandiri</p>
+          </div>
+        </div>
+
+        <!-- Form Card Container -->
+        <div class="w-full max-w-sm sm:max-w-md mx-auto my-auto py-2">
+          
+          <!-- Title & Coral Accent Line -->
+          <div data-animate="fade-up" class="mb-6">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-[#1E1B3A] tracking-tight font-display">
+              Sign up
+            </h1>
+            <!-- Accent Coral Underline Bar -->
+            <div class="w-11 h-1 bg-[#FF6B6B] rounded-full mt-2"></div>
+            <p class="text-xs sm:text-sm text-gray-500 mt-2.5 font-normal">
+              Daftarkan akun kampus Anda untuk mulai meminjam barang & buku.
+            </p>
           </div>
 
-          <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1" for="nim_nip">
-              NIM Mahasiswa
-            </label>
-            <input
-              id="nim_nip"
-              name="nim_nip"
-              type="text"
-              required
-              placeholder="Contoh: 220101009"
-              class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
-            />
-          </div>
+          <!-- Error Alert Banner -->
+          {error && (
+            <div class="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2.5 animate-shake">
+              <svg class="w-4 h-4 shrink-0 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>{error}</span>
+            </div>
+          )}
 
-          <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1" for="email">
-              Email Kampus
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              placeholder="rina@kampus.ac.id"
-              class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
-            />
-          </div>
+          <!-- Sign Up Form -->
+          <form method="POST" action="/api/auth/register" class="space-y-4 sm:space-y-5" id="register-form">
+            
+            <!-- Full Name Input -->
+            <div class="space-y-1">
+              <label for="name" class="block text-xs font-semibold text-gray-600">
+                Nama Lengkap
+              </label>
+              <div class="underline-input-group flex items-center gap-3 border-b-2 border-gray-200 py-2">
+                <!-- User Icon -->
+                <svg class="input-icon w-5 h-5 text-gray-400 shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  placeholder="Contoh: Rina Fitriani"
+                  class="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                  autocomplete="name"
+                />
+              </div>
+            </div>
 
-          <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1" for="password">
-              Kata Sandi
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              placeholder="Minimal 6 karakter"
-              class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
-            />
-          </div>
+            <!-- NIM / NIP Input -->
+            <div class="space-y-1">
+              <label for="nim_nip" class="block text-xs font-semibold text-gray-600">
+                NIM Mahasiswa
+              </label>
+              <div class="underline-input-group flex items-center gap-3 border-b-2 border-gray-200 py-2">
+                <!-- ID Badge Icon -->
+                <svg class="input-icon w-5 h-5 text-gray-400 shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                </svg>
+                <input
+                  id="nim_nip"
+                  name="nim_nip"
+                  type="text"
+                  required
+                  placeholder="Contoh: 220101009"
+                  class="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                />
+              </div>
+            </div>
 
-          <button
-            type="submit"
-            class="w-full py-3.5 px-4 btn-sticker-primary text-sm font-bold tracking-wide mt-2"
-          >
-            Daftar Sekarang
-          </button>
-        </form>
+            <!-- Email Input -->
+            <div class="space-y-1">
+              <label for="email" class="block text-xs font-semibold text-gray-600">
+                Email Kampus
+              </label>
+              <div class="underline-input-group flex items-center gap-3 border-b-2 border-gray-200 py-2">
+                <!-- Mail Icon -->
+                <svg class="input-icon w-5 h-5 text-gray-400 shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="rina@kampus.ac.id"
+                  class="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                  autocomplete="email"
+                />
+              </div>
+            </div>
 
-        <div class="mt-5 text-center pt-4 border-t border-gray-100">
-          <p class="text-xs text-gray-500">
-            Sudah memiliki akun?{' '}
-            <a href="/login" class="text-[#3B3FD9] font-bold hover:underline">
-              Masuk di sini
+            <!-- Password Input with Toggle -->
+            <div class="space-y-1">
+              <label for="password" class="block text-xs font-semibold text-gray-600">
+                Kata Sandi
+              </label>
+              <div class="underline-input-group flex items-center gap-3 border-b-2 border-gray-200 py-2">
+                <!-- Lock Icon -->
+                <svg class="input-icon w-5 h-5 text-gray-400 shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  placeholder="Minimal 6 karakter"
+                  class="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                  autocomplete="new-password"
+                />
+                <!-- Eye Toggle Button -->
+                <button
+                  type="button"
+                  id="toggle-password"
+                  aria-label="Tampilkan atau sembunyikan kata sandi"
+                  class="text-gray-400 hover:text-gray-600 p-1 focus:outline-none transition-colors"
+                >
+                  <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <svg id="eye-off-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Pill Sign Up Button -->
+            <div class="pt-3">
+              <button
+                type="submit"
+                id="submit-btn"
+                class="w-full py-3.5 px-6 btn-coral rounded-full text-sm font-bold tracking-wide flex items-center justify-center gap-2 transition"
+              >
+                <span>Sign up</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Sign In Link (Footer of Form) -->
+          <div class="mt-6 sm:mt-7 text-center text-xs text-gray-500">
+            <span>Already have an Account ? </span>
+            <a href="/login" class="text-[#FF6B6B] font-bold hover:underline transition-colors">
+              Sign in
             </a>
-          </p>
+          </div>
+
         </div>
+
+        <!-- Clean Empty Spacer -->
+        <div class="hidden lg:block h-2"></div>
       </div>
+
+      <!-- ============================================================ -->
+      <!-- DESKTOP ONLY: Right Bookshelf Visual (Pure, Clean Background) -->
+      <!-- ============================================================ -->
+      <div class="hidden lg:block lg:w-[54%] xl:w-[58%] relative overflow-hidden bg-stone-900">
+        <!-- Bookshelf High-Res Background Image -->
+        <img
+          src="/images/bookshelf-bg.jpg"
+          alt="Rak Buku Perpustakaan"
+          class="w-full h-full object-cover object-center filter brightness-[0.96]"
+        />
+      </div>
+
     </div>
+
+    <!-- Client Script for Interactive Password Toggle & Submit State -->
+    <script>
+      // Toggle Password Visibility
+      const togglePasswordBtn = document.getElementById('toggle-password');
+      const passwordInput = document.getElementById('password') as HTMLInputElement | null;
+      const eyeIcon = document.getElementById('eye-icon');
+      const eyeOffIcon = document.getElementById('eye-off-icon');
+
+      if (togglePasswordBtn && passwordInput && eyeIcon && eyeOffIcon) {
+        togglePasswordBtn.addEventListener('click', () => {
+          const isPassword = passwordInput.type === 'password';
+          passwordInput.type = isPassword ? 'text' : 'password';
+          eyeIcon.classList.toggle('hidden', isPassword);
+          eyeOffIcon.classList.toggle('hidden', !isPassword);
+        });
+      }
+
+      // Loading state on submit
+      const registerForm = document.getElementById('register-form');
+      const submitBtn = document.getElementById('submit-btn');
+      if (registerForm && submitBtn) {
+        registerForm.addEventListener('submit', () => {
+          submitBtn.setAttribute('disabled', 'true');
+          submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+          submitBtn.innerHTML = `
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Mendaftarkan Akun...</span>
+          `;
+        });
+      }
+    </script>
   </body>
 </html>

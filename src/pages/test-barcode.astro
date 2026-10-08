@@ -41,16 +41,16 @@ const libraryBooks = allItems.filter((i) => i.itemCode.startsWith('LIB-'));
   <body class="bg-[#F6F5FF] text-[#1E1B3A] p-4 sm:p-8 min-h-screen">
     <div class="max-w-6xl mx-auto space-y-6">
       {/* Top Bar / Print Action */}
-      <div class="no-print bg-white p-6 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="no-print bg-white p-6 sm:p-8 rounded-3xl border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] flex flex-col sm:flex-row items-center justify-between gap-5">
         <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-2xl bg-[#3B3FD9] flex items-center justify-center p-1">
-            <Mascot mood="scanning" size={48} />
+          <div class="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200/60 flex items-center justify-center p-1 shadow-2xs shrink-0">
+            <Mascot mood="scanning" size={40} />
           </div>
           <div>
-            <div class="inline-block bg-[#FFD23F] text-[#1E1B3A] text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1">
+            <div class="inline-block bg-[#FF6B6B] text-white text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider mb-1.5 shadow-[0_2px_10px_rgba(255,107,107,0.35)]">
               Lembar Cetak Label Fisik Inventaris
             </div>
-            <h1 class="text-xl sm:text-2xl font-bold font-display text-[#1E1B3A]">
+            <h1 class="text-xl sm:text-2xl font-extrabold font-display text-[#1E1B3A] tracking-tight">
               Katalog Label Barcode Perpustakaan (Code 128 + QR Code + OCR)
             </h1>
             <p class="text-xs text-gray-500 mt-0.5">
@@ -59,16 +59,16 @@ const libraryBooks = allItems.filter((i) => i.itemCode.startsWith('LIB-'));
           </div>
         </div>
 
-        <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-2.5 shrink-0">
           <a
             href="/pinjam"
-            class="px-4 py-2.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold hover:bg-indigo-100 transition"
+            class="px-4 py-2.5 rounded-2xl bg-rose-50 border border-rose-200 text-[#FF6B6B] text-xs font-bold hover:bg-rose-100 transition shadow-2xs"
           >
             ← Buka Scanner Pinjam
           </a>
           <button
             onclick="window.print()"
-            class="px-4 py-2.5 btn-sticker-primary text-xs font-bold flex items-center gap-2"
+            class="px-5 py-2.5 btn-coral text-xs font-bold rounded-2xl flex items-center gap-2 cursor-pointer"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />

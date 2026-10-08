@@ -56,17 +56,21 @@ const filtered = processed.filter((b) => {
 
 <StudentLayout title="Riwayat Peminjaman" activeNav="riwayat">
   <div class="space-y-6">
-    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
       <div>
-        <h1 class="text-xl md:text-2xl font-bold font-display text-[#1E1B3A]">Riwayat Transaksi Peminjaman</h1>
-        <p class="text-xs text-gray-500">Daftar semua permohonan pinjam, bukti QR, dan status barang inventaris</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold font-display text-[#1E1B3A] tracking-tight">Riwayat Transaksi Peminjaman</h1>
+        <div class="w-11 h-1 bg-[#FF6B6B] rounded-full mt-2"></div>
+        <p class="text-xs text-gray-500 mt-2">Daftar semua permohonan pinjam, bukti QR, dan status barang inventaris</p>
       </div>
 
       <a
         href="/pinjam"
-        class="px-4 py-2.5 rounded-2xl bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-xs flex items-center gap-1.5"
+        class="btn-coral px-5 py-2.5 rounded-full text-xs font-bold transition flex items-center gap-2 cursor-pointer shrink-0"
       >
-        <span>⚡ Pinjam Barang Baru</span>
+        <span>Pinjam Barang Baru</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
       </a>
     </div>
 
@@ -82,8 +86,8 @@ const filtered = processed.filter((b) => {
           href={`/riwayat?status=${tab.id}`}
           class={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition ${
             filter === tab.id
-              ? 'bg-[#3B3FD9] text-white shadow-xs'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100'
+              ? 'bg-[#FF6B6B] text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
+              : 'bg-white text-gray-600 border border-gray-200 hover:text-[#FF6B6B] hover:bg-gray-50'
           }`}
         >
           {tab.label}
@@ -93,8 +97,8 @@ const filtered = processed.filter((b) => {
 
     <!-- Transaction List -->
     {filtered.length === 0 ? (
-      <div class="bg-white rounded-3xl p-12 text-center border-2 border-[#1E1B3A]/10 space-y-3">
-        <div class="w-16 h-16 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto text-2xl">
+      <div class="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] space-y-3">
+        <div class="w-16 h-16 rounded-full bg-rose-50 text-[#FF6B6B] flex items-center justify-center mx-auto text-2xl font-bold">
           📑
         </div>
         <h3 class="text-base font-bold text-[#1E1B3A]">Belum ada data riwayat</h3>
@@ -103,11 +107,11 @@ const filtered = processed.filter((b) => {
         </p>
       </div>
     ) : (
-      <div class="space-y-3">
+      <div class="space-y-3.5">
         {filtered.map((b) => (
-          <div class="bg-white rounded-3xl p-5 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition">
+          <div class="bg-white rounded-3xl p-5 border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition">
             <div class="flex items-start gap-3.5">
-              <div class="w-12 h-12 rounded-2xl bg-[#F6F5FF] text-[#3B3FD9] flex items-center justify-center shrink-0 border border-indigo-100">
+              <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-800 flex items-center justify-center shrink-0 border border-amber-200/50 shadow-2xs">
                 <CategoryIcon category={b.item.category} size={22} />
               </div>
               <div class="space-y-1">
@@ -136,7 +140,7 @@ const filtered = processed.filter((b) => {
             <div class="flex items-center gap-2 self-end md:self-center shrink-0">
               <a
                 href={`/riwayat/${b.borrowingCode}`}
-                class="px-4 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-[#3B3FD9] text-xs font-bold border border-indigo-200 transition flex items-center gap-1.5"
+                class="px-4 py-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-[#FF6B6B] text-xs font-bold border border-rose-200 transition flex items-center gap-1.5 shadow-2xs"
               >
                 <span>Lihat QR Bukti</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

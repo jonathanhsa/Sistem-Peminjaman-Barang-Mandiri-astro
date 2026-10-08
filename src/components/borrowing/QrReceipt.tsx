@@ -46,20 +46,20 @@ export const QrReceipt: React.FC<QrReceiptProps> = ({ borrowing, user, item }) =
   return (
     <div className="w-full max-w-md mx-auto">
       {/* Receipt Card */}
-      <div className="bg-white rounded-3xl border-2 border-[#1E1B3A]/15 shadow-xl overflow-hidden relative">
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] overflow-hidden relative">
         {/* Top Header Banner */}
-        <div className="bg-[#3B3FD9] text-white p-6 text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 transform translate-x-4 -translate-y-4 w-24 h-24 bg-white/10 rounded-full pointer-events-none" />
-          <div className="inline-block bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2">
+        <div className="bg-[#1E1B3A] text-white p-7 text-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 transform translate-x-4 -translate-y-4 w-24 h-24 bg-white/5 rounded-full pointer-events-none" />
+          <div className="inline-block bg-[#FF6B6B] text-white text-xs font-bold px-3.5 py-1 rounded-full uppercase tracking-wider mb-2 shadow-[0_2px_10px_rgba(255,107,107,0.35)]">
             Bukti Transaksi Mandiri
           </div>
-          <h2 className="text-xl font-bold tracking-tight">Sistem Peminjaman Kampus</h2>
-          <p className="text-xs text-white/80 mt-1">Simpan QR ini dan tunjukkan kepada petugas</p>
+          <h2 className="text-xl font-bold tracking-tight font-display">SIPEMBAR Kampus</h2>
+          <p className="text-xs text-gray-300 mt-1">Simpan QR ini dan tunjukkan kepada petugas loket</p>
         </div>
 
         {/* QR Code Container */}
-        <div className="flex flex-col items-center justify-center p-6 bg-[#F6F5FF]">
-          <div className="p-4 bg-white rounded-2xl shadow-md border-2 border-[#1E1B3A]/10">
+        <div className="flex flex-col items-center justify-center p-6 bg-[#F8F7FF]">
+          <div className="p-4 bg-white rounded-3xl shadow-sm border border-gray-100">
             <QRCodeSVG
               value={borrowing.borrowingCode}
               size={180}
@@ -71,12 +71,12 @@ export const QrReceipt: React.FC<QrReceiptProps> = ({ borrowing, user, item }) =
 
           {/* Borrowing Code with copy action */}
           <div className="mt-4 flex items-center gap-2">
-            <span className="font-mono text-base font-bold text-[#1E1B3A] tracking-wider bg-white px-3 py-1 rounded-lg border border-gray-200">
+            <span className="font-mono text-base font-bold text-[#1E1B3A] tracking-wider bg-white px-3.5 py-1 rounded-xl border border-gray-200 shadow-2xs">
               {borrowing.borrowingCode}
             </span>
             <button
               onClick={handleCopy}
-              className="p-1.5 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 active:scale-95 text-[#1E1B3A]"
+              className="p-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 active:scale-95 text-[#1E1B3A] cursor-pointer shadow-2xs transition"
               title="Salin Kode"
             >
               {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
@@ -85,14 +85,14 @@ export const QrReceipt: React.FC<QrReceiptProps> = ({ borrowing, user, item }) =
         </div>
 
         {/* Perforated Divider */}
-        <div className="relative py-2 flex items-center justify-center">
-          <div className="absolute -left-3 w-6 h-6 bg-[#F6F5FF] rounded-full border-r-2 border-[#1E1B3A]/15" />
-          <div className="w-full border-t-2 border-dashed border-gray-300 mx-4" />
-          <div className="absolute -right-3 w-6 h-6 bg-[#F6F5FF] rounded-full border-l-2 border-[#1E1B3A]/15" />
+        <div className="relative py-2 flex items-center justify-center bg-[#F8F7FF]">
+          <div className="absolute -left-3 w-6 h-6 bg-[#F8F7FF] rounded-full border-r border-gray-200" />
+          <div className="w-full border-t-2 border-dashed border-gray-200 mx-5" />
+          <div className="absolute -right-3 w-6 h-6 bg-[#F8F7FF] rounded-full border-l border-gray-200" />
         </div>
 
         {/* Transaction Detail Details */}
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-4 bg-white">
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase tracking-wider font-semibold text-gray-500">Status Saat Ini</span>
             <StatusBadge status={borrowing.status} size="sm" />
@@ -105,7 +105,7 @@ export const QrReceipt: React.FC<QrReceiptProps> = ({ borrowing, user, item }) =
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">NIM / NIP:</span>
-              <span className="font-mono font-medium text-right">{user.nim_nip}</span>
+              <span className="font-mono font-medium text-right text-gray-700">{user.nim_nip}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Barang:</span>
@@ -115,11 +115,11 @@ export const QrReceipt: React.FC<QrReceiptProps> = ({ borrowing, user, item }) =
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Kode Barang:</span>
-              <span className="font-mono text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-700">{item.itemCode}</span>
+              <span className="font-mono text-xs bg-gray-100 px-2 py-0.5 rounded-md text-gray-700">{item.itemCode}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Kategori:</span>
-              <span className="font-medium text-right text-indigo-700">{item.category}</span>
+              <span className="font-medium text-right text-[#FF6B6B]">{item.category}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Tgl Pinjam:</span>
@@ -136,13 +136,13 @@ export const QrReceipt: React.FC<QrReceiptProps> = ({ borrowing, user, item }) =
               </div>
             )}
             {borrowing.fineAmount > 0 && (
-              <div className="flex justify-between items-center bg-rose-50 p-2.5 rounded-xl border border-rose-200">
+              <div className="flex justify-between items-center bg-rose-50 p-2.5 rounded-2xl border border-rose-200">
                 <span className="text-xs font-semibold text-rose-800">Denda Keterlambatan:</span>
                 <span className="font-bold text-rose-700">{formatRupiah(borrowing.fineAmount)}</span>
               </div>
             )}
             {borrowing.notes && (
-              <div className="pt-2 text-xs text-gray-500 bg-gray-50 p-2.5 rounded-xl">
+              <div className="pt-2 text-xs text-gray-500 bg-gray-50 p-2.5 rounded-2xl border border-gray-100">
                 <span className="font-semibold block text-gray-700 mb-0.5">Catatan:</span>
                 {borrowing.notes}
               </div>
@@ -154,10 +154,10 @@ export const QrReceipt: React.FC<QrReceiptProps> = ({ borrowing, user, item }) =
         <div className="p-4 bg-gray-50 border-t border-gray-100 flex gap-2">
           <button
             onClick={handlePrint}
-            className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition shadow-xs"
+            className="flex-1 inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-white border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-100 transition shadow-2xs cursor-pointer"
           >
             <Printer className="w-4 h-4" />
-            Cetak Bukti
+            Cetak Bukti Transaksi
           </button>
         </div>
       </div>

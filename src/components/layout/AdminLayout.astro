@@ -2,6 +2,7 @@
 import '../../styles/global.css';
 import { getCurrentUser } from '../../lib/auth';
 import { Mascot } from '../illustrations/Mascot';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title?: string;
@@ -33,6 +34,7 @@ if (user.role !== 'admin') {
       rel="stylesheet"
     />
     <script src="../../scripts/motion.ts"></script>
+    <ClientRouter />
   </head>
   <body class="bg-[#F6F5FF] text-[#1E1B3A] min-h-screen flex flex-col md:flex-row">
     <!-- Admin Sidebar -->
@@ -176,19 +178,5 @@ if (user.role !== 'admin') {
         <slot />
       </main>
     </div>
-
-    <script>
-      import anime from 'animejs';
-
-      // Admin Sidebar Nav Animation
-      anime({
-        targets: 'aside nav a',
-        translateX: [-6, 0],
-        opacity: [0, 1],
-        delay: anime.stagger(40),
-        duration: 400,
-        easing: 'easeOutCubic'
-      });
-    </script>
   </body>
 </html>

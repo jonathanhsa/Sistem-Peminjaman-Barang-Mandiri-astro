@@ -26,11 +26,12 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
 <StudentLayout title="Katalog Barang & Buku" activeNav="katalog">
   <div class="space-y-6">
     <!-- Header & Search -->
-    <div data-animate="fade-up" class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm space-y-4">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div data-animate="fade-up" class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] space-y-5">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div>
-          <h1 class="text-xl md:text-2xl font-bold font-display text-[#1E1B3A]">Katalog Inventaris Kampus</h1>
-          <p class="text-xs text-gray-500">Cari buku referensi, peralatan lab, dan perlengkapan kegiatan mahasiswa</p>
+          <h1 class="text-2xl sm:text-3xl font-extrabold font-display text-[#1E1B3A] tracking-tight">Katalog Inventaris Kampus</h1>
+          <div class="w-11 h-1 bg-[#FF6B6B] rounded-full mt-2"></div>
+          <p class="text-xs text-gray-500 mt-2">Cari buku referensi, peralatan lab, dan perlengkapan kegiatan mahasiswa</p>
         </div>
 
         <!-- Search Form -->
@@ -42,27 +43,27 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
               name="q"
               value={search}
               placeholder="Cari nama barang atau kode..."
-              class="w-full pl-10 pr-4 py-2.5 rounded-2xl border-2 border-gray-200 text-xs focus:outline-none focus:border-[#3B3FD9]"
+              class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-gray-50 border border-gray-200 text-xs focus:outline-none focus:border-[#FF6B6B] focus:bg-white transition"
             />
             <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <button type="submit" class="px-4 py-2.5 btn-sticker-primary text-xs font-bold shrink-0">
+          <button type="submit" class="px-5 py-2.5 btn-coral text-xs font-bold rounded-2xl shrink-0 cursor-pointer">
             Cari
           </button>
         </form>
       </div>
 
       <!-- Category Filter Pills -->
-      <div class="flex items-center gap-2 overflow-x-auto pb-1 pt-2">
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 pt-1">
         {categories.map((cat) => (
           <a
             href={`/katalog?cat=${encodeURIComponent(cat)}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
             class={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition ${
               selectedCategory.toLowerCase() === cat.toLowerCase()
-                ? 'bg-[#3B3FD9] text-white shadow-xs'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-[#FF6B6B] text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
+                : 'bg-gray-100 text-gray-600 hover:text-[#FF6B6B] hover:bg-gray-200'
             }`}
           >
             {cat}
@@ -73,24 +74,24 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
 
     <!-- Items Grid -->
     {filteredItems.length === 0 ? (
-      <div data-animate="fade-in" class="bg-white rounded-3xl p-12 text-center border-2 border-[#1E1B3A]/10 space-y-3">
-        <div class="w-16 h-16 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto text-2xl">
+      <div data-animate="fade-in" class="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] space-y-3">
+        <div class="w-16 h-16 rounded-full bg-rose-50 text-[#FF6B6B] flex items-center justify-center mx-auto text-2xl font-bold">
           🔍
         </div>
         <h3 class="text-base font-bold text-[#1E1B3A]">Barang tidak ditemukan</h3>
         <p class="text-xs text-gray-500 max-w-sm mx-auto">
           Tidak ada barang yang cocok dengan kata kunci "{search}". Coba gunakan kata kunci lain atau pilih kategori Semua.
         </p>
-        <a href="/katalog" class="inline-block text-xs font-bold text-[#3B3FD9] hover:underline">
+        <a href="/katalog" class="inline-block text-xs font-bold text-[#FF6B6B] hover:underline">
           Reset Pencarian
         </a>
       </div>
     ) : (
-      <div data-animate="stagger-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div data-animate="stagger-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {filteredItems.map((item) => {
           const isAvailable = item.status === 'available' && item.stock > 0;
           return (
-            <div class="bg-white rounded-3xl p-5 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col justify-between hover:shadow-md transition space-y-4">
+            <div class="bg-white rounded-3xl p-5 border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] flex flex-col justify-between hover:shadow-md transition space-y-4">
               <div class="space-y-3">
                 <div class="flex items-center justify-between">
                   <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-gray-100 text-gray-700">
@@ -114,7 +115,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
                 </div>
 
                 <div class="flex items-start gap-3">
-                  <div class="w-10 h-10 rounded-2xl bg-[#F6F5FF] text-[#3B3FD9] flex items-center justify-center shrink-0 border border-indigo-100">
+                  <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-800 flex items-center justify-center shrink-0 border border-amber-200/50 shadow-2xs">
                     <CategoryIcon category={item.category} size={20} />
                   </div>
                   <div>
@@ -130,15 +131,15 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
                 <span class="text-xs text-gray-500 font-medium">Stok: {item.stock} unit</span>
                 {isAvailable ? (
                   <a
-                    href={`/pinjam?code=${item.itemCode}`}
-                    class="px-3.5 py-2 rounded-xl bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-xs flex items-center gap-1.5"
+                    href={`/pinjam/form?code=${item.itemCode}`}
+                    class="px-4 py-2 rounded-2xl btn-coral text-white text-xs font-bold cursor-pointer"
                   >
-                    <span>⚡ Pinjam</span>
+                    Pinjam
                   </a>
                 ) : (
                   <button
                     disabled
-                    class="px-3.5 py-2 rounded-xl bg-gray-100 text-gray-400 text-xs font-semibold cursor-not-allowed"
+                    class="px-4 py-2 rounded-2xl bg-gray-100 text-gray-400 text-xs font-semibold cursor-not-allowed"
                   >
                     Tidak Tersedia
                   </button>

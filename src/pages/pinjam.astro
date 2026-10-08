@@ -1,66 +1,39 @@
 ---
 import StudentLayout from '../components/layout/StudentLayout.astro';
 import { getCurrentUser } from '../lib/auth';
-import { db, schema } from '../db';
-import { eq, and, gt, isNull, inArray } from 'drizzle-orm';
-import { BorrowForm } from '../components/borrowing/BorrowForm';
+import { BorrowScannerView } from '../components/scanner/BorrowScannerView';
 
 const user = await getCurrentUser(Astro.cookies);
 if (!user) return Astro.redirect('/login');
 
 const initialCode = (Astro.url.searchParams.get('code') || '').trim();
-
-// Check user's unpaid fines
-const unpaidFineRecord = await db
-  .select()
-  .from(schema.borrowings)
-  .where(
-    and(
-      eq(schema.borrowings.userId, user.id),
-      gt(schema.borrowings.fineAmount, 0),
-      isNull(schema.borrowings.finePaidAt)
-    )
-  )
-  .get();
-
-const hasUnpaidFine = !!unpaidFineRecord;
-const unpaidFineAmount = unpaidFineRecord ? unpaidFineRecord.fineAmount : 0;
-
-// Check user's active borrowings count
-const activeLoans = await db
-  .select()
-  .from(schema.borrowings)
-  .where(
-    and(
-      eq(schema.borrowings.userId, user.id),
-      inArray(schema.borrowings.status, ['pending', 'borrowed', 'overdue'])
-    )
-  )
-  .all();
-
-const activeLoansCount = activeLoans.length;
+if (initialCode) {
+  return Astro.redirect(`/pinjam/form?code=${encodeURIComponent(initialCode)}`);
+}
+const errorParam = Astro.url.searchParams.get('error') || null;
 ---
 
-<StudentLayout title="Form Pinjam Mandiri" activeNav="pinjam">
-  <div data-animate="fade-up" class="max-w-2xl mx-auto space-y-4">
-    <!-- Breadcrumb / Header link -->
+<StudentLayout title="Scan Barcode Pinjam Mandiri" activeNav="pinjam">
+  <div class="space-y-4">
+    <!-- Breadcrumb Header -->
     <div class="flex items-center justify-between">
-      <a href="/dashboard" class="text-xs font-bold text-gray-500 hover:text-[#3B3FD9] flex items-center gap-1">
+      <a href="/dashboard" class="text-xs font-semibold text-gray-500 hover:text-[#FF6B6B] flex items-center gap-1 transition">
         ← Kembali ke Beranda
       </a>
-      <a href="/katalog" class="text-xs font-semibold text-[#3B3FD9] bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100 transition">
+      <a href="/katalog" class="text-xs font-semibold text-[#FF6B6B] bg-rose-50 px-3 py-1.5 rounded-xl hover:bg-rose-100 transition shadow-2xs">
         Lihat Katalog Barang →
       </a>
     </div>
 
-    <!-- Interactive Island -->
-    <div data-animate="fade-in">
-      <BorrowForm
-        client:only="react"
-        initialCode={initialCode}
-        hasUnpaidFine={hasUnpaidFine}
-        unpaidFineAmount={unpaidFineAmount}
-        activeLoansCount={activeLoansCount}
+    <!-- Scanner-First View -->
+    <div>
+      <BorrowScannerView
+        client:load
+        currentUser={{
+          name: user.name,
+          nim_nip: user.nim_nip,
+        }}
+        initialError={errorParam}
       />
     </div>
   </div>

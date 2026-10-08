@@ -53,7 +53,7 @@ const borrowingData = {
 <StudentLayout title={`Bukti Peminjaman ${code}`} activeNav="riwayat">
   <div class="max-w-xl mx-auto space-y-6">
     <div class="flex items-center justify-between">
-      <a href="/riwayat" class="text-xs font-bold text-gray-500 hover:text-[#3B3FD9] flex items-center gap-1">
+      <a href="/riwayat" class="text-xs font-bold text-gray-500 hover:text-[#FF6B6B] flex items-center gap-1 transition">
         ← Kembali ke Riwayat
       </a>
       <span class="text-xs font-mono text-gray-400">ID #{borrowingData.id}</span>
@@ -61,19 +61,20 @@ const borrowingData = {
 
     {/* Digital Receipt React Island */}
     <QrReceipt
-      client:only="react"
+      client:load
       borrowing={borrowingData}
       user={record.borrower}
       item={record.item}
     />
 
     {/* Helpful notice */}
-    <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 text-xs text-indigo-900 space-y-1">
-      <h4 class="font-bold flex items-center gap-1.5">
-        <span>ℹ️ Petunjuk Verifikasi:</span>
+    <div class="bg-amber-50/80 border border-amber-200/70 rounded-3xl p-5 text-xs text-amber-900 space-y-1.5 shadow-2xs">
+      <h4 class="font-bold flex items-center gap-2 text-amber-950">
+        <span class="w-2 h-2 rounded-full bg-[#FF6B6B]"></span>
+        <span>Petunjuk Verifikasi di Loket:</span>
       </h4>
-      <p>
-        Bawa smartphone Anda ke loket petugas inventaris. Petugas akan memindai QR code ini menggunakan menu <strong>Verifikasi Scan QR</strong> untuk menyetujui atau menyelesaikan pengembalian barang.
+      <p class="leading-relaxed text-amber-900/80">
+        Bawa smartphone Anda ke loket petugas inventaris. Petugas akan memindai QR code ini menggunakan menu <strong>Verifikasi Scan QR</strong> untuk menyetujui peminjaman atau menyelesaikan pengembalian barang.
       </p>
     </div>
   </div>

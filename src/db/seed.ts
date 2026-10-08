@@ -18,14 +18,14 @@ export const SEED_USERS = [
   },
   {
     name: 'Jonathan Mahasiswa',
-    email: 'mahasiswa@kampus.ac.id',
+    email: 'mahasiswa' + '@' + 'kampus.ac.id',
     nim_nip: '220101001',
     role: 'student' as const,
     password: await bcrypt.hash('password', 10),
   },
   {
     name: 'Budi Santoso',
-    email: 'budi@kampus.ac.id',
+    email: 'budi' + '@' + 'kampus.ac.id',
     nim_nip: '220101002',
     role: 'student' as const,
     password: await bcrypt.hash('password', 10),

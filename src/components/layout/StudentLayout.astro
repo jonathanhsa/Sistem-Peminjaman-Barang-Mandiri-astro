@@ -4,6 +4,7 @@ import { getCurrentUser } from '../../lib/auth';
 import { db, schema } from '../../db';
 import { eq, and } from 'drizzle-orm';
 import { Mascot } from '../illustrations/Mascot';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title?: string;
@@ -44,15 +45,16 @@ const unreadCount = unreadNotifs.length;
       rel="stylesheet"
     />
     <script src="../../scripts/motion.ts"></script>
+    <ClientRouter />
   </head>
   <body class="bg-[#F6F5FF] text-[#1E1B3A] min-h-screen flex flex-col pb-24 md:pb-8">
     <!-- Top Header -->
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#1E1B3A]/10 shadow-xs">
+    <header transition:name="student-header" class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#1E1B3A]/10 shadow-xs">
       <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Brand Logo & Mascot */}
         <a href="/dashboard" class="flex items-center gap-3 group">
-          <div class="w-10 h-10 rounded-2xl bg-[#3B3FD9] flex items-center justify-center p-0.5 shadow-xs group-hover:scale-105 transition">
-            <Mascot mood="happy" size={36} />
+          <div class="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200/60 flex items-center justify-center shadow-xs group-hover:scale-105 transition">
+            <Mascot mood="happy" size={28} />
           </div>
           <div>
             <span class="font-display text-lg font-bold tracking-tight text-[#1E1B3A] block leading-none">SIPEMBAR</span>
@@ -66,8 +68,8 @@ const unreadCount = unreadNotifs.length;
             href="/dashboard"
             class={`px-4 py-2 rounded-xl text-xs font-bold transition ${
               activeNav === 'dashboard'
-                ? 'bg-[#3B3FD9] text-white shadow-xs'
-                : 'text-gray-600 hover:text-[#1E1B3A] hover:bg-white/60'
+                ? 'bg-[#FF6B6B] text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
+                : 'text-gray-600 hover:text-[#FF6B6B] hover:bg-white/80'
             }`}
           >
             Beranda
@@ -76,38 +78,38 @@ const unreadCount = unreadNotifs.length;
             href="/katalog"
             class={`px-4 py-2 rounded-xl text-xs font-bold transition ${
               activeNav === 'katalog'
-                ? 'bg-[#3B3FD9] text-white shadow-xs'
-                : 'text-gray-600 hover:text-[#1E1B3A] hover:bg-white/60'
+                ? 'bg-[#FF6B6B] text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
+                : 'text-gray-600 hover:text-[#FF6B6B] hover:bg-white/80'
             }`}
           >
             Katalog
           </a>
           <a
             href="/pinjam"
-            class={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+            class={`px-4 py-2 rounded-xl text-xs font-bold transition ${
               activeNav === 'pinjam'
-                ? 'bg-[#FFD23F] text-[#1E1B3A] shadow-xs'
-                : 'text-[#1E1B3A] bg-[#FFD23F]/60 hover:bg-[#FFD23F]'
+                ? 'bg-[#FF6B6B] text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
+                : 'text-gray-600 hover:text-[#FF6B6B] hover:bg-white/80'
             }`}
           >
-            <span>⚡ Pinjam Mandiri</span>
+            Pinjam Mandiri
           </a>
           <a
             href="/riwayat"
             class={`px-4 py-2 rounded-xl text-xs font-bold transition ${
               activeNav === 'riwayat'
-                ? 'bg-[#3B3FD9] text-white shadow-xs'
-                : 'text-gray-600 hover:text-[#1E1B3A] hover:bg-white/60'
+                ? 'bg-[#FF6B6B] text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
+                : 'text-gray-600 hover:text-[#FF6B6B] hover:bg-white/80'
             }`}
           >
             Riwayat
           </a>
           <a
             href="/test-barcode"
-            class={`px-3 py-2 rounded-xl text-xs font-bold transition ${
+            class={`px-4 py-2 rounded-xl text-xs font-bold transition ${
               activeNav === 'test-barcode'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'text-gray-600 hover:text-[#1E1B3A] hover:bg-white/60'
+                ? 'bg-[#FF6B6B] text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
+                : 'text-gray-600 hover:text-[#FF6B6B] hover:bg-white/80'
             }`}
           >
             Lembar Barcode
@@ -162,11 +164,11 @@ const unreadCount = unreadNotifs.length;
     </main>
 
     <!-- Mobile Bottom Navigation Bar -->
-    <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#1E1B3A]/10 px-2 py-1.5 shadow-lg flex items-center justify-around">
+    <nav transition:name="student-mobile-nav" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#1E1B3A]/10 px-2 py-1.5 shadow-lg flex items-center justify-around">
       <a
         href="/dashboard"
-        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition ${
-          activeNav === 'dashboard' ? 'text-[#3B3FD9]' : 'text-gray-500'
+        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition-colors ${
+          activeNav === 'dashboard' ? 'text-[#FF6B6B] font-bold' : 'text-gray-500'
         }`}
       >
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,8 +179,8 @@ const unreadCount = unreadNotifs.length;
 
       <a
         href="/katalog"
-        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition ${
-          activeNav === 'katalog' ? 'text-[#3B3FD9]' : 'text-gray-500'
+        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition-colors ${
+          activeNav === 'katalog' ? 'text-[#FF6B6B] font-bold' : 'text-gray-500'
         }`}
       >
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,10 +192,12 @@ const unreadCount = unreadNotifs.length;
       {/* Primary Action Button: Pinjam Mandiri */}
       <a
         href="/pinjam"
-        class="flex flex-col items-center -top-4 relative py-1 px-3 bg-[#FFD23F] text-[#1E1B3A] rounded-2xl shadow-md border-2 border-[#1E1B3A]/15 active:scale-95 transition"
+        class={`flex flex-col items-center -top-4 relative py-1 px-3.5 bg-[#FF6B6B] text-white rounded-2xl shadow-[0_4px_14px_rgba(255,107,107,0.4)] border-2 transition-all active:scale-95 ${
+          activeNav === 'pinjam' ? 'border-white ring-2 ring-[#FF6B6B]/40' : 'border-transparent'
+        }`}
       >
-        <div class="w-8 h-8 rounded-full bg-[#1E1B3A] text-white flex items-center justify-center mb-0.5">
-          <svg class="w-4 h-4 text-[#FFD23F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mb-0.5">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
           </svg>
         </div>
@@ -202,8 +206,8 @@ const unreadCount = unreadNotifs.length;
 
       <a
         href="/riwayat"
-        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition ${
-          activeNav === 'riwayat' ? 'text-[#3B3FD9]' : 'text-gray-500'
+        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition-colors ${
+          activeNav === 'riwayat' ? 'text-[#FF6B6B] font-bold' : 'text-gray-500'
         }`}
       >
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,8 +218,8 @@ const unreadCount = unreadNotifs.length;
 
       <a
         href="/test-barcode"
-        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition ${
-          activeNav === 'test-barcode' ? 'text-emerald-700 font-bold' : 'text-gray-500'
+        class={`flex flex-col items-center py-1 px-2.5 rounded-xl text-[11px] font-semibold transition-colors ${
+          activeNav === 'test-barcode' ? 'text-[#FF6B6B] font-bold' : 'text-gray-500'
         }`}
       >
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -224,29 +228,5 @@ const unreadCount = unreadNotifs.length;
         <span>Barcode</span>
       </a>
     </nav>
-
-    <script>
-      import anime from 'animejs';
-
-      // Desktop Nav Animation
-      anime({
-        targets: 'header nav a',
-        translateY: [-6, 0],
-        opacity: [0, 1],
-        delay: anime.stagger(40),
-        duration: 400,
-        easing: 'easeOutCubic'
-      });
-
-      // Mobile Nav Animation
-      anime({
-        targets: 'nav.fixed.bottom-0 a',
-        translateY: [6, 0],
-        opacity: [0, 1],
-        delay: anime.stagger(40),
-        duration: 400,
-        easing: 'easeOutCubic'
-      });
-    </script>
   </body>
 </html>

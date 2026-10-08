@@ -26,6 +26,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     if (!name || !email || !nim_nip || !password) {
+      if (!contentType.includes('application/json')) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/register?error=${encodeURIComponent('Semua kolom pendaftaran wajib diisi.')}` },
+        });
+      }
       return new Response(JSON.stringify({ error: 'Semua kolom pendaftaran wajib diisi.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -33,6 +39,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     if (password.length < 6) {
+      if (!contentType.includes('application/json')) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/register?error=${encodeURIComponent('Kata sandi minimal 6 karakter.')}` },
+        });
+      }
       return new Response(JSON.stringify({ error: 'Kata sandi minimal 6 karakter.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -47,6 +59,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       .get();
 
     if (existing) {
+      if (!contentType.includes('application/json')) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/register?error=${encodeURIComponent('NIM atau Email sudah terdaftar. Silakan gunakan akun yang sudah ada.')}` },
+        });
+      }
       return new Response(
         JSON.stringify({ error: 'NIM atau Email sudah terdaftar. Silakan gunakan akun yang sudah ada.' }),
         { status: 409, headers: { 'Content-Type': 'application/json' } }

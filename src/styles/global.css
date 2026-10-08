@@ -1,4 +1,4 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 @theme {
   --font-heading: 'Fredoka', ui-rounded, 'Comic Sans MS', sans-serif;
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
@@ -16,6 +16,10 @@
   --color-coral-light: #fff0f0;
   --color-lilac: #b8a9ff;
   --color-lilac-light: #f2efff;
+}
+html {
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
 }
 body {
   background-color: var(--color-paper);
@@ -100,6 +104,33 @@ h1, h2, h3, .font-display {
   transform: translateY(2px);
   box-shadow: 0 2px 0 var(--color-coral-dark);
 }
+/* Auth Style Coral Button */
+.btn-coral {
+  background-color: #FF6B6B;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(255, 107, 107, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-coral:hover {
+  background-color: #f75555;
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.45);
+  transform: translateY(-1px);
+}
+.btn-coral:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+.btn-coral:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
 .card-friendly {
   background-color: #ffffff;
   border-radius: 24px;
@@ -115,13 +146,46 @@ h1, h2, h3, .font-display {
   font-size: 0.825rem;
   font-weight: 600;
 }
-@keyframes scan {
-  0% { top: 5%; }
-  50% { top: 90%; }
-  100% { top: 5%; }
+.scanner-box {
+  container-type: size;
 }
+
+@keyframes scan-laser {
+  0% {
+    transform: translate3d(0, 8px, 0);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate3d(0, 215px, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 8px, 0);
+    opacity: 0.75;
+  }
+}
+
+@supports (height: 100cqh) {
+  @keyframes scan-laser {
+    0% {
+      transform: translate3d(0, 8px, 0);
+      opacity: 0.75;
+    }
+    50% {
+      transform: translate3d(0, calc(100cqh - 16px), 0);
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(0, 8px, 0);
+      opacity: 0.75;
+    }
+  }
+}
+
 .animate-scan {
-  animation: scan 2.2s ease-in-out infinite;
+  top: 0;
+  will-change: transform;
+  transform: translate3d(0, 8px, 0);
+  animation: scan-laser 2.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
 }
-[data-animate="fade-up"], [data-animate="fade-in"] { opacity: 0; }
-[data-animate="stagger-list"] > * { opacity: 0; }
+
