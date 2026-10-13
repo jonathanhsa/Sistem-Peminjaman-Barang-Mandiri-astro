@@ -67,7 +67,6 @@ export const AdminVerification: React.FC = () => {
           });
         } catch {}
         setActionSuccess('Pengembalian barang berhasil dicatat! Status telah diperbarui menjadi "returned".');
-        // Refresh transaction state
         fetchTransaction(transaction.borrowing_code);
       }
     } catch (err: any) {
@@ -85,7 +84,9 @@ export const AdminVerification: React.FC = () => {
     try {
       const res = await fetch(`/api/borrowings/${transaction.id}/approve`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
       });
+      const data = await res.json();
       if (!res.ok) {
         setError('Gagal menyetujui peminjaman.');
       } else {
@@ -114,40 +115,40 @@ export const AdminVerification: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Search & Camera Input Card */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border-2 border-[#1E1B3A]/10 shadow-sm space-y-4">
+      <div className="bg-white rounded-2xl p-6 sm:p-7 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4">
         <div>
-          <h2 className="text-xl font-bold font-display text-[#1E1B3A]">Verifikasi QR Bukti Transaksi Mahasiswa</h2>
-          <p className="text-xs text-gray-500 mt-1">
-            Pindai QR receipt dari layar smartphone mahasiswa atau masukkan kode transaksi (PJM-...)
+          <h2 className="text-lg font-bold text-[#0F172A]">Verifikasi QR Bukti Transaksi Mahasiswa</h2>
+          <p className="text-xs text-gray-400 mt-1">
+            Pindai QR receipt dari layar mahasiswa atau masukkan nomor tracking transaksi (PJM-...)
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2.5">
+        <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
           <input
             type="text"
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             placeholder="PJM-YYYYMMDD-XXXX"
-            className="flex-1 px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm font-mono tracking-wider focus:outline-none focus:border-[#3B3FD9] uppercase"
+            className="flex-1 px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs font-mono tracking-wider focus:outline-none focus:border-[#3B3FD9] focus:bg-white uppercase transition"
           />
 
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => setIsScannerOpen(true)}
-              className="px-4 py-3 rounded-2xl bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-xs flex items-center justify-center gap-2 whitespace-nowrap"
+              className="px-3.5 py-2.5 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer"
             >
-              <Camera className="w-4 h-4" />
-              <span>Buka Kamera Scanner</span>
+              <Camera className="w-4 h-4 text-gray-600" />
+              <span>Buka Kamera</span>
             </button>
 
             <button
               type="button"
               onClick={() => fetchTransaction(code)}
               disabled={!code.trim() || isLoading}
-              className="px-5 py-3 rounded-2xl btn-sticker-primary text-xs font-bold whitespace-nowrap"
+              className="px-4 py-2.5 rounded-xl bg-[#3B3FD9] hover:bg-[#3235b8] text-white text-xs font-bold shadow-md shadow-indigo-500/20 whitespace-nowrap transition cursor-pointer disabled:opacity-50"
             >
               {isLoading ? 'Mencari...' : 'Verifikasi'}
             </button>
@@ -155,14 +156,14 @@ export const AdminVerification: React.FC = () => {
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 font-medium">
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 font-medium">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {actionSuccess && (
-          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs flex items-center gap-2.5 font-bold animate-fade-in">
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs flex items-center gap-2.5 font-bold">
             <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600" />
             <span>{actionSuccess}</span>
           </div>
@@ -171,48 +172,48 @@ export const AdminVerification: React.FC = () => {
 
       {/* Transaction Details & Verification Action */}
       {transaction && (
-        <div className="bg-white rounded-3xl p-6 md:p-8 border-2 border-[#1E1B3A]/10 shadow-lg space-y-6 animate-fade-in">
+        <div className="bg-white rounded-2xl p-6 sm:p-7 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-5 animate-fade-in">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 gap-3">
             <div>
               <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Kode Bukti Transaksi</span>
-              <h3 className="text-xl font-bold font-mono text-[#3B3FD9]">{transaction.borrowing_code}</h3>
+              <h3 className="text-lg font-bold font-mono text-[#3B3FD9]">#{transaction.borrowing_code}</h3>
             </div>
             <div>
-              <StatusBadge status={transaction.status} size="lg" />
+              <StatusBadge status={transaction.status} size="md" />
             </div>
           </div>
 
           {/* Identity & Item Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Student Info Card */}
-            <div className="p-4 rounded-2xl bg-[#F6F5FF] border border-indigo-100 space-y-2">
-              <span className="text-[10px] uppercase font-bold text-indigo-700 flex items-center gap-1.5">
+            <div className="p-4 rounded-xl bg-[#F8FAFC] border border-gray-100 space-y-1.5">
+              <span className="text-[10px] uppercase font-bold text-indigo-600 flex items-center gap-1.5">
                 <User className="w-3.5 h-3.5" /> Identitas Mahasiswa
               </span>
-              <h4 className="font-bold text-base text-[#1E1B3A]">{transaction.user.name}</h4>
+              <h4 className="font-bold text-sm text-[#0F172A]">{transaction.user.name}</h4>
               <p className="text-xs font-mono text-gray-600">NIM: {transaction.user.nim_nip}</p>
               {transaction.user.email && (
-                <p className="text-xs text-gray-500">{transaction.user.email}</p>
+                <p className="text-xs text-gray-400">{transaction.user.email}</p>
               )}
             </div>
 
             {/* Item Info Card */}
-            <div className="p-4 rounded-2xl bg-[#F6F5FF] border border-indigo-100 space-y-2">
-              <span className="text-[10px] uppercase font-bold text-indigo-700 flex items-center gap-1.5">
+            <div className="p-4 rounded-xl bg-[#F8FAFC] border border-gray-100 space-y-1.5">
+              <span className="text-[10px] uppercase font-bold text-indigo-600 flex items-center gap-1.5">
                 <Package className="w-3.5 h-3.5" /> Barang Inventaris
               </span>
-              <h4 className="font-bold text-base text-[#1E1B3A]">{transaction.item.name}</h4>
-              <p className="text-xs font-mono text-gray-600">Kode: {transaction.item.item_code}</p>
-              <p className="text-xs text-gray-500">Kategori: {transaction.item.category}</p>
+              <h4 className="font-bold text-sm text-[#0F172A]">{transaction.item.name}</h4>
+              <p className="text-xs font-mono text-gray-600">Kode: #{transaction.item.item_code}</p>
+              <p className="text-xs text-gray-400">Kategori: {transaction.item.category}</p>
             </div>
           </div>
 
           {/* Time & Fine Calculation Details */}
-          <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+          <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-gray-100 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div>
               <span className="text-gray-400 block text-[10px] uppercase font-bold">Tanggal Pengajuan</span>
-              <span className="font-semibold text-gray-800">
+              <span className="font-semibold text-gray-700">
                 {new Date(transaction.borrow_date).toLocaleDateString('id-ID', {
                   day: 'numeric',
                   month: 'short',
@@ -232,10 +233,10 @@ export const AdminVerification: React.FC = () => {
             </div>
             <div>
               <span className="text-gray-400 block text-[10px] uppercase font-bold">Perhitungan Denda</span>
-              <span className={`font-bold ${transaction.fine_amount > 0 ? 'text-rose-700' : 'text-emerald-700'}`}>
+              <span className={`font-bold ${transaction.fine_amount > 0 ? 'text-rose-600' : 'text-emerald-700'}`}>
                 {transaction.fine_amount > 0
-                  ? `Rp ${transaction.fine_amount.toLocaleString('id-ID')} (${transaction.is_overdue ? 'Terlambat' : ''})`
-                  : 'Rp 0 (Tepat Waktu)'}
+                  ? `Rp ${transaction.fine_amount.toLocaleString('id-ID')}`
+                  : 'Rp 0'}
               </span>
             </div>
           </div>
@@ -244,29 +245,29 @@ export const AdminVerification: React.FC = () => {
           <div className="pt-2">
             {transaction.status === 'pending' && (
               <div className="space-y-3">
-                <p className="text-xs text-gray-600">
-                  Permohonan ini masih berstatus <strong>Menunggu Persetujuan</strong>. Klik di bawah ini untuk menyetujui dan menyerahkan barang kepada mahasiswa.
+                <p className="text-xs text-gray-500">
+                  Permohonan ini masih berstatus <strong>Menunggu Persetujuan</strong>. Klik tombol berikut untuk menyetujui dan menyerahkan fisik barang.
                 </p>
                 <button
                   type="button"
                   onClick={handleApproveAction}
                   disabled={isProcessingAction}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <ShieldCheck className="w-5 h-5" />
+                  <ShieldCheck className="w-4 h-4" />
                   <span>Setujui Peminjaman & Kurangi Stok Barang</span>
                 </button>
               </div>
             )}
 
             {(transaction.status === 'borrowed' || transaction.status === 'overdue') && (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {transaction.fine_amount > 0 && (
-                  <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 flex items-center justify-between text-xs">
+                  <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                     <div>
-                      <span className="font-bold text-amber-900 block">Denda Terlambat Terhitung:</span>
+                      <span className="font-bold text-amber-900 block">Denda Terhitung:</span>
                       <span className="text-amber-800">
-                        Rp {transaction.fine_amount.toLocaleString('id-ID')} (Tarif Rp 1.000 / hari)
+                        Rp {transaction.fine_amount.toLocaleString('id-ID')}
                       </span>
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer font-bold text-amber-950">
@@ -285,17 +286,17 @@ export const AdminVerification: React.FC = () => {
                   type="button"
                   onClick={handleReturnAction}
                   disabled={isProcessingAction}
-                  className="w-full py-4 px-6 btn-sticker-primary text-sm font-bold shadow-md flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 rounded-xl bg-[#3B3FD9] hover:bg-[#3235b8] text-white font-bold text-xs shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <CheckCircle2 className="w-5 h-5" />
-                  <span>Konfirmasi Pengembalian Barang (Ubah Status ke Returned)</span>
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Konfirmasi Pengembalian Barang (Status Returned)</span>
                 </button>
               </div>
             )}
 
             {transaction.status === 'returned' && (
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-center font-bold text-sm">
-                Barang ini sudah berstatus dikembalikan pada {new Date(transaction.return_date || Date.now()).toLocaleDateString('id-ID')}.
+              <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-center font-bold text-xs">
+                Barang ini sudah dikembalikan pada {new Date(transaction.return_date || Date.now()).toLocaleDateString('id-ID')}.
               </div>
             )}
           </div>
@@ -304,9 +305,9 @@ export const AdminVerification: React.FC = () => {
             <button
               type="button"
               onClick={resetAll}
-              className="text-xs font-bold text-gray-500 hover:text-[#3B3FD9] underline"
+              className="text-xs font-bold text-gray-400 hover:text-[#3B3FD9] underline cursor-pointer"
             >
-              Scan Transaksi Mahasiswa Lainnya
+              Scan Transaksi Lainnya
             </button>
           </div>
         </div>

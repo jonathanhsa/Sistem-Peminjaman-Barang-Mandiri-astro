@@ -21,103 +21,130 @@ const filteredItems = allItems.filter((i) => {
 const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
 ---
 
-<AdminLayout title="Kelola Inventaris Barang & Buku" activeNav="barang">
-  <div class="space-y-6">
-    <!-- Top Action Row -->
-    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<AdminLayout title="Kelola Inventaris — SIPEMBAR Admin" activeNav="barang">
+  <div class="space-y-5">
+    
+    <!-- Top Action & Filter Header Card -->
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1 class="text-xl md:text-2xl font-bold font-display text-[#1E1B3A]">Daftar Inventaris Kampus</h1>
-        <p class="text-xs text-gray-500">Kelola buku perpustakaan, perlengkapan lab komputer, dan aset himpunan</p>
+        <h1 class="text-xl font-extrabold text-[#0F172A] tracking-tight">Manajemen Inventaris & Stok</h1>
+        <p class="text-xs text-gray-400 mt-0.5">Kelola katalog buku perpustakaan, peralatan laboratorium, dan logistik kampus</p>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2.5 flex-wrap">
         <a
           href="/test-barcode"
           target="_blank"
-          class="px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold hover:bg-emerald-100 transition flex items-center gap-1.5"
+          class="px-3.5 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 text-xs font-bold transition flex items-center gap-1.5"
         >
-          <span>🖨️ Cetak Barcode Buku ↗</span>
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>
+          <span>Cetak Barcode ↗</span>
         </a>
+
         <a
           href="/admin/barang/create"
-          class="px-5 py-2.5 btn-sticker-primary text-xs font-bold flex items-center gap-2"
+          class="px-4 py-2 rounded-xl bg-[#3B3FD9] hover:bg-[#3235b8] text-white text-xs font-bold shadow-md shadow-indigo-500/20 flex items-center gap-1.5 transition"
         >
-          <span>+ Tambah Barang Baru</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          <span>+ Tambah Barang</span>
         </a>
       </div>
     </div>
 
-    <!-- Search & Filter Bar -->
-    <div class="bg-white rounded-2xl p-4 border border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
-        {categories.map((c) => (
-          <a
-            href={`/admin/barang?cat=${encodeURIComponent(c)}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
-            class={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
-              category.toLowerCase() === c.toLowerCase()
-                ? 'bg-[#3B3FD9] text-white shadow-xs'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            {c}
-          </a>
-        ))}
+    <!-- Table Container Card -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] overflow-hidden">
+      
+      <!-- Filter Bar inside Table Card -->
+      <div class="p-4 sm:px-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white">
+        <!-- Category Filter Pills -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          {categories.map((c) => (
+            <a
+              href={`/admin/barang?cat=${encodeURIComponent(c)}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
+              class={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+                category.toLowerCase() === c.toLowerCase()
+                  ? 'bg-[#EEF2FF] text-[#3B3FD9] font-bold shadow-xs'
+                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
+              }`}
+            >
+              {c}
+            </a>
+          ))}
+        </div>
+
+        <!-- Search Bar -->
+        <form method="GET" class="relative w-full sm:w-64">
+          <input type="hidden" name="cat" value={category} />
+          <svg class="w-3.5 h-3.5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            name="q"
+            value={search}
+            placeholder="Cari kode atau nama..."
+            class="w-full pl-9 pr-3 py-1.5 bg-[#F8FAFC] border border-gray-200 rounded-xl text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#3B3FD9] focus:bg-white"
+          />
+        </form>
       </div>
 
-      <form method="GET" class="w-full sm:max-w-xs">
-        <input type="hidden" name="cat" value={category} />
-        <input
-          type="text"
-          name="q"
-          value={search}
-          placeholder="Cari kode atau nama..."
-          class="w-full px-3.5 py-1.5 rounded-xl border border-gray-300 text-xs focus:outline-none focus:border-[#3B3FD9]"
-        />
-      </form>
-    </div>
-
-    <!-- Table of Items -->
-    <div class="bg-white rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm overflow-hidden">
+      <!-- Table -->
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead>
-            <tr class="bg-[#F6F5FF] border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-              <th class="py-3.5 px-4">Kode Barang</th>
+            <tr class="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider text-[11px] bg-[#F8FAFC]">
+              <th class="py-3.5 px-4 w-10">
+                <input type="checkbox" class="rounded text-indigo-600 focus:ring-0 w-3.5 h-3.5" />
+              </th>
+              <th class="py-3.5 px-4">Tracking no / Kode</th>
               <th class="py-3.5 px-4">Nama Inventaris</th>
               <th class="py-3.5 px-4">Kategori</th>
               <th class="py-3.5 px-4">Stok Fisik</th>
               <th class="py-3.5 px-4">Status</th>
-              <th class="py-3.5 px-4 text-right">Kelola</th>
+              <th class="py-3.5 px-4 text-right">Kelola Stok</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100">
+          <tbody class="divide-y divide-gray-50">
             {filteredItems.map((item) => (
-              <tr class="hover:bg-gray-50/80 transition">
-                <td class="py-4 px-4 font-mono font-bold text-indigo-700">
-                  {item.itemCode}
+              <tr class="hover:bg-[#F8FAFC] transition">
+                <td class="py-3.5 px-4">
+                  <input type="checkbox" class="rounded text-indigo-600 focus:ring-0 w-3.5 h-3.5" />
                 </td>
-                <td class="py-4 px-4 font-bold text-[#1E1B3A] max-w-xs">
-                  {item.name}
+                <td class="py-3.5 px-4 font-mono font-bold text-[#3B3FD9]">
+                  #{item.itemCode}
                 </td>
-                <td class="py-4 px-4">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700 font-medium">
-                    <CategoryIcon category={item.category} size={14} />
-                    <span>{item.category}</span>
+                <td class="py-3.5 px-4">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                      <CategoryIcon category={item.category} size={16} />
+                    </div>
+                    <span class="font-bold text-[#0F172A] max-w-xs block truncate" title={item.name}>
+                      {item.name}
+                    </span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-100 text-gray-600 font-medium text-[11px]">
+                    {item.category}
                   </span>
                 </td>
-                <td class="py-4 px-4 font-semibold text-gray-800">
-                  <span class={`font-mono text-sm ${item.stock <= 0 ? 'text-rose-600 font-bold' : ''}`}>
+                <td class="py-3.5 px-4 font-semibold text-gray-700">
+                  <span class={`font-mono ${item.stock <= 0 ? 'text-rose-600 font-bold' : ''}`}>
                     {item.stock} unit
                   </span>
                 </td>
-                <td class="py-4 px-4">
+                <td class="py-3.5 px-4">
                   <span
-                    class={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                    class={`px-2.5 py-1 rounded-lg text-[11px] font-bold ${
                       item.status === 'available' && item.stock > 0
-                        ? 'bg-emerald-100 text-emerald-800'
+                        ? 'bg-emerald-50 text-emerald-700'
                         : item.status === 'maintenance'
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-rose-100 text-rose-800'
+                        ? 'bg-amber-50 text-amber-700'
+                        : 'bg-rose-50 text-rose-700'
                     }`}
                   >
                     {item.status === 'available'
@@ -126,13 +153,13 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
                         : 'Habis'
                       : item.status === 'maintenance'
                       ? 'Perbaikan'
-                      : 'Dipinjam Penuh'}
+                      : 'Dipinjam'}
                   </span>
                 </td>
-                <td class="py-4 px-4 text-right">
+                <td class="py-3.5 px-4 text-right">
                   <div class="inline-flex items-center gap-2">
-                    {/* Quick Edit Stock Dialog or Form */}
-                    <form method="POST" action={`/api/items/${item.id}/update`} class="inline-flex items-center gap-1.5">
+                    <!-- Inline stock form -->
+                    <form method="POST" action={`/api/items/${item.id}/update`} class="inline-flex items-center gap-1">
                       <input type="hidden" name="name" value={item.name} />
                       <input type="hidden" name="category" value={item.category} />
                       <input type="hidden" name="status" value={item.status} />
@@ -141,27 +168,27 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
                         name="stock"
                         value={item.stock}
                         min="0"
-                        class="w-14 px-1.5 py-1 text-center font-mono text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-600"
-                        title="Ubah stok lalu klik simpan"
+                        class="w-14 px-2 py-1 text-center font-mono text-xs border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#3B3FD9]"
+                        title="Ubah stok fisik"
                       />
                       <button
                         type="submit"
-                        class="px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-[11px] border border-indigo-200 transition"
+                        class="px-2 py-1 rounded-lg bg-indigo-50 text-[#3B3FD9] font-bold text-[11px] hover:bg-indigo-100 transition cursor-pointer"
                       >
-                        Ubah
+                        Simpan
                       </button>
                     </form>
 
-                    {/* Delete Item Form */}
+                    <!-- Delete item -->
                     <form
                       method="POST"
                       action={`/api/items/${item.id}/delete`}
-                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus barang ini dari database?');"
+                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus barang ini?');"
                     >
                       <button
                         type="submit"
-                        class="p-1 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition"
-                        title="Hapus Barang"
+                        class="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                        title="Hapus"
                       >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -174,6 +201,22 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
             ))}
           </tbody>
         </table>
+      </div>
+
+      <!-- Pagination Footer -->
+      <div class="p-4 sm:px-6 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400 bg-white">
+        <span>Menampilkan 1-{filteredItems.length} dari {filteredItems.length} barang</span>
+        <div class="flex items-center gap-1 font-bold">
+          <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
+            ‹
+          </button>
+          <button class="w-7 h-7 rounded-lg flex items-center justify-center bg-[#3B3FD9] text-white shadow-xs">
+            1
+          </button>
+          <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
+            ›
+          </button>
+        </div>
       </div>
     </div>
   </div>

@@ -4,6 +4,7 @@ import { db, schema } from '../../db';
 import { eq, desc } from 'drizzle-orm';
 import { StatusBadge } from '../../components/borrowing/StatusBadge';
 import { CountdownBadge } from '../../components/borrowing/CountdownBadge';
+import { CategoryIcon } from '../../components/illustrations/CategoryIcon';
 import { formatDate } from '../../lib/format-date';
 import { formatRupiah } from '../../lib/format-rupiah';
 import { calculateFine } from '../../lib/fine';
@@ -52,153 +53,157 @@ if (tab === 'aktif') currentList = activeList;
 else if (tab === 'selesai') currentList = returnedList;
 ---
 
-<AdminLayout title="Kelola Permohonan & Pengembalian" activeNav="peminjaman">
-  <div class="space-y-6">
-    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<AdminLayout title="Peminjaman & ACC — SIPEMBAR Admin" activeNav="peminjaman">
+  <div class="space-y-5">
+    
+    <!-- Top Header Card with QR Scanner Shortcut -->
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1 class="text-xl md:text-2xl font-bold font-display text-[#1E1B3A]">Persetujuan & Pengembalian Barang</h1>
-        <p class="text-xs text-gray-500">Verifikasi permohonan pinjam mandiri dan proses pengembalian fisik barang</p>
+        <h1 class="text-xl font-extrabold text-[#0F172A] tracking-tight">Persetujuan & Sirkulasi Peminjaman</h1>
+        <p class="text-xs text-gray-400 mt-0.5">Kelola verifikasi pengajuan mandiri mahasiswa dan penerimaan pengembalian</p>
       </div>
 
       <a
         href="/admin/verifikasi"
-        class="px-5 py-2.5 rounded-2xl bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-sm flex items-center gap-2"
+        class="px-4 py-2 rounded-xl bg-[#3B3FD9] hover:bg-[#3235b8] text-white text-xs font-bold shadow-md shadow-indigo-500/20 flex items-center gap-2 transition cursor-pointer self-start md:self-auto"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
         </svg>
-        <span>Scan QR Bukti Mahasiswa</span>
+        <span>Buka Scanner QR Loket</span>
       </a>
     </div>
 
-    <!-- Navigation Tabs -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-1">
-      <a
-        href="/admin/peminjaman?tab=pending"
-        class={`px-4 py-2.5 rounded-2xl text-xs font-bold transition flex items-center gap-2 ${
-          tab === 'pending'
-            ? 'bg-[#3B3FD9] text-white shadow-xs'
-            : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100'
-        }`}
-      >
-        <span>Menunggu Persetujuan</span>
-        <span class={`text-[10px] px-2 py-0.5 rounded-full ${tab === 'pending' ? 'bg-white/20' : 'bg-gray-100 text-gray-700'}`}>
-          {pendingList.length}
-        </span>
-      </a>
+    <!-- Table Container Card with Status Tabs -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] overflow-hidden">
+      
+      <!-- Status Tabs Bar (Matches SaaS Reference Navigation) -->
+      <div class="p-4 sm:px-6 border-b border-gray-100 flex items-center gap-2 overflow-x-auto bg-white">
+        <a
+          href="/admin/peminjaman?tab=pending"
+          class={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 whitespace-nowrap ${
+            tab === 'pending'
+              ? 'bg-[#EEF2FF] text-[#3B3FD9] font-bold shadow-xs'
+              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
+          }`}
+        >
+          <span>Menunggu Persetujuan</span>
+          <span class={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${tab === 'pending' ? 'bg-[#3B3FD9] text-white' : 'bg-gray-100 text-gray-600'}`}>
+            {pendingList.length}
+          </span>
+        </a>
 
-      <a
-        href="/admin/peminjaman?tab=aktif"
-        class={`px-4 py-2.5 rounded-2xl text-xs font-bold transition flex items-center gap-2 ${
-          tab === 'aktif'
-            ? 'bg-[#3B3FD9] text-white shadow-xs'
-            : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100'
-        }`}
-      >
-        <span>Sedang Dipinjam & Terlambat</span>
-        <span class={`text-[10px] px-2 py-0.5 rounded-full ${tab === 'aktif' ? 'bg-white/20' : 'bg-gray-100 text-gray-700'}`}>
-          {activeList.length}
-        </span>
-      </a>
+        <a
+          href="/admin/peminjaman?tab=aktif"
+          class={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 whitespace-nowrap ${
+            tab === 'aktif'
+              ? 'bg-[#EEF2FF] text-[#3B3FD9] font-bold shadow-xs'
+              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
+          }`}
+        >
+          <span>Sedang Dipinjam & Terlambat</span>
+          <span class={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${tab === 'aktif' ? 'bg-[#3B3FD9] text-white' : 'bg-gray-100 text-gray-600'}`}>
+            {activeList.length}
+          </span>
+        </a>
 
-      <a
-        href="/admin/peminjaman?tab=selesai"
-        class={`px-4 py-2.5 rounded-2xl text-xs font-bold transition flex items-center gap-2 ${
-          tab === 'selesai'
-            ? 'bg-[#3B3FD9] text-white shadow-xs'
-            : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100'
-        }`}
-      >
-        <span>Selesai Dikembalikan</span>
-        <span class={`text-[10px] px-2 py-0.5 rounded-full ${tab === 'selesai' ? 'bg-white/20' : 'bg-gray-100 text-gray-700'}`}>
-          {returnedList.length}
-        </span>
-      </a>
-    </div>
-
-    <!-- Transaction List Table -->
-    {currentList.length === 0 ? (
-      <div class="bg-white rounded-3xl p-12 text-center border-2 border-[#1E1B3A]/10 space-y-3">
-        <div class="w-16 h-16 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto text-2xl">
-          ✓
-        </div>
-        <h3 class="text-base font-bold text-[#1E1B3A]">Tidak ada data dalam kategori ini</h3>
-        <p class="text-xs text-gray-500 max-w-sm mx-auto">
-          Semua tugas operasional pada tab ini telah terselesaikan.
-        </p>
+        <a
+          href="/admin/peminjaman?tab=selesai"
+          class={`px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 whitespace-nowrap ${
+            tab === 'selesai'
+              ? 'bg-[#EEF2FF] text-[#3B3FD9] font-bold shadow-xs'
+              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
+          }`}
+        >
+          <span>Selesai Dikembalikan</span>
+          <span class={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${tab === 'selesai' ? 'bg-[#3B3FD9] text-white' : 'bg-gray-100 text-gray-600'}`}>
+            {returnedList.length}
+          </span>
+        </a>
       </div>
-    ) : (
-      <div class="bg-white rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm overflow-hidden">
+
+      <!-- Table View -->
+      {currentList.length === 0 ? (
+        <div class="p-12 text-center space-y-2">
+          <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto text-xl font-bold">
+            ✓
+          </div>
+          <h3 class="text-sm font-bold text-[#0F172A]">Tidak ada data</h3>
+          <p class="text-xs text-gray-400">Semua transaksi dalam kategori ini telah diproses.</p>
+        </div>
+      ) : (
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
             <thead>
-              <tr class="bg-[#F6F5FF] border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                <th class="py-3.5 px-4">Kode Transaksi</th>
+              <tr class="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider text-[11px] bg-[#F8FAFC]">
+                <th class="py-3.5 px-4 w-10">
+                  <input type="checkbox" class="rounded text-indigo-600 focus:ring-0 w-3.5 h-3.5" />
+                </th>
+                <th class="py-3.5 px-4">Tracking no</th>
                 <th class="py-3.5 px-4">Mahasiswa</th>
                 <th class="py-3.5 px-4">Barang Inventaris</th>
                 <th class="py-3.5 px-4">Batas / Status</th>
                 <th class="py-3.5 px-4">Denda</th>
-                <th class="py-3.5 px-4 text-right">Tindakan Petugas</th>
+                <th class="py-3.5 px-4 text-right">Tindakan</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody class="divide-y divide-gray-50">
               {currentList.map((b) => (
-                <tr class="hover:bg-gray-50/80 transition">
-                  <td class="py-4 px-4 font-mono font-bold text-indigo-700">
-                    <a href={`/riwayat/${b.borrowingCode}`} target="_blank" class="hover:underline flex items-center gap-1">
-                      <span>{b.borrowingCode}</span>
-                      <span class="text-[10px] text-gray-400">↗</span>
+                <tr class="hover:bg-[#F8FAFC] transition">
+                  <td class="py-3.5 px-4">
+                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-0 w-3.5 h-3.5" />
+                  </td>
+                  <td class="py-3.5 px-4 font-mono font-bold text-[#3B3FD9]">
+                    <a href={`/riwayat/${b.borrowingCode}`} target="_blank" class="hover:underline">
+                      #{b.borrowingCode}
                     </a>
                   </td>
-                  <td class="py-4 px-4">
-                    <span class="font-bold text-[#1E1B3A] block">{b.user.name}</span>
+                  <td class="py-3.5 px-4">
+                    <span class="font-bold text-[#0F172A] block">{b.user.name}</span>
                     <span class="text-[10px] text-gray-400 font-mono">{b.user.nim_nip}</span>
                   </td>
-                  <td class="py-4 px-4">
-                    <span class="font-bold text-[#1E1B3A] block line-clamp-1 max-w-[220px]" title={b.item.name}>
-                      {b.item.name}
-                    </span>
-                    <span class="text-[10px] text-gray-400 font-mono">{b.item.itemCode} • {b.item.category}</span>
-                    {b.notes && (
-                      <span class="block text-[10px] text-gray-500 italic mt-0.5">"{b.notes}"</span>
-                    )}
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-2">
+                      <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                        <CategoryIcon category={b.item.category} size={14} />
+                      </div>
+                      <div>
+                        <span class="font-bold text-[#0F172A] block truncate max-w-[180px]" title={b.item.name}>
+                          {b.item.name}
+                        </span>
+                        <span class="text-[10px] text-gray-400 font-mono">{b.item.itemCode}</span>
+                      </div>
+                    </div>
                   </td>
-                  <td class="py-4 px-4 space-y-1">
+                  <td class="py-3.5 px-4 space-y-1">
                     <div class="flex items-center gap-1.5 flex-wrap">
                       <StatusBadge status={b.status} size="sm" />
                       <CountdownBadge dueDate={b.dueDate} status={b.status} />
                     </div>
-                    <span class="text-[10px] text-gray-500 block">
-                      Batas: {formatDate(b.dueDate)}
+                    <span class="text-[10px] text-gray-400 block font-medium">
+                      {formatDate(b.dueDate)}
                     </span>
                   </td>
-                  <td class="py-4 px-4">
+                  <td class="py-3.5 px-4">
                     {b.fineAmount > 0 ? (
-                      <div>
-                        <span class="font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
-                          {formatRupiah(b.fineAmount)}
-                        </span>
-                        <span class="text-[10px] text-gray-400 block mt-0.5">
-                          {b.finePaidAt ? '✓ Lunas' : 'Belum Lunas'}
-                        </span>
-                      </div>
+                      <span class={`font-bold ${b.finePaidAt ? 'text-emerald-700' : 'text-rose-600'}`}>
+                        {formatRupiah(b.fineAmount)} {b.finePaidAt ? '(Lunas)' : ''}
+                      </span>
                     ) : (
                       <span class="text-gray-400">Rp 0</span>
                     )}
                   </td>
-                  <td class="py-4 px-4 text-right">
+                  <td class="py-3.5 px-4 text-right">
                     {tab === 'pending' ? (
-                      <div class="inline-flex items-center gap-2">
-                        {/* Approve */}
+                      <div class="inline-flex items-center gap-1.5">
                         <form method="POST" action={`/api/borrowings/${b.id}/approve`}>
                           <button
                             type="submit"
-                            class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition"
+                            class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-[11px] transition cursor-pointer"
                           >
                             Setujui
                           </button>
                         </form>
-                        {/* Reject */}
                         <form
                           method="POST"
                           action={`/api/borrowings/${b.id}/reject`}
@@ -206,31 +211,28 @@ else if (tab === 'selesai') currentList = returnedList;
                         >
                           <button
                             type="submit"
-                            class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition"
+                            class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold text-[11px] transition cursor-pointer"
                           >
                             Tolak
                           </button>
                         </form>
                       </div>
                     ) : tab === 'aktif' ? (
-                      <div class="inline-flex items-center gap-2">
-                        {/* Return Item Form */}
+                      <div class="inline-flex items-center gap-1.5">
                         <form method="POST" action={`/api/borrowings/${b.id}/return`}>
                           <input type="hidden" name="markFinePaid" value="true" />
                           <button
                             type="submit"
-                            class="px-3 py-1.5 rounded-xl btn-sticker-primary text-xs font-bold"
+                            class="px-2.5 py-1 rounded-lg bg-indigo-50 text-[#3B3FD9] hover:bg-indigo-100 font-bold text-[11px] transition cursor-pointer"
                           >
-                            Konfirmasi Kembali
+                            Kembalikan
                           </button>
                         </form>
-
-                        {/* Pay Fine only */}
                         {b.fineAmount > 0 && !b.finePaidAt && (
                           <form method="POST" action={`/api/borrowings/${b.id}/pay-fine`}>
                             <button
                               type="submit"
-                              class="px-2.5 py-1.5 rounded-xl bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 font-bold text-xs transition"
+                              class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 hover:bg-amber-100 font-bold text-[11px] transition cursor-pointer"
                               title="Tandai Denda Telah Dibayar"
                             >
                               Bayar Denda
@@ -249,7 +251,23 @@ else if (tab === 'selesai') currentList = returnedList;
             </tbody>
           </table>
         </div>
+      )}
+
+      <!-- Pagination Footer -->
+      <div class="p-4 sm:px-6 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400 bg-white">
+        <span>Menampilkan 1-{currentList.length} dari {currentList.length} entri</span>
+        <div class="flex items-center gap-1 font-bold">
+          <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
+            ‹
+          </button>
+          <button class="w-7 h-7 rounded-lg flex items-center justify-center bg-[#3B3FD9] text-white shadow-xs">
+            1
+          </button>
+          <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
+            ›
+          </button>
+        </div>
       </div>
-    )}
+    </div>
   </div>
 </AdminLayout>

@@ -3,13 +3,17 @@ import AdminLayout from '../../components/layout/AdminLayout.astro';
 import { AdminVerification } from '../../components/scanner/AdminVerification';
 ---
 
-<AdminLayout title="Verifikasi QR Bukti Transaksi" activeNav="verifikasi">
+<AdminLayout title="Verifikasi QR Loket — SIPEMBAR Admin" activeNav="verifikasi">
   <div class="max-w-2xl mx-auto space-y-4">
     <div class="flex items-center justify-between">
-      <a href="/admin/dashboard" class="text-xs font-bold text-gray-500 hover:text-[#3B3FD9]">
-        ← Kembali ke Dashboard
+      <div class="flex items-center gap-2 text-xs text-gray-400">
+        <a href="/admin/dashboard" class="hover:text-gray-600">Dashboard</a>
+        <span>/</span>
+        <span class="text-gray-600 font-medium">Verifikasi QR Loket</span>
+      </div>
+      <a href="/admin/dashboard" class="text-xs font-bold text-gray-500 hover:text-[#3B3FD9] px-3 py-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition">
+        ← Kembali
       </a>
-      <span class="text-xs text-gray-400">Loket Layanan Mandiri</span>
     </div>
 
     <!-- Interactive Verification Island -->

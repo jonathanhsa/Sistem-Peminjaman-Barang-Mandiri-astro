@@ -4,23 +4,36 @@ import AdminLayout from '../../../components/layout/AdminLayout.astro';
 const error = Astro.url.searchParams.get('error');
 ---
 
-<AdminLayout title="Tambah Inventaris Baru" activeNav="barang">
-  <div class="max-w-xl mx-auto space-y-6">
+<AdminLayout title="Tambah Inventaris — SIPEMBAR Admin" activeNav="barang">
+  <div class="max-w-2xl mx-auto space-y-5">
+    
+    <!-- Top Breadcrumb & Header -->
     <div class="flex items-center justify-between">
-      <a href="/admin/barang" class="text-xs font-bold text-gray-500 hover:text-[#3B3FD9] flex items-center gap-1">
-        ← Kembali ke Daftar Inventaris
+      <div>
+        <div class="flex items-center gap-2 text-xs text-gray-400 mb-1">
+          <a href="/admin/dashboard" class="hover:text-gray-600">Dashboard</a>
+          <span>/</span>
+          <a href="/admin/barang" class="hover:text-gray-600">Inventaris</a>
+          <span>/</span>
+          <span class="text-gray-600 font-medium">Tambah Baru</span>
+        </div>
+        <h1 class="text-xl font-extrabold text-[#0F172A] tracking-tight">Formulir Tambah Inventaris</h1>
+      </div>
+
+      <a
+        href="/admin/barang"
+        class="text-xs font-bold text-gray-500 hover:text-[#3B3FD9] px-3 py-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition"
+      >
+        ← Kembali
       </a>
     </div>
 
-    <div class="bg-white rounded-3xl p-6 md:p-8 border-2 border-[#1E1B3A]/10 shadow-sm space-y-6">
-      <div>
-        <h1 class="text-xl font-bold font-display text-[#1E1B3A]">Tambah Barang Inventaris Baru</h1>
-        <p class="text-xs text-gray-500 mt-1">Daftarkan buku, perangkat laboratorium, atau inventaris kegiatan kampus</p>
-      </div>
-
+    <!-- Form Card -->
+    <div class="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-6">
+      
       {error && (
-        <div class="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
-          {error}
+        <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
+          <span>⚠️ {error}</span>
         </div>
       )}
 
@@ -34,29 +47,29 @@ const error = Astro.url.searchParams.get('error');
             name="itemCode"
             type="text"
             required
-            placeholder="Contoh: LIB-NEW-111 atau LAB-CAM-004"
-            class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm font-mono tracking-wider focus:outline-none focus:border-[#3B3FD9] uppercase"
+            placeholder="Contoh: LIB-NEW-101 atau LAB-CAM-004"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs font-mono tracking-wider focus:outline-none focus:border-[#3B3FD9] focus:bg-white uppercase transition"
           />
-          <div class="flex items-center gap-2 mt-2">
+          <div class="flex items-center gap-2 mt-2 flex-wrap">
             <span class="text-[11px] text-gray-400">Pilihan cepat:</span>
             <button
               type="button"
               onclick="document.getElementById('itemCode').value='LIB-';"
-              class="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+              class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 cursor-pointer"
             >
-              LIB- (Buku)
+              LIB- (Perpustakaan)
             </button>
             <button
               type="button"
               onclick="document.getElementById('itemCode').value='LAB-';"
-              class="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+              class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 cursor-pointer"
             >
-              LAB- (Alat Lab)
+              LAB- (Laboratorium)
             </button>
             <button
               type="button"
               onclick="document.getElementById('itemCode').value='HMP-';"
-              class="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+              class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 cursor-pointer"
             >
               HMP- (Himpunan)
             </button>
@@ -65,15 +78,15 @@ const error = Astro.url.searchParams.get('error');
 
         <div>
           <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5" for="name">
-            Nama Barang
+            Nama Barang Inventaris
           </label>
           <input
             id="name"
             name="name"
             type="text"
             required
-            placeholder="Contoh: Buku Dasar Pemrograman Python"
-            class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+            placeholder="Contoh: Buku Artificial Intelligence & Deep Learning"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs focus:outline-none focus:border-[#3B3FD9] focus:bg-white transition"
           />
         </div>
 
@@ -85,7 +98,7 @@ const error = Astro.url.searchParams.get('error');
             <select
               id="category"
               name="category"
-              class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs focus:outline-none focus:border-[#3B3FD9] focus:bg-white transition cursor-pointer"
             >
               <option value="Perpustakaan">Perpustakaan</option>
               <option value="Lab Komputer">Lab Komputer</option>
@@ -104,32 +117,40 @@ const error = Astro.url.searchParams.get('error');
               min="0"
               value="5"
               required
-              class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs focus:outline-none focus:border-[#3B3FD9] focus:bg-white transition"
             />
           </div>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5" for="status">
-            Status Ketersediaan
+            Status Ketersediaan Awal
           </label>
           <select
             id="status"
             name="status"
-            class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#3B3FD9]"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs focus:outline-none focus:border-[#3B3FD9] focus:bg-white transition cursor-pointer"
           >
-            <option value="available">Tersedia (Bisa dipinjam)</option>
+            <option value="available">Tersedia (Siap Dipinjam)</option>
             <option value="maintenance">Maintenance / Perbaikan</option>
-            <option value="borrowed">Sedang Habis Dipinjam</option>
+            <option value="borrowed">Sedang Dipinjam</option>
           </select>
         </div>
 
-        <button
-          type="submit"
-          class="w-full py-4 px-6 btn-sticker-primary text-sm font-bold tracking-wide mt-2"
-        >
-          Simpan Barang ke Inventaris
-        </button>
+        <div class="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
+          <a
+            href="/admin/barang"
+            class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold transition"
+          >
+            Batal
+          </a>
+          <button
+            type="submit"
+            class="px-5 py-2.5 rounded-xl bg-[#3B3FD9] hover:bg-[#3235b8] text-white text-xs font-bold shadow-md shadow-indigo-500/20 transition cursor-pointer"
+          >
+            Simpan Barang ke Inventaris
+          </button>
+        </div>
       </form>
     </div>
   </div>

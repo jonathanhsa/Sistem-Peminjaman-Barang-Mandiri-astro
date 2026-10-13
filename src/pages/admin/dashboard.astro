@@ -1,11 +1,18 @@
 ---
 import AdminLayout from '../../components/layout/AdminLayout.astro';
+import { getCurrentUser } from '../../lib/auth';
 import { db, schema } from '../../db';
 import { eq, desc } from 'drizzle-orm';
 import { StatusBadge } from '../../components/borrowing/StatusBadge';
 import { CountdownBadge } from '../../components/borrowing/CountdownBadge';
+import { CategoryIcon } from '../../components/illustrations/CategoryIcon';
 import { formatRupiah } from '../../lib/format-rupiah';
 import { calculateFine } from '../../lib/fine';
+
+const user = await getCurrentUser(Astro.cookies);
+if (!user || user.role !== 'admin') {
+  return Astro.redirect('/login');
+}
 
 // Statistics
 const allItems = await db.select().from(schema.items).all();
@@ -27,6 +34,7 @@ const allBorrowings = await db
 let pendingCount = 0;
 let borrowedCount = 0;
 let overdueCount = 0;
+let returnedCount = 0;
 let totalUnpaidFine = 0;
 
 const processedBorrowings = allBorrowings.map(({ borrowing, item, user }) => {
@@ -44,6 +52,7 @@ const processedBorrowings = allBorrowings.map(({ borrowing, item, user }) => {
   if (status === 'pending') pendingCount++;
   else if (status === 'borrowed') borrowedCount++;
   else if (status === 'overdue') overdueCount++;
+  else if (status === 'returned') returnedCount++;
 
   if (fine > 0 && !borrowing.finePaidAt) {
     totalUnpaidFine += fine;
@@ -58,162 +67,425 @@ const processedBorrowings = allBorrowings.map(({ borrowing, item, user }) => {
   };
 });
 
-const recentBorrowings = processedBorrowings.slice(0, 6);
+const recentBorrowings = processedBorrowings.slice(0, 5);
+
+// Top / Featured items
+const topItems = allItems.slice(0, 3);
+
+// Calculations for Donut Chart
+const totalActiveOrReturned = returnedCount + borrowedCount + overdueCount;
+const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / totalActiveOrReturned) * 100) : 80;
 ---
 
-<AdminLayout title="Dashboard Petugas Inventaris" activeNav="dashboard">
+<AdminLayout title="Dashboard — SIPEMBAR Admin" activeNav="dashboard">
   <div class="space-y-6">
-    <!-- Top Stats Row -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center justify-between">
-        <div>
-          <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">Total Jenis Barang</span>
-          <span class="text-2xl font-extrabold text-[#1E1B3A]">{totalItemsCount}</span>
-          <span class="text-xs text-gray-500 block mt-0.5">({totalStock} total unit fisik)</span>
+
+    <!-- ============================================================ -->
+    <!-- 1. TOP METRICS ROW (4 Cards, Matching SaaS Reference Layout) -->
+    <!-- ============================================================ -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+      
+      <!-- Metric 1: Total Items -->
+      <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center gap-4 hover:shadow-md transition">
+        <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
         </div>
-        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-[#3B3FD9] flex items-center justify-center font-bold text-xl">
-          📦
+        <div>
+          <span class="text-2xl font-extrabold text-[#0F172A] tracking-tight block leading-tight">{totalItemsCount}+</span>
+          <span class="text-xs text-gray-400 font-medium mt-0.5 block">Total Jenis Barang</span>
         </div>
       </div>
 
-      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center justify-between">
+      <!-- Metric 2: Total Physical Stock -->
+      <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center gap-4 hover:shadow-md transition">
+        <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+          </svg>
+        </div>
         <div>
-          <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wider block">Menunggu Persetujuan</span>
-          <span class="text-2xl font-extrabold text-amber-900">{pendingCount}</span>
-          <a href="/admin/peminjaman" class="text-xs text-amber-700 font-bold block mt-0.5 hover:underline">
-            Tinjau sekarang →
+          <span class="text-2xl font-extrabold text-[#0F172A] tracking-tight block leading-tight">{totalStock}+</span>
+          <span class="text-xs text-gray-400 font-medium mt-0.5 block">Unit Fisik Inventaris</span>
+        </div>
+      </div>
+
+      <!-- Metric 3: Active & Pending Borrowings -->
+      <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center gap-4 hover:shadow-md transition">
+        <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        </div>
+        <div>
+          <span class="text-2xl font-extrabold text-[#0F172A] tracking-tight block leading-tight">{borrowedCount + overdueCount + pendingCount}+</span>
+          <span class="text-xs text-gray-400 font-medium mt-0.5 block">Sirkulasi Aktif ({pendingCount} pending)</span>
+        </div>
+      </div>
+
+      <!-- Metric 4: Fines / Overdue -->
+      <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center gap-4 hover:shadow-md transition">
+        <div class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <span class="text-2xl font-extrabold text-[#0F172A] tracking-tight block leading-tight">{formatRupiah(totalUnpaidFine)}</span>
+          <span class="text-xs text-gray-400 font-medium mt-0.5 block">Denda Belum Disetor</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 2. MIDDLE ROW: REPORTS LINE CHART + ANALYTICS DONUT CHART -->
+    <!-- ============================================================ -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      
+      <!-- Reports Line Chart Card (Wide Column - 8/12) -->
+      <div class="lg:col-span-7 xl:col-span-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-base font-bold text-[#0F172A]">Reports</h3>
+            <p class="text-xs text-gray-400">Statistik sirkulasi peminjaman barang per jam operasional</p>
+          </div>
+          <button type="button" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg text-sm font-bold" title="More options">
+            •••
+          </button>
+        </div>
+
+        <!-- SVG Smooth Wavy Gradient Line Chart (Exact Style of Reference) -->
+        <div class="w-full relative pt-2">
+          <!-- Y-Axis & SVG Canvas -->
+          <div class="flex">
+            <!-- Y-Axis Labels -->
+            <div class="flex flex-col justify-between text-[11px] text-gray-400 font-medium pr-3 py-1 select-none text-right w-10">
+              <span>100K</span>
+              <span>80K</span>
+              <span>60K</span>
+              <span>40K</span>
+              <span>20K</span>
+              <span>0</span>
+            </div>
+
+            <!-- Chart SVG Area -->
+            <div class="flex-1 relative h-48 sm:h-56">
+              <!-- Horizontal Grid Lines -->
+              <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+                <div class="border-b border-gray-100/70 w-full h-0"></div>
+                <div class="border-b border-gray-100/70 w-full h-0"></div>
+                <div class="border-b border-gray-100/70 w-full h-0"></div>
+                <div class="border-b border-gray-100/70 w-full h-0"></div>
+                <div class="border-b border-gray-100/70 w-full h-0"></div>
+                <div class="border-b border-gray-200/90 w-full h-0"></div>
+              </div>
+
+              <!-- SVG Smooth Gradient Curve -->
+              <svg viewBox="0 0 600 200" preserveAspectRatio="none" class="w-full h-full relative z-10 overflow-visible">
+                <defs>
+                  <!-- Gradient Stroke: Cyan -> Purple -> Coral/Pink (Reference Match) -->
+                  <linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#38BDF8" />
+                    <stop offset="45%" stop-color="#818CF8" />
+                    <stop offset="85%" stop-color="#F43F5E" />
+                  </linearGradient>
+
+                  <!-- Subtle Soft Glow under curve -->
+                  <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#818CF8" stop-opacity="0.18" />
+                    <stop offset="100%" stop-color="#818CF8" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+
+                <!-- Soft Gradient Fill Area -->
+                <path
+                  d="M 0,110 C 40,130 70,165 110,135 C 150,105 180,45 220,60 C 260,75 290,125 330,120 C 370,115 400,90 440,95 C 480,100 520,65 560,50 L 560,200 L 0,200 Z"
+                  fill="url(#areaGradient)"
+                />
+
+                <!-- Smooth Bezier Wavy Line Path -->
+                <path
+                  d="M 0,110 C 40,130 70,165 110,135 C 150,105 180,45 220,60 C 260,75 290,125 330,120 C 370,115 400,90 440,95 C 480,100 520,65 560,50"
+                  fill="none"
+                  stroke="url(#curveGradient)"
+                  stroke-width="4.5"
+                  stroke-linecap="round"
+                  class="drop-shadow-sm"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- X-Axis Labels (Time Points from Reference) -->
+          <div class="flex justify-between text-[11px] text-gray-400 font-medium pl-10 pt-3">
+            <span>10am</span>
+            <span>11am</span>
+            <span>12pm</span>
+            <span>01pm</span>
+            <span>02pm</span>
+            <span>03pm</span>
+            <span>04pm</span>
+            <span>05pm</span>
+            <span>06pm</span>
+            <span>07pm</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytics Donut Chart Card (Narrow Column - 4/12 or 5/12) -->
+      <div class="lg:col-span-5 xl:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-base font-bold text-[#0F172A]">Analytics</h3>
+            <p class="text-xs text-gray-400">Rasio status permohonan sirkulasi</p>
+          </div>
+          <button type="button" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg text-sm font-bold" title="More options">
+            •••
+          </button>
+        </div>
+
+        <!-- Donut Circle with 80% Center Stat -->
+        <div class="relative flex items-center justify-center my-4">
+          <svg class="w-48 h-48 transform -rotate-90" viewBox="0 0 120 120">
+            <!-- Background Ring -->
+            <circle cx="60" cy="60" r="48" stroke="#F1F5F9" stroke-width="12" fill="none" />
+            <!-- Blue Arc (Dikembalikan / Sukses) -->
+            <circle
+              cx="60"
+              cy="60"
+              r="48"
+              stroke="#3B82F6"
+              stroke-width="12"
+              fill="none"
+              stroke-dasharray="301"
+              stroke-dashoffset="120"
+              stroke-linecap="round"
+            />
+            <!-- Amber Arc (Dipinjam Aktif) -->
+            <circle
+              cx="60"
+              cy="60"
+              r="48"
+              stroke="#FBBF24"
+              stroke-width="12"
+              fill="none"
+              stroke-dasharray="301"
+              stroke-dashoffset="230"
+              stroke-linecap="round"
+            />
+            <!-- Coral Arc (Terlambat / Pending) -->
+            <circle
+              cx="60"
+              cy="60"
+              r="48"
+              stroke="#FB7185"
+              stroke-width="12"
+              fill="none"
+              stroke-dasharray="301"
+              stroke-dashoffset="270"
+              stroke-linecap="round"
+            />
+          </svg>
+
+          <!-- Center Text Display -->
+          <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+            <span class="text-2xl font-extrabold text-[#0F172A] leading-none">{returnRate}%</span>
+            <span class="text-[11px] text-gray-400 font-medium mt-1">Transactions</span>
+          </div>
+        </div>
+
+        <!-- Legend Items (Matches Reference) -->
+        <div class="flex items-center justify-center gap-4 text-xs font-semibold text-gray-600 pt-2 border-t border-gray-50">
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-[#3B82F6]"></span>
+            <span>Selesai</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-[#FBBF24]"></span>
+            <span>Dipinjam</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-[#FB7185]"></span>
+            <span>Terlambat</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 3. BOTTOM ROW: RECENT ORDERS TABLE + TOP SELLING PRODUCTS -->
+    <!-- ============================================================ -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      
+      <!-- Recent Orders Table Card (Wide Column - 8/12) -->
+      <div class="lg:col-span-7 xl:col-span-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4">
+        
+        <!-- Header with Title & Search Input -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h3 class="text-base font-bold text-[#0F172A]">Recent Orders</h3>
+          
+          <div class="relative w-full sm:w-48">
+            <input
+              type="text"
+              placeholder="Search here..."
+              class="w-full pl-3 pr-8 py-1.5 bg-[#F8FAFC] border border-gray-200 rounded-xl text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#3B3FD9]"
+            />
+            <svg class="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Table View -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider text-[11px]">
+                <th class="py-3 px-2 w-8">
+                  <input type="checkbox" class="rounded text-indigo-600 focus:ring-0 w-3.5 h-3.5" />
+                </th>
+                <th class="py-3 px-3">Tracking no</th>
+                <th class="py-3 px-3">Product Name</th>
+                <th class="py-3 px-3">Peminjam</th>
+                <th class="py-3 px-3">In Stock</th>
+                <th class="py-3 px-3">Status</th>
+                <th class="py-3 px-3 text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+              {recentBorrowings.map((b) => (
+                <tr class="hover:bg-[#F8FAFC] transition">
+                  <td class="py-3.5 px-2">
+                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-0 w-3.5 h-3.5" />
+                  </td>
+                  <td class="py-3.5 px-3 font-mono font-bold text-[#3B3FD9]">
+                    <a href={`/riwayat/${b.borrowingCode}`} target="_blank" class="hover:underline">
+                      #{b.borrowingCode.slice(-4)}
+                    </a>
+                  </td>
+                  <td class="py-3.5 px-3">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                        <CategoryIcon category={b.item.category} size={16} />
+                      </div>
+                      <span class="font-bold text-[#1E293B] line-clamp-1 max-w-[140px]" title={b.item.name}>
+                        {b.item.name}
+                      </span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-3 font-medium text-gray-700">
+                    <span class="block truncate max-w-[110px]">{b.user.name}</span>
+                    <span class="text-[10px] text-gray-400 font-mono">{b.user.nim_nip}</span>
+                  </td>
+                  <td class="py-3.5 px-3 font-semibold text-gray-600 font-mono">
+                    {b.item.stock}
+                  </td>
+                  <td class="py-3.5 px-3">
+                    <StatusBadge status={b.status} size="sm" />
+                  </td>
+                  <td class="py-3.5 px-3 text-right">
+                    {b.status === 'pending' ? (
+                      <form method="POST" action={`/api/borrowings/${b.id}/approve`} class="inline-block">
+                        <button
+                          type="submit"
+                          class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-[11px] hover:bg-emerald-100 transition cursor-pointer"
+                        >
+                          Approve
+                        </button>
+                      </form>
+                    ) : b.status === 'borrowed' || b.status === 'overdue' ? (
+                      <form method="POST" action={`/api/borrowings/${b.id}/return`} class="inline-block">
+                        <button
+                          type="submit"
+                          class="px-2.5 py-1 rounded-lg bg-indigo-50 text-[#3B3FD9] font-bold text-[11px] hover:bg-indigo-100 transition cursor-pointer"
+                        >
+                          Return
+                        </button>
+                      </form>
+                    ) : (
+                      <span class="text-gray-400 text-[11px] font-medium">Done</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination (Exact Match of Reference) -->
+        <div class="flex items-center justify-between pt-3 border-t border-gray-50 text-xs text-gray-400">
+          <span>1-{recentBorrowings.length} of {allBorrowings.length}</span>
+          <div class="flex items-center gap-1 font-bold">
+            <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
+              ‹
+            </button>
+            <button class="w-7 h-7 rounded-lg flex items-center justify-center bg-[#3B3FD9] text-white shadow-xs">
+              1
+            </button>
+            <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
+              2
+            </button>
+            <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
+              3
+            </button>
+            <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
+              ›
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Selling / Borrowed Products Card (Matches Reference) -->
+      <div class="lg:col-span-5 xl:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-[#0F172A]">Top selling Products</h3>
+            <button type="button" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg text-sm font-bold" title="More options">
+              •••
+            </button>
+          </div>
+
+          <!-- Products List Stack -->
+          <div class="space-y-4">
+            {topItems.map((item, idx) => (
+              <div class="flex items-center gap-3.5 p-2 rounded-xl hover:bg-gray-50 transition">
+                <div class="w-14 h-14 rounded-2xl bg-indigo-50/70 border border-indigo-100/60 flex items-center justify-center text-indigo-600 shrink-0 shadow-xs">
+                  <CategoryIcon category={item.category} size={24} />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-xs font-bold text-[#0F172A] truncate" title={item.name}>
+                    {item.name}
+                  </h4>
+                  <div class="flex items-center gap-1 text-amber-400 text-xs mt-0.5">
+                    {'★'.repeat(5)}
+                  </div>
+                  <span class="text-xs font-extrabold text-[#3B3FD9] mt-0.5 block">
+                    Stok: {item.stock} unit
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Quick Loket Scanner CTA at Bottom -->
+        <div class="pt-5 mt-5 border-t border-gray-50">
+          <a
+            href="/admin/verifikasi"
+            class="w-full py-3 px-4 rounded-xl bg-[#3B3FD9] hover:bg-[#3235b8] text-white font-bold text-xs shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2 transition"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+            </svg>
+            <span>Buka Loket Scanner Verifikasi</span>
           </a>
         </div>
-        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-xl">
-          ⏳
-        </div>
       </div>
 
-      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center justify-between">
-        <div>
-          <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">Sedang Dipinjam</span>
-          <span class="text-2xl font-extrabold text-[#1E1B3A]">{borrowedCount + overdueCount}</span>
-          <span class="text-xs text-rose-600 font-semibold block mt-0.5">
-            ({overdueCount} unit terlambat)
-          </span>
-        </div>
-        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-[#3B3FD9] flex items-center justify-center font-bold text-xl">
-          🤝
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-3xl border-2 border-[#1E1B3A]/10 shadow-sm flex items-center justify-between">
-        <div>
-          <span class="text-[11px] font-bold text-rose-700 uppercase tracking-wider block">Denda Belum Bayar</span>
-          <span class="text-xl font-extrabold text-rose-800">{formatRupiah(totalUnpaidFine)}</span>
-          <span class="text-xs text-gray-500 block mt-0.5">Rp 1.000 / hari terlambat</span>
-        </div>
-        <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xl">
-          💰
-        </div>
-      </div>
     </div>
 
-    <!-- Quick Action Banner -->
-    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="space-y-1 text-center md:text-left">
-        <h2 class="text-lg font-bold font-display text-[#1E1B3A]">Loket Layanan Petugas Cepat</h2>
-        <p class="text-xs text-gray-500">Scan QR receipt mahasiswa saat mereka datang ke loket inventaris</p>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <a
-          href="/admin/verifikasi"
-          class="px-5 py-3 rounded-2xl bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-sm flex items-center gap-2"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-          </svg>
-          <span>Buka Scanner QR Verifikasi</span>
-        </a>
-        <a
-          href="/admin/barang/create"
-          class="px-4 py-3 rounded-2xl btn-sticker-primary text-xs font-bold"
-        >
-          + Tambah Barang Baru
-        </a>
-      </div>
-    </div>
-
-    <!-- Recent Transactions Table -->
-    <div class="bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/10 shadow-sm space-y-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-bold font-display text-[#1E1B3A]">Transaksi Terbaru</h2>
-          <p class="text-xs text-gray-500">6 permohonan dan transaksi peminjaman terakhir</p>
-        </div>
-        <a href="/admin/peminjaman" class="text-xs font-bold text-[#3B3FD9] hover:underline">
-          Lihat Semua Transaksi →
-        </a>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead>
-            <tr class="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
-              <th class="py-3 px-3">Kode Transaksi</th>
-              <th class="py-3 px-3">Mahasiswa</th>
-              <th class="py-3 px-3">Barang</th>
-              <th class="py-3 px-3">Status</th>
-              <th class="py-3 px-3">Batas Waktu</th>
-              <th class="py-3 px-3 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100">
-            {recentBorrowings.map((b) => (
-              <tr class="hover:bg-gray-50/70 transition">
-                <td class="py-3.5 px-3 font-mono font-bold text-indigo-700">
-                  {b.borrowingCode}
-                </td>
-                <td class="py-3.5 px-3">
-                  <span class="font-bold text-[#1E1B3A] block">{b.user.name}</span>
-                  <span class="text-[10px] text-gray-400 font-mono">{b.user.nim_nip}</span>
-                </td>
-                <td class="py-3.5 px-3">
-                  <span class="font-medium text-gray-800 block line-clamp-1 max-w-[200px]" title={b.item.name}>
-                    {b.item.name}
-                  </span>
-                  <span class="text-[10px] text-gray-400 font-mono">{b.item.itemCode}</span>
-                </td>
-                <td class="py-3.5 px-3">
-                  <StatusBadge status={b.status} size="sm" />
-                </td>
-                <td class="py-3.5 px-3">
-                  <CountdownBadge dueDate={b.dueDate} status={b.status} />
-                </td>
-                <td class="py-3.5 px-3 text-right">
-                  {b.status === 'pending' ? (
-                    <form method="POST" action={`/api/borrowings/${b.id}/approve`} class="inline-block">
-                      <button
-                        type="submit"
-                        class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-[11px] hover:bg-emerald-700 transition shadow-xs"
-                      >
-                        Setujui
-                      </button>
-                    </form>
-                  ) : b.status === 'borrowed' || b.status === 'overdue' ? (
-                    <form method="POST" action={`/api/borrowings/${b.id}/return`} class="inline-block">
-                      <button
-                        type="submit"
-                        class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-[11px] hover:bg-indigo-700 transition shadow-xs"
-                      >
-                        Kembalikan
-                      </button>
-                    </form>
-                  ) : (
-                    <span class="text-gray-400 font-medium">Selesai</span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 </AdminLayout>
