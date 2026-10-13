@@ -21,6 +21,11 @@ html {
   scrollbar-gutter: stable;
   overflow-y: scroll;
 }
+/* Disable default browser password reveal on Edge/IE to prevent conflict with custom eye button */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
 body {
   background-color: var(--color-paper);
   color: var(--color-ink);
