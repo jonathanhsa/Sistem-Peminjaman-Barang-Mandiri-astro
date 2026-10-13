@@ -18,7 +18,7 @@ const error = Astro.url.searchParams.get('error');
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign in — SIPEMBAR Kampus</title>
+    <title>Masuk — SIPEMBAR Kampus</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -112,7 +112,7 @@ const error = Astro.url.searchParams.get('error');
           <!-- Title & Coral Accent Line -->
           <div data-animate="fade-up" class="mb-7">
             <h1 class="text-3xl sm:text-4xl font-extrabold text-[#1E1B3A] tracking-tight font-display">
-              Sign in
+              Masuk
             </h1>
             <!-- Accent Coral Underline Bar (Matches reference mockup) -->
             <div class="w-11 h-1 bg-[#FF6B6B] rounded-full mt-2"></div>
@@ -159,7 +159,7 @@ const error = Astro.url.searchParams.get('error');
             <!-- Password Input Field with Toggle -->
             <div class="space-y-1.5">
               <label for="password" class="block text-xs font-semibold text-gray-600">
-                Password
+                Kata Sandi
               </label>
               <div class="underline-input-group flex items-center gap-3 border-b-2 border-gray-200 py-2.5">
                 <!-- Lock Icon -->
@@ -171,7 +171,7 @@ const error = Astro.url.searchParams.get('error');
                   name="password"
                   type="password"
                   required
-                  placeholder="enter your password"
+                  placeholder="masukkan kata sandi Anda"
                   class="flex-1 min-w-0 bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
                   autocomplete="current-password"
                 />
@@ -201,7 +201,7 @@ const error = Astro.url.searchParams.get('error');
                   name="remember"
                   class="w-4 h-4 rounded text-[#FF6B6B] accent-[#FF6B6B] border-gray-300 focus:ring-[#FF6B6B] cursor-pointer"
                 />
-                <span>Remember Me</span>
+                <span>Ingat Saya</span>
               </label>
               
               <button
@@ -209,7 +209,7 @@ const error = Astro.url.searchParams.get('error');
                 id="forgot-password-btn"
                 class="text-[#FF6B6B] hover:text-[#e85b4b] font-semibold transition-colors focus:outline-none cursor-pointer"
               >
-                Forgot Password?
+                Lupa Kata Sandi?
               </button>
             </div>
 
@@ -220,16 +220,16 @@ const error = Astro.url.searchParams.get('error');
                 id="submit-btn"
                 class="w-full py-3.5 px-6 btn-coral rounded-full text-sm font-bold tracking-wide flex items-center justify-center gap-2 transition"
               >
-                <span>Login</span>
+                <span>Masuk</span>
               </button>
             </div>
           </form>
 
           <!-- Sign Up Link (Footer of Form) -->
           <div class="mt-8 text-center text-xs text-gray-500">
-            <span>Don't have an Account ? </span>
+            <span>Belum punya akun? </span>
             <a href="/register" class="text-[#FF6B6B] font-bold hover:underline transition-colors">
-              Sign up
+              Daftar Sekarang
             </a>
           </div>
 

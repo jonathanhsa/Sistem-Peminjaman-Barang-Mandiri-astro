@@ -8,7 +8,7 @@ interface Props {
   activeNav?: 'dashboard' | 'barang' | 'peminjaman' | 'verifikasi' | 'laporan' | 'test-barcode';
 }
 
-const { title = 'Admin Dashboard — SIPEMBAR', activeNav = 'dashboard' } = Astro.props;
+const { title = 'Dasbor Admin — SIPEMBAR', activeNav = 'dashboard' } = Astro.props;
 
 const user = await getCurrentUser(Astro.cookies);
 if (!user) {
@@ -59,7 +59,7 @@ if (user.role !== 'admin') {
             </div>
             <div class="hidden lg:block">
               <span class="text-base font-extrabold tracking-tight text-[#1E1B3A] block leading-none">SIPEMBAR</span>
-              <span class="text-[10px] font-bold text-[#FF6B6B] uppercase tracking-wider">Admin Base</span>
+              <span class="text-[10px] font-bold text-[#FF6B6B] uppercase tracking-wider">Panel Admin</span>
             </div>
           </a>
         </div>
@@ -74,14 +74,14 @@ if (user.role !== 'admin') {
                 ? 'bg-[#FFF0F0] text-[#FF6B6B] shadow-xs'
                 : 'text-gray-500 hover:bg-[#FFF0F0]/50 hover:text-[#FF6B6B]'
             }`}
-            title="Dashboard"
+            title="Dasbor"
           >
             <div class={`w-5 h-5 flex items-center justify-center shrink-0 ${activeNav === 'dashboard' ? 'text-[#FF6B6B]' : 'text-gray-400 group-hover:text-[#FF6B6B]'}`}>
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
               </svg>
             </div>
-            <span class="hidden lg:inline font-semibold">Dashboard</span>
+            <span class="hidden lg:inline font-semibold">Dasbor</span>
           </a>
 
           <!-- 2. Barang -->
@@ -231,7 +231,7 @@ if (user.role !== 'admin') {
             </svg>
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Cari..."
               class="w-full pl-10 pr-4 py-2 bg-[#F8FAFC] border border-gray-200/80 rounded-xl text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#FF6B6B] focus:bg-white transition"
             />
           </div>
@@ -277,10 +277,6 @@ if (user.role !== 'admin') {
         <slot />
       </main>
 
-      <!-- Professional Minimal Footer (Matches Reference) -->
-      <footer class="py-5 px-6 sm:px-8 text-center text-xs text-gray-400 border-t border-gray-100 bg-white/50">
-        <span>SIPEMBAR Kampus • Sistem Peminjaman Barang Mandiri</span>
-      </footer>
     </div>
 
     <!-- Mobile Slideover Drawer -->
@@ -304,7 +300,7 @@ if (user.role !== 'admin') {
 
           <nav class="mt-4 space-y-1">
             <a href="/admin/dashboard" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'dashboard' ? 'bg-[#FFF0F0] text-[#FF6B6B]' : 'text-gray-600'}`}>
-              Dashboard
+              Dasbor
             </a>
             <a href="/admin/barang" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'barang' ? 'bg-[#FFF0F0] text-[#FF6B6B]' : 'text-gray-600'}`}>
               Kelola Inventaris

@@ -77,20 +77,20 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
 
 // Hourly traffic stats for Reports (realistic distribution per operational hour)
 const hourlyStats = [
-  { hour: '10am', value: 25, count: '12 unit' },
-  { hour: '11am', value: 42, count: '20 unit' },
-  { hour: '12pm', value: 78, count: '38 unit' },
-  { hour: '01pm', value: 52, count: '26 unit' },
-  { hour: '02pm', value: 85, count: '44 unit' },
-  { hour: '03pm', value: 48, count: '24 unit' },
-  { hour: '04pm', value: 38, count: '18 unit' },
-  { hour: '05pm', value: 64, count: '32 unit' },
-  { hour: '06pm', value: 32, count: '16 unit' },
-  { hour: '07pm', value: 18, count: '8 unit' },
+  { hour: '10:00', value: 25, count: '12 unit' },
+  { hour: '11:00', value: 42, count: '20 unit' },
+  { hour: '12:00', value: 78, count: '38 unit' },
+  { hour: '13:00', value: 52, count: '26 unit' },
+  { hour: '14:00', value: 85, count: '44 unit' },
+  { hour: '15:00', value: 48, count: '24 unit' },
+  { hour: '16:00', value: 38, count: '18 unit' },
+  { hour: '17:00', value: 64, count: '32 unit' },
+  { hour: '18:00', value: 32, count: '16 unit' },
+  { hour: '19:00', value: 18, count: '8 unit' },
 ];
 ---
 
-<AdminLayout title="Dashboard — SIPEMBAR Admin" activeNav="dashboard">
+<AdminLayout title="Dasbor — SIPEMBAR Admin" activeNav="dashboard">
   <div class="space-y-6">
 
     <!-- ============================================================ -->
@@ -133,7 +133,7 @@ const hourlyStats = [
         </div>
         <div>
           <span class="text-2xl font-extrabold text-[#1E1B3A] tracking-tight block leading-tight">{borrowedCount + overdueCount + pendingCount}+</span>
-          <span class="text-xs text-gray-400 font-medium mt-0.5 block">Sirkulasi Aktif ({pendingCount} pending)</span>
+          <span class="text-xs text-gray-400 font-medium mt-0.5 block">Sirkulasi Aktif ({pendingCount} menunggu)</span>
         </div>
       </div>
 
@@ -161,7 +161,7 @@ const hourlyStats = [
       <div class="lg:col-span-7 xl:col-span-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Reports</h3>
+            <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Laporan Sirkulasi</h3>
             <p class="text-xs text-gray-400">Statistik sirkulasi peminjaman barang per jam operasional</p>
           </div>
           <div class="flex items-center gap-2">
@@ -231,10 +231,10 @@ const hourlyStats = [
       <div class="lg:col-span-5 xl:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between">
         <div class="flex items-center justify-between mb-3">
           <div>
-            <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Analytics</h3>
+            <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Analisis Sirkulasi</h3>
             <p class="text-xs text-gray-400">Rasio status permohonan sirkulasi</p>
           </div>
-          <button type="button" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg text-sm font-bold" title="More options">
+          <button type="button" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg text-sm font-bold" title="Opsi lainnya">
             •••
           </button>
         </div>
@@ -285,7 +285,7 @@ const hourlyStats = [
           <!-- Center Text Display -->
           <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
             <span class="text-2xl font-extrabold text-[#1E1B3A] leading-none">{returnRate}%</span>
-            <span class="text-[11px] text-gray-400 font-medium mt-1">Transactions</span>
+            <span class="text-[11px] text-gray-400 font-medium mt-1">Transaksi</span>
           </div>
         </div>
 
@@ -318,12 +318,12 @@ const hourlyStats = [
         
         <!-- Header with Title & Search Input -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Recent Orders</h3>
+          <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Peminjaman Terbaru</h3>
           
-          <div class="relative w-full sm:w-48">
+          <div class="relative w-full sm:w-56">
             <input
               type="text"
-              placeholder="Search here..."
+              placeholder="Cari peminjaman di sini..."
               class="w-full pl-3 pr-8 py-1.5 bg-[#F8FAFC] border border-gray-200 rounded-xl text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#FF6B6B]"
             />
             <svg class="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -340,10 +340,10 @@ const hourlyStats = [
                 <th class="py-3 px-2 w-8">
                   <input type="checkbox" class="rounded accent-[#FF6B6B] focus:ring-0 w-3.5 h-3.5" />
                 </th>
-                <th class="py-3 px-3">Tracking no</th>
-                <th class="py-3 px-3">Product Name</th>
+                <th class="py-3 px-3">Kode Pinjam</th>
+                <th class="py-3 px-3">Nama Barang</th>
                 <th class="py-3 px-3">Peminjam</th>
-                <th class="py-3 px-3">In Stock</th>
+                <th class="py-3 px-3">Stok</th>
                 <th class="py-3 px-3">Status</th>
                 <th class="py-3 px-3 text-right">Aksi</th>
               </tr>
@@ -386,7 +386,7 @@ const hourlyStats = [
                           type="submit"
                           class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-[11px] hover:bg-emerald-100 transition cursor-pointer"
                         >
-                          Approve
+                          Setujui
                         </button>
                       </form>
                     ) : b.status === 'borrowed' || b.status === 'overdue' ? (
@@ -395,11 +395,11 @@ const hourlyStats = [
                           type="submit"
                           class="px-2.5 py-1 rounded-lg bg-[#FFF0F0] text-[#FF6B6B] hover:bg-[#FFE5E5] font-bold text-[11px] transition cursor-pointer"
                         >
-                          Return
+                          Kembalikan
                         </button>
                       </form>
                     ) : (
-                      <span class="text-gray-400 text-[11px] font-medium">Done</span>
+                      <span class="text-gray-400 text-[11px] font-medium">Selesai</span>
                     )}
                   </td>
                 </tr>
@@ -410,7 +410,7 @@ const hourlyStats = [
 
         <!-- Pagination -->
         <div class="flex items-center justify-between pt-3 border-t border-gray-50 text-xs text-gray-400">
-          <span>1-{recentBorrowings.length} of {allBorrowings.length}</span>
+          <span>1-{recentBorrowings.length} dari {allBorrowings.length}</span>
           <div class="flex items-center gap-1 font-bold">
             <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
               ‹
@@ -435,8 +435,8 @@ const hourlyStats = [
       <div class="lg:col-span-5 xl:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Top selling Products</h3>
-            <button type="button" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg text-sm font-bold" title="More options">
+            <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Barang Paling Populer</h3>
+            <button type="button" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg text-sm font-bold" title="Opsi lainnya">
               •••
             </button>
           </div>

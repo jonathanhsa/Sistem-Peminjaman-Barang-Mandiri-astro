@@ -66,7 +66,7 @@ export const AdminVerification: React.FC = () => {
             origin: { y: 0.6 },
           });
         } catch {}
-        setActionSuccess('Pengembalian barang berhasil dicatat! Status telah diperbarui menjadi "returned".');
+        setActionSuccess('Pengembalian barang berhasil dicatat! Status telah diperbarui menjadi selesai dikembalikan.');
         fetchTransaction(transaction.borrowing_code);
       }
     } catch (err: any) {
@@ -289,7 +289,7 @@ export const AdminVerification: React.FC = () => {
                   className="w-full py-3 px-4 rounded-xl bg-[#3B3FD9] hover:bg-[#3235b8] text-white font-bold text-xs shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>Konfirmasi Pengembalian Barang (Status Returned)</span>
+                  <span>Konfirmasi Penerimaan Pengembalian Barang</span>
                 </button>
               </div>
             )}
