@@ -35,12 +35,12 @@ if (user.role !== 'admin') {
     <script src="../../scripts/motion.ts"></script>
     <ClientRouter />
     <style>
-      body {
-        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      body, h1, h2, h3, h4, .font-display {
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
       }
     </style>
   </head>
-  <body class="bg-[#F6F7FB] text-[#1E293B] min-h-screen flex antialiased">
+  <body class="bg-[#F8F9FD] text-[#1E293B] min-h-screen flex antialiased">
     
     <!-- ============================================================ -->
     <!-- PROFESSIONAL DESKTOP SIDEBAR (Icon & Label, Sleek SaaS Style) -->
@@ -52,14 +52,14 @@ if (user.role !== 'admin') {
         <!-- Logo Header -->
         <div class="h-20 flex items-center px-4 lg:px-6 border-b border-gray-50">
           <a href="/admin/dashboard" class="flex items-center gap-3 group">
-            <div class="w-10 h-10 rounded-2xl bg-linear-to-tr from-[#3B3FD9] to-[#818CF8] flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition shrink-0">
-              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <div class="w-10 h-10 rounded-2xl bg-[#FF6B6B] flex items-center justify-center text-white shadow-md shadow-[#FF6B6B]/25 group-hover:scale-105 transition shrink-0">
+              <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <div class="hidden lg:block">
-              <span class="text-base font-extrabold tracking-tight text-[#0F172A] block leading-none">SIPEMBAR</span>
-              <span class="text-[10px] font-bold text-[#6366F1] uppercase tracking-wider">Admin Base</span>
+              <span class="text-base font-extrabold tracking-tight text-[#1E1B3A] block leading-none">SIPEMBAR</span>
+              <span class="text-[10px] font-bold text-[#FF6B6B] uppercase tracking-wider">Admin Base</span>
             </div>
           </a>
         </div>
@@ -71,12 +71,12 @@ if (user.role !== 'admin') {
             href="/admin/dashboard"
             class={`flex items-center gap-3.5 px-3 lg:px-3.5 py-3 rounded-xl text-xs font-bold transition-all group ${
               activeNav === 'dashboard'
-                ? 'bg-[#EEF2FF] text-[#3B3FD9] shadow-xs'
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-[#FFF0F0] text-[#FF6B6B] shadow-xs'
+                : 'text-gray-500 hover:bg-[#FFF0F0]/50 hover:text-[#FF6B6B]'
             }`}
             title="Dashboard"
           >
-            <div class={`w-5 h-5 flex items-center justify-center shrink-0 ${activeNav === 'dashboard' ? 'text-[#3B3FD9]' : 'text-gray-400 group-hover:text-gray-600'}`}>
+            <div class={`w-5 h-5 flex items-center justify-center shrink-0 ${activeNav === 'dashboard' ? 'text-[#FF6B6B]' : 'text-gray-400 group-hover:text-[#FF6B6B]'}`}>
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
               </svg>
@@ -89,12 +89,12 @@ if (user.role !== 'admin') {
             href="/admin/barang"
             class={`flex items-center gap-3.5 px-3 lg:px-3.5 py-3 rounded-xl text-xs font-bold transition-all group ${
               activeNav === 'barang'
-                ? 'bg-[#EEF2FF] text-[#3B3FD9] shadow-xs'
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-[#FFF0F0] text-[#FF6B6B] shadow-xs'
+                : 'text-gray-500 hover:bg-[#FFF0F0]/50 hover:text-[#FF6B6B]'
             }`}
             title="Kelola Barang"
           >
-            <div class={`w-5 h-5 flex items-center justify-center shrink-0 ${activeNav === 'barang' ? 'text-[#3B3FD9]' : 'text-gray-400 group-hover:text-gray-600'}`}>
+            <div class={`w-5 h-5 flex items-center justify-center shrink-0 ${activeNav === 'barang' ? 'text-[#FF6B6B]' : 'text-gray-400 group-hover:text-[#FF6B6B]'}`}>
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
               </svg>
@@ -107,12 +107,12 @@ if (user.role !== 'admin') {
             href="/admin/peminjaman"
             class={`flex items-center gap-3.5 px-3 lg:px-3.5 py-3 rounded-xl text-xs font-bold transition-all group ${
               activeNav === 'peminjaman'
-                ? 'bg-[#EEF2FF] text-[#3B3FD9] shadow-xs'
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-[#FFF0F0] text-[#FF6B6B] shadow-xs'
+                : 'text-gray-500 hover:bg-[#FFF0F0]/50 hover:text-[#FF6B6B]'
             }`}
             title="Peminjaman & ACC"
           >
-            <div class={`w-5 h-5 flex items-center justify-center shrink-0 ${activeNav === 'peminjaman' ? 'text-[#3B3FD9]' : 'text-gray-400 group-hover:text-gray-600'}`}>
+            <div class={`w-5 h-5 flex items-center justify-center shrink-0 ${activeNav === 'peminjaman' ? 'text-[#FF6B6B]' : 'text-gray-400 group-hover:text-[#FF6B6B]'}`}>
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
               </svg>
@@ -125,12 +125,12 @@ if (user.role !== 'admin') {
             href="/admin/verifikasi"
             class={`flex items-center gap-3.5 px-3 lg:px-3.5 py-3 rounded-xl text-xs font-bold transition-all group ${
               activeNav === 'verifikasi'
-                ? 'bg-[#EEF2FF] text-[#3B3FD9] shadow-xs'
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-[#FFF0F0] text-[#FF6B6B] shadow-xs'
+                : 'text-gray-500 hover:bg-[#FFF0F0]/50 hover:text-[#FF6B6B]'
             }`}
             title="Scan QR Loket"
           >
-            <div class={`w-5 h-5 flex items-center justify-center shrink-0 ${activeNav === 'verifikasi' ? 'text-[#3B3FD9]' : 'text-gray-400 group-hover:text-gray-600'}`}>
+            <div class={`w-5 h-5 flex items-center justify-center shrink-0 ${activeNav === 'verifikasi' ? 'text-[#FF6B6B]' : 'text-gray-400 group-hover:text-[#FF6B6B]'}`}>
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
               </svg>
@@ -143,12 +143,12 @@ if (user.role !== 'admin') {
             href="/admin/laporan"
             class={`flex items-center gap-3.5 px-3 lg:px-3.5 py-3 rounded-xl text-xs font-bold transition-all group ${
               activeNav === 'laporan'
-                ? 'bg-[#EEF2FF] text-[#3B3FD9] shadow-xs'
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-[#FFF0F0] text-[#FF6B6B] shadow-xs'
+                : 'text-gray-500 hover:bg-[#FFF0F0]/50 hover:text-[#FF6B6B]'
             }`}
             title="Laporan & Ekspor"
           >
-            <div class={`w-5 h-5 flex items-center justify-center shrink-0 ${activeNav === 'laporan' ? 'text-[#3B3FD9]' : 'text-gray-400 group-hover:text-gray-600'}`}>
+            <div class={`w-5 h-5 flex items-center justify-center shrink-0 ${activeNav === 'laporan' ? 'text-[#FF6B6B]' : 'text-gray-400 group-hover:text-[#FF6B6B]'}`}>
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
@@ -160,10 +160,10 @@ if (user.role !== 'admin') {
           <a
             href="/test-barcode"
             target="_blank"
-            class="flex items-center gap-3.5 px-3 lg:px-3.5 py-3 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all group"
+            class="flex items-center gap-3.5 px-3 lg:px-3.5 py-3 rounded-xl text-xs font-bold text-gray-500 hover:bg-[#FFF0F0]/50 hover:text-[#FF6B6B] transition-all group"
             title="Buka Lembar Barcode"
           >
-            <div class="w-5 h-5 flex items-center justify-center shrink-0 text-gray-400 group-hover:text-gray-600">
+            <div class="w-5 h-5 flex items-center justify-center shrink-0 text-gray-400 group-hover:text-[#FF6B6B]">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m-4-16v16m8-16v16M4 6v12m16-12v12" />
               </svg>
@@ -177,7 +177,7 @@ if (user.role !== 'admin') {
       <div class="p-3 lg:p-4 border-t border-gray-100 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="relative">
-            <div class="w-10 h-10 rounded-full bg-linear-to-tr from-[#3B3FD9] to-[#818CF8] text-white flex items-center justify-center font-bold text-sm shadow-xs">
+            <div class="w-10 h-10 rounded-full bg-[#FF6B6B] text-white flex items-center justify-center font-bold text-sm shadow-xs">
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></div>
@@ -232,18 +232,13 @@ if (user.role !== 'admin') {
             <input
               type="text"
               placeholder="Search..."
-              class="w-full pl-10 pr-4 py-2 bg-[#F8FAFC] border border-gray-200/80 rounded-xl text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#3B3FD9] focus:bg-white transition"
+              class="w-full pl-10 pr-4 py-2 bg-[#F8FAFC] border border-gray-200/80 rounded-xl text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#FF6B6B] focus:bg-white transition"
             />
           </div>
         </div>
 
         <!-- Right: Actions, Language/Badge, Notifications, User -->
         <div class="flex items-center gap-3 sm:gap-4 shrink-0">
-          <!-- Campus Badge -->
-          <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-100 text-xs font-semibold text-gray-600">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Kampus Pusat</span>
-          </div>
 
           <!-- Notification Bell with Red Badge -->
           <div class="relative">
@@ -255,7 +250,7 @@ if (user.role !== 'admin') {
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
-              <span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
+              <span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#FF6B6B] text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
                 2
               </span>
             </button>
@@ -264,7 +259,7 @@ if (user.role !== 'admin') {
           <!-- User Avatar & Quick Info -->
           <div class="flex items-center gap-2.5 pl-2 sm:pl-3 border-l border-gray-100">
             <div class="relative">
-              <div class="w-9 h-9 rounded-full bg-linear-to-tr from-[#3B3FD9] to-[#818CF8] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+              <div class="w-9 h-9 rounded-full bg-[#FF6B6B] text-white flex items-center justify-center font-bold text-xs shadow-xs">
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <div class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></div>
@@ -297,7 +292,7 @@ if (user.role !== 'admin') {
         <div>
           <div class="flex items-center justify-between pb-6 border-b border-gray-100">
             <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-linear-to-tr from-[#3B3FD9] to-[#818CF8] flex items-center justify-center text-white font-bold text-sm">
+              <div class="w-9 h-9 rounded-xl bg-[#FF6B6B] flex items-center justify-center text-white font-bold text-sm shadow-xs">
                 S
               </div>
               <span class="font-extrabold text-sm text-gray-900">SIPEMBAR Admin</span>
@@ -308,19 +303,19 @@ if (user.role !== 'admin') {
           </div>
 
           <nav class="mt-4 space-y-1">
-            <a href="/admin/dashboard" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'dashboard' ? 'bg-[#EEF2FF] text-[#3B3FD9]' : 'text-gray-600'}`}>
+            <a href="/admin/dashboard" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'dashboard' ? 'bg-[#FFF0F0] text-[#FF6B6B]' : 'text-gray-600'}`}>
               Dashboard
             </a>
-            <a href="/admin/barang" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'barang' ? 'bg-[#EEF2FF] text-[#3B3FD9]' : 'text-gray-600'}`}>
+            <a href="/admin/barang" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'barang' ? 'bg-[#FFF0F0] text-[#FF6B6B]' : 'text-gray-600'}`}>
               Kelola Inventaris
             </a>
-            <a href="/admin/peminjaman" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'peminjaman' ? 'bg-[#EEF2FF] text-[#3B3FD9]' : 'text-gray-600'}`}>
+            <a href="/admin/peminjaman" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'peminjaman' ? 'bg-[#FFF0F0] text-[#FF6B6B]' : 'text-gray-600'}`}>
               Peminjaman & ACC
             </a>
-            <a href="/admin/verifikasi" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'verifikasi' ? 'bg-[#EEF2FF] text-[#3B3FD9]' : 'text-gray-600'}`}>
+            <a href="/admin/verifikasi" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'verifikasi' ? 'bg-[#FFF0F0] text-[#FF6B6B]' : 'text-gray-600'}`}>
               Scan QR Loket
             </a>
-            <a href="/admin/laporan" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'laporan' ? 'bg-[#EEF2FF] text-[#3B3FD9]' : 'text-gray-600'}`}>
+            <a href="/admin/laporan" class={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${activeNav === 'laporan' ? 'bg-[#FFF0F0] text-[#FF6B6B]' : 'text-gray-600'}`}>
               Laporan Sirkulasi
             </a>
             <a href="/test-barcode" target="_blank" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-gray-600">

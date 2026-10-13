@@ -1,11 +1,11 @@
 @import "tailwindcss";
 @theme {
-  --font-heading: 'Fredoka', ui-rounded, 'Comic Sans MS', sans-serif;
+  --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --color-ink: #1e1b3a;
   --color-paper: #f6f5ff;
-  --color-primary: #3b3fd9;
-  --color-primary-hover: #3235b8;
+  --color-primary: #ff6b6b;
+  --color-primary-hover: #f75555;
   --color-sticker: #ffd23f;
   --color-sticker-shadow: #c69f1b;
   --color-mint: #2ec4a0;
@@ -39,7 +39,7 @@ h1, h2, h3, .font-display {
 .btn-sticker-primary {
   background-color: var(--color-primary);
   color: #ffffff;
-  box-shadow: 0 4px 0 #24278f;
+  box-shadow: 0 4px 0 var(--color-coral-dark);
   transition: all 150ms ease-in-out;
   display: inline-flex;
   align-items: center;
@@ -53,7 +53,7 @@ h1, h2, h3, .font-display {
 }
 .btn-sticker-primary:active {
   transform: translateY(2px);
-  box-shadow: 0 2px 0 #24278f;
+  box-shadow: 0 2px 0 var(--color-coral-dark);
 }
 .btn-sticker-yellow {
   background-color: var(--color-sticker);

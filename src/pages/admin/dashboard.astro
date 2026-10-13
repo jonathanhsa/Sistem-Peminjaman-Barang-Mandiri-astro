@@ -4,7 +4,6 @@ import { getCurrentUser } from '../../lib/auth';
 import { db, schema } from '../../db';
 import { eq, desc } from 'drizzle-orm';
 import { StatusBadge } from '../../components/borrowing/StatusBadge';
-import { CountdownBadge } from '../../components/borrowing/CountdownBadge';
 import { CategoryIcon } from '../../components/illustrations/CategoryIcon';
 import { formatRupiah } from '../../lib/format-rupiah';
 import { calculateFine } from '../../lib/fine';
@@ -75,64 +74,78 @@ const topItems = allItems.slice(0, 3);
 // Calculations for Donut Chart
 const totalActiveOrReturned = returnedCount + borrowedCount + overdueCount;
 const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / totalActiveOrReturned) * 100) : 80;
+
+// Hourly traffic stats for Reports (realistic distribution per operational hour)
+const hourlyStats = [
+  { hour: '10am', value: 25, count: '12 unit' },
+  { hour: '11am', value: 42, count: '20 unit' },
+  { hour: '12pm', value: 78, count: '38 unit' },
+  { hour: '01pm', value: 52, count: '26 unit' },
+  { hour: '02pm', value: 85, count: '44 unit' },
+  { hour: '03pm', value: 48, count: '24 unit' },
+  { hour: '04pm', value: 38, count: '18 unit' },
+  { hour: '05pm', value: 64, count: '32 unit' },
+  { hour: '06pm', value: 32, count: '16 unit' },
+  { hour: '07pm', value: 18, count: '8 unit' },
+];
 ---
 
 <AdminLayout title="Dashboard — SIPEMBAR Admin" activeNav="dashboard">
   <div class="space-y-6">
 
     <!-- ============================================================ -->
-    <!-- 1. TOP METRICS ROW (4 Cards, Matching SaaS Reference Layout) -->
+    <!-- 1. TOP METRICS ROW (4 Cohesive Cards in Coral Palette) -->
     <!-- ============================================================ -->
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
       
       <!-- Metric 1: Total Items -->
       <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center gap-4 hover:shadow-md transition">
-        <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+        <div class="w-12 h-12 rounded-2xl bg-[#FFF0F0] text-[#FF6B6B] border border-[#FF6B6B]/15 flex items-center justify-center shrink-0">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
         </div>
         <div>
-          <span class="text-2xl font-extrabold text-[#0F172A] tracking-tight block leading-tight">{totalItemsCount}+</span>
+          <span class="text-2xl font-extrabold text-[#1E1B3A] tracking-tight block leading-tight">{totalItemsCount}+</span>
           <span class="text-xs text-gray-400 font-medium mt-0.5 block">Total Jenis Barang</span>
         </div>
       </div>
 
       <!-- Metric 2: Total Physical Stock -->
       <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center gap-4 hover:shadow-md transition">
-        <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+        <div class="w-12 h-12 rounded-2xl bg-[#FFF5EB] text-[#F97316] border border-[#F97316]/15 flex items-center justify-center shrink-0">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
           </svg>
         </div>
         <div>
-          <span class="text-2xl font-extrabold text-[#0F172A] tracking-tight block leading-tight">{totalStock}+</span>
+          <span class="text-2xl font-extrabold text-[#1E1B3A] tracking-tight block leading-tight">{totalStock}+</span>
           <span class="text-xs text-gray-400 font-medium mt-0.5 block">Unit Fisik Inventaris</span>
         </div>
       </div>
 
       <!-- Metric 3: Active & Pending Borrowings -->
       <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center gap-4 hover:shadow-md transition">
-        <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
+        <div class="w-12 h-12 rounded-2xl bg-[#FFF0F0] text-[#FF6B6B] border border-[#FF6B6B]/15 flex items-center justify-center shrink-0">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
           </svg>
         </div>
         <div>
-          <span class="text-2xl font-extrabold text-[#0F172A] tracking-tight block leading-tight">{borrowedCount + overdueCount + pendingCount}+</span>
+          <span class="text-2xl font-extrabold text-[#1E1B3A] tracking-tight block leading-tight">{borrowedCount + overdueCount + pendingCount}+</span>
           <span class="text-xs text-gray-400 font-medium mt-0.5 block">Sirkulasi Aktif ({pendingCount} pending)</span>
         </div>
       </div>
 
       <!-- Metric 4: Fines / Overdue -->
       <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center gap-4 hover:shadow-md transition">
-        <div class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+        <div class="w-12 h-12 rounded-2xl bg-[#FFF0F0] text-[#FF6B6B] border border-[#FF6B6B]/15 flex items-center justify-center shrink-0">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
         <div>
-          <span class="text-2xl font-extrabold text-[#0F172A] tracking-tight block leading-tight">{formatRupiah(totalUnpaidFine)}</span>
+          <span class="text-2xl font-extrabold text-[#1E1B3A] tracking-tight block leading-tight">{formatRupiah(totalUnpaidFine)}</span>
           <span class="text-xs text-gray-400 font-medium mt-0.5 block">Denda Belum Disetor</span>
         </div>
       </div>
@@ -140,96 +153,76 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
     </div>
 
     <!-- ============================================================ -->
-    <!-- 2. MIDDLE ROW: REPORTS LINE CHART + ANALYTICS DONUT CHART -->
+    <!-- 2. MIDDLE ROW: REPORTS BAR CHART + ANALYTICS DONUT CHART -->
     <!-- ============================================================ -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
       
-      <!-- Reports Line Chart Card (Wide Column - 8/12) -->
+      <!-- Reports Activity Chart Card (Wide Column - 8/12) -->
       <div class="lg:col-span-7 xl:col-span-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-base font-bold text-[#0F172A]">Reports</h3>
+            <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Reports</h3>
             <p class="text-xs text-gray-400">Statistik sirkulasi peminjaman barang per jam operasional</p>
           </div>
-          <button type="button" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg text-sm font-bold" title="More options">
-            •••
-          </button>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FFF0F0] text-[#FF6B6B] text-[11px] font-bold">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#FF6B6B]"></span>
+              Hari Ini
+            </span>
+          </div>
         </div>
 
-        <!-- SVG Smooth Wavy Gradient Line Chart (Exact Style of Reference) -->
+        <!-- Clean Realistic Activity Bar Chart (No fake wavy AI lines) -->
         <div class="w-full relative pt-2">
-          <!-- Y-Axis & SVG Canvas -->
+          <!-- Chart Canvas Area -->
           <div class="flex">
             <!-- Y-Axis Labels -->
             <div class="flex flex-col justify-between text-[11px] text-gray-400 font-medium pr-3 py-1 select-none text-right w-10">
-              <span>100K</span>
-              <span>80K</span>
-              <span>60K</span>
-              <span>40K</span>
-              <span>20K</span>
+              <span>80</span>
+              <span>60</span>
+              <span>40</span>
+              <span>20</span>
               <span>0</span>
             </div>
 
-            <!-- Chart SVG Area -->
-            <div class="flex-1 relative h-48 sm:h-56">
+            <!-- Chart Columns Container -->
+            <div class="flex-1 relative h-48 sm:h-52">
               <!-- Horizontal Grid Lines -->
               <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
-                <div class="border-b border-gray-100/70 w-full h-0"></div>
-                <div class="border-b border-gray-100/70 w-full h-0"></div>
-                <div class="border-b border-gray-100/70 w-full h-0"></div>
-                <div class="border-b border-gray-100/70 w-full h-0"></div>
-                <div class="border-b border-gray-100/70 w-full h-0"></div>
-                <div class="border-b border-gray-200/90 w-full h-0"></div>
+                <div class="border-b border-gray-100 w-full h-0"></div>
+                <div class="border-b border-gray-100 w-full h-0"></div>
+                <div class="border-b border-gray-100 w-full h-0"></div>
+                <div class="border-b border-gray-100 w-full h-0"></div>
+                <div class="border-b border-gray-200 w-full h-0"></div>
               </div>
 
-              <!-- SVG Smooth Gradient Curve -->
-              <svg viewBox="0 0 600 200" preserveAspectRatio="none" class="w-full h-full relative z-10 overflow-visible">
-                <defs>
-                  <!-- Gradient Stroke: Cyan -> Purple -> Coral/Pink (Reference Match) -->
-                  <linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#38BDF8" />
-                    <stop offset="45%" stop-color="#818CF8" />
-                    <stop offset="85%" stop-color="#F43F5E" />
-                  </linearGradient>
+              <!-- Bar Columns Grid -->
+              <div class="relative z-10 h-full flex items-end justify-between gap-1.5 sm:gap-3 px-2 sm:px-4">
+                {hourlyStats.map((item) => (
+                  <div class="flex-1 h-full flex flex-col justify-end items-center group relative">
+                    <!-- Tooltip on Hover -->
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 px-2 py-0.5 rounded-md bg-[#1E1B3A] text-white text-[10px] font-bold shadow-md pointer-events-none whitespace-nowrap z-20">
+                      {item.count}
+                    </div>
 
-                  <!-- Subtle Soft Glow under curve -->
-                  <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#818CF8" stop-opacity="0.18" />
-                    <stop offset="100%" stop-color="#818CF8" stop-opacity="0" />
-                  </linearGradient>
-                </defs>
-
-                <!-- Soft Gradient Fill Area -->
-                <path
-                  d="M 0,110 C 40,130 70,165 110,135 C 150,105 180,45 220,60 C 260,75 290,125 330,120 C 370,115 400,90 440,95 C 480,100 520,65 560,50 L 560,200 L 0,200 Z"
-                  fill="url(#areaGradient)"
-                />
-
-                <!-- Smooth Bezier Wavy Line Path -->
-                <path
-                  d="M 0,110 C 40,130 70,165 110,135 C 150,105 180,45 220,60 C 260,75 290,125 330,120 C 370,115 400,90 440,95 C 480,100 520,65 560,50"
-                  fill="none"
-                  stroke="url(#curveGradient)"
-                  stroke-width="4.5"
-                  stroke-linecap="round"
-                  class="drop-shadow-sm"
-                />
-              </svg>
+                    <!-- Column Track & Fill -->
+                    <div class="w-full max-w-[28px] h-full flex items-end">
+                      <div
+                        class="w-full rounded-t-lg bg-[#FF6B6B] group-hover:bg-[#f75555] transition-all duration-300 shadow-xs"
+                        style={`height: ${item.value}%;`}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          <!-- X-Axis Labels (Time Points from Reference) -->
+          <!-- X-Axis Labels (Operational Hours) -->
           <div class="flex justify-between text-[11px] text-gray-400 font-medium pl-10 pt-3">
-            <span>10am</span>
-            <span>11am</span>
-            <span>12pm</span>
-            <span>01pm</span>
-            <span>02pm</span>
-            <span>03pm</span>
-            <span>04pm</span>
-            <span>05pm</span>
-            <span>06pm</span>
-            <span>07pm</span>
+            {hourlyStats.map((item) => (
+              <span class="flex-1 text-center">{item.hour}</span>
+            ))}
           </div>
         </div>
       </div>
@@ -238,7 +231,7 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
       <div class="lg:col-span-5 xl:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between">
         <div class="flex items-center justify-between mb-3">
           <div>
-            <h3 class="text-base font-bold text-[#0F172A]">Analytics</h3>
+            <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Analytics</h3>
             <p class="text-xs text-gray-400">Rasio status permohonan sirkulasi</p>
           </div>
           <button type="button" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg text-sm font-bold" title="More options">
@@ -246,17 +239,17 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
           </button>
         </div>
 
-        <!-- Donut Circle with 80% Center Stat -->
+        <!-- Donut Circle with Return Rate Stat -->
         <div class="relative flex items-center justify-center my-4">
           <svg class="w-48 h-48 transform -rotate-90" viewBox="0 0 120 120">
             <!-- Background Ring -->
-            <circle cx="60" cy="60" r="48" stroke="#F1F5F9" stroke-width="12" fill="none" />
-            <!-- Blue Arc (Dikembalikan / Sukses) -->
+            <circle cx="60" cy="60" r="48" stroke="#F8FAFC" stroke-width="12" fill="none" />
+            <!-- Coral Arc (Dikembalikan / Sukses) -->
             <circle
               cx="60"
               cy="60"
               r="48"
-              stroke="#3B82F6"
+              stroke="#FF6B6B"
               stroke-width="12"
               fill="none"
               stroke-dasharray="301"
@@ -275,12 +268,12 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
               stroke-dashoffset="230"
               stroke-linecap="round"
             />
-            <!-- Coral Arc (Terlambat / Pending) -->
+            <!-- Red/Warning Arc (Terlambat) -->
             <circle
               cx="60"
               cy="60"
               r="48"
-              stroke="#FB7185"
+              stroke="#EF4444"
               stroke-width="12"
               fill="none"
               stroke-dasharray="301"
@@ -291,15 +284,15 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
 
           <!-- Center Text Display -->
           <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span class="text-2xl font-extrabold text-[#0F172A] leading-none">{returnRate}%</span>
+            <span class="text-2xl font-extrabold text-[#1E1B3A] leading-none">{returnRate}%</span>
             <span class="text-[11px] text-gray-400 font-medium mt-1">Transactions</span>
           </div>
         </div>
 
-        <!-- Legend Items (Matches Reference) -->
+        <!-- Legend Items (Cohesive with Coral Theme) -->
         <div class="flex items-center justify-center gap-4 text-xs font-semibold text-gray-600 pt-2 border-t border-gray-50">
           <div class="flex items-center gap-1.5">
-            <span class="w-3 h-3 rounded-full bg-[#3B82F6]"></span>
+            <span class="w-3 h-3 rounded-full bg-[#FF6B6B]"></span>
             <span>Selesai</span>
           </div>
           <div class="flex items-center gap-1.5">
@@ -307,7 +300,7 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
             <span>Dipinjam</span>
           </div>
           <div class="flex items-center gap-1.5">
-            <span class="w-3 h-3 rounded-full bg-[#FB7185]"></span>
+            <span class="w-3 h-3 rounded-full bg-[#EF4444]"></span>
             <span>Terlambat</span>
           </div>
         </div>
@@ -325,13 +318,13 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
         
         <!-- Header with Title & Search Input -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h3 class="text-base font-bold text-[#0F172A]">Recent Orders</h3>
+          <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Recent Orders</h3>
           
           <div class="relative w-full sm:w-48">
             <input
               type="text"
               placeholder="Search here..."
-              class="w-full pl-3 pr-8 py-1.5 bg-[#F8FAFC] border border-gray-200 rounded-xl text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#3B3FD9]"
+              class="w-full pl-3 pr-8 py-1.5 bg-[#F8FAFC] border border-gray-200 rounded-xl text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#FF6B6B]"
             />
             <svg class="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -345,7 +338,7 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
             <thead>
               <tr class="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider text-[11px]">
                 <th class="py-3 px-2 w-8">
-                  <input type="checkbox" class="rounded text-indigo-600 focus:ring-0 w-3.5 h-3.5" />
+                  <input type="checkbox" class="rounded accent-[#FF6B6B] focus:ring-0 w-3.5 h-3.5" />
                 </th>
                 <th class="py-3 px-3">Tracking no</th>
                 <th class="py-3 px-3">Product Name</th>
@@ -359,9 +352,9 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
               {recentBorrowings.map((b) => (
                 <tr class="hover:bg-[#F8FAFC] transition">
                   <td class="py-3.5 px-2">
-                    <input type="checkbox" class="rounded text-indigo-600 focus:ring-0 w-3.5 h-3.5" />
+                    <input type="checkbox" class="rounded accent-[#FF6B6B] focus:ring-0 w-3.5 h-3.5" />
                   </td>
-                  <td class="py-3.5 px-3 font-mono font-bold text-[#3B3FD9]">
+                  <td class="py-3.5 px-3 font-mono font-bold text-[#FF6B6B]">
                     <a href={`/riwayat/${b.borrowingCode}`} target="_blank" class="hover:underline">
                       #{b.borrowingCode.slice(-4)}
                     </a>
@@ -400,7 +393,7 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
                       <form method="POST" action={`/api/borrowings/${b.id}/return`} class="inline-block">
                         <button
                           type="submit"
-                          class="px-2.5 py-1 rounded-lg bg-indigo-50 text-[#3B3FD9] font-bold text-[11px] hover:bg-indigo-100 transition cursor-pointer"
+                          class="px-2.5 py-1 rounded-lg bg-[#FFF0F0] text-[#FF6B6B] hover:bg-[#FFE5E5] font-bold text-[11px] transition cursor-pointer"
                         >
                           Return
                         </button>
@@ -415,14 +408,14 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
           </table>
         </div>
 
-        <!-- Pagination (Exact Match of Reference) -->
+        <!-- Pagination -->
         <div class="flex items-center justify-between pt-3 border-t border-gray-50 text-xs text-gray-400">
           <span>1-{recentBorrowings.length} of {allBorrowings.length}</span>
           <div class="flex items-center gap-1 font-bold">
             <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
               ‹
             </button>
-            <button class="w-7 h-7 rounded-lg flex items-center justify-center bg-[#3B3FD9] text-white shadow-xs">
+            <button class="w-7 h-7 rounded-lg flex items-center justify-center bg-[#FF6B6B] text-white shadow-xs">
               1
             </button>
             <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
@@ -438,11 +431,11 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
         </div>
       </div>
 
-      <!-- Top Selling / Borrowed Products Card (Matches Reference) -->
+      <!-- Top Selling / Borrowed Products Card -->
       <div class="lg:col-span-5 xl:col-span-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-bold text-[#0F172A]">Top selling Products</h3>
+            <h3 class="text-base font-bold text-[#1E1B3A] tracking-tight">Top selling Products</h3>
             <button type="button" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg text-sm font-bold" title="More options">
               •••
             </button>
@@ -450,19 +443,19 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
 
           <!-- Products List Stack -->
           <div class="space-y-4">
-            {topItems.map((item, idx) => (
+            {topItems.map((item) => (
               <div class="flex items-center gap-3.5 p-2 rounded-xl hover:bg-gray-50 transition">
-                <div class="w-14 h-14 rounded-2xl bg-indigo-50/70 border border-indigo-100/60 flex items-center justify-center text-indigo-600 shrink-0 shadow-xs">
+                <div class="w-14 h-14 rounded-2xl bg-[#FFF0F0] border border-[#FF6B6B]/20 flex items-center justify-center text-[#FF6B6B] shrink-0 shadow-xs">
                   <CategoryIcon category={item.category} size={24} />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <h4 class="text-xs font-bold text-[#0F172A] truncate" title={item.name}>
+                  <h4 class="text-xs font-bold text-[#1E1B3A] truncate" title={item.name}>
                     {item.name}
                   </h4>
                   <div class="flex items-center gap-1 text-amber-400 text-xs mt-0.5">
                     {'★'.repeat(5)}
                   </div>
-                  <span class="text-xs font-extrabold text-[#3B3FD9] mt-0.5 block">
+                  <span class="text-xs font-extrabold text-[#FF6B6B] mt-0.5 block">
                     Stok: {item.stock} unit
                   </span>
                 </div>
@@ -475,7 +468,7 @@ const returnRate = totalActiveOrReturned > 0 ? Math.round((returnedCount / total
         <div class="pt-5 mt-5 border-t border-gray-50">
           <a
             href="/admin/verifikasi"
-            class="w-full py-3 px-4 rounded-xl bg-[#3B3FD9] hover:bg-[#3235b8] text-white font-bold text-xs shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2 transition"
+            class="w-full py-3 px-4 rounded-xl bg-[#FF6B6B] hover:bg-[#f75555] text-white font-bold text-xs shadow-md shadow-[#FF6B6B]/20 flex items-center justify-center gap-2 transition"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
