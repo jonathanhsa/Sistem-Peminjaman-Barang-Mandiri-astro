@@ -3,6 +3,10 @@ import '../../styles/global.css';
 import { getCurrentUser } from '../../lib/auth';
 import { ClientRouter } from 'astro:transitions';
 
+import { db, schema } from '../../db';
+import { eq, desc } from 'drizzle-orm';
+import { calculateFine } from '../../lib/fine';
+
 interface Props {
   title?: string;
   activeNav?: 'dashboard' | 'barang' | 'peminjaman' | 'verifikasi' | 'laporan' | 'test-barcode';
@@ -17,6 +21,96 @@ if (!user) {
 if (user.role !== 'admin') {
   return Astro.redirect('/dashboard');
 }
+
+// 1. Pending borrowing requests
+const pendingBorrowings = await db
+  .select({
+    id: schema.borrowings.id,
+    borrowingCode: schema.borrowings.borrowingCode,
+    userName: schema.users.name,
+    itemName: schema.items.name,
+    createdAt: schema.borrowings.createdAt,
+  })
+  .from(schema.borrowings)
+  .innerJoin(schema.items, eq(schema.borrowings.itemId, schema.items.id))
+  .innerJoin(schema.users, eq(schema.borrowings.userId, schema.users.id))
+  .where(eq(schema.borrowings.status, 'pending'))
+  .orderBy(desc(schema.borrowings.createdAt))
+  .all();
+
+// 2. Active borrowings that are overdue
+const activeBorrowings = await db
+  .select({
+    id: schema.borrowings.id,
+    borrowingCode: schema.borrowings.borrowingCode,
+    dueDate: schema.borrowings.dueDate,
+    userName: schema.users.name,
+    itemName: schema.items.name,
+  })
+  .from(schema.borrowings)
+  .innerJoin(schema.items, eq(schema.borrowings.itemId, schema.items.id))
+  .innerJoin(schema.users, eq(schema.borrowings.userId, schema.users.id))
+  .where(eq(schema.borrowings.status, 'borrowed'))
+  .all();
+
+const overdueBorrowings = activeBorrowings.filter((b) => calculateFine(b.dueDate).isOverdue);
+
+// 3. Out of stock inventory items
+const outOfStockItems = await db
+  .select({
+    id: schema.items.id,
+    name: schema.items.name,
+    itemCode: schema.items.itemCode,
+  })
+  .from(schema.items)
+  .where(eq(schema.items.stock, 0))
+  .all();
+
+interface AdminNotificationItem {
+  id: string;
+  title: string;
+  message: string;
+  type: 'warning' | 'danger' | 'info';
+  link: string;
+  badge: string;
+}
+
+const adminNotifs: AdminNotificationItem[] = [];
+
+for (const p of pendingBorrowings) {
+  adminNotifs.push({
+    id: `pending-${p.id}`,
+    title: 'Permohonan Menunggu Persetujuan',
+    message: `${p.userName} mengajukan pinjam ${p.itemName} (#${p.borrowingCode})`,
+    type: 'warning',
+    link: '/admin/peminjaman?tab=pending',
+    badge: 'Menunggu ACC',
+  });
+}
+
+for (const o of overdueBorrowings) {
+  adminNotifs.push({
+    id: `overdue-${o.id}`,
+    title: 'Peminjaman Melewati Batas Tempo',
+    message: `${o.userName} belum mengembalikan ${o.itemName} (#${o.borrowingCode})`,
+    type: 'danger',
+    link: '/admin/peminjaman?tab=aktif',
+    badge: 'Terlambat',
+  });
+}
+
+for (const s of outOfStockItems) {
+  adminNotifs.push({
+    id: `stock-${s.id}`,
+    title: 'Stok Fisik Habis',
+    message: `Barang ${s.name} (#${s.itemCode}) tersisa 0 unit`,
+    type: 'info',
+    link: '/admin/barang',
+    badge: 'Stok 0',
+  });
+}
+
+const totalNotifCount = adminNotifs.length;
 ---
 
 <!doctype html>
@@ -240,20 +334,112 @@ if (user.role !== 'admin') {
         <!-- Right: Actions, Language/Badge, Notifications, User -->
         <div class="flex items-center gap-3 sm:gap-4 shrink-0">
 
-          <!-- Notification Bell with Red Badge -->
-          <div class="relative">
+          <!-- Notification Bell with Functional Dropdown Menu -->
+          <div class="relative" id="notif-container">
             <button
               type="button"
+              id="notif-bell-btn"
               class="p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-600 transition border border-gray-100 relative cursor-pointer"
-              title="Notifikasi"
+              title="Pemberitahuan & Notifikasi"
+              aria-label="Buka notifikasi admin"
+              aria-expanded="false"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
-              <span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#FF6B6B] text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
-                2
-              </span>
+              {totalNotifCount > 0 && (
+                <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#FF6B6B] text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white animate-pulse">
+                  {totalNotifCount}
+                </span>
+              )}
             </button>
+
+            <!-- Dropdown Flyout Panel -->
+            <div
+              id="notif-dropdown"
+              class="hidden absolute right-0 mt-2.5 w-80 sm:w-96 bg-white rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] border border-gray-100 py-3 z-50 animate-fade-in"
+            >
+              <!-- Dropdown Header -->
+              <div class="px-4 pb-2.5 border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="font-extrabold text-sm text-[#1E1B3A]">Pemberitahuan</span>
+                  {totalNotifCount > 0 ? (
+                    <span class="px-2 py-0.5 rounded-full bg-[#FFF0F0] text-[#FF6B6B] text-[10px] font-bold border border-[#FF6B6B]/20">
+                      {totalNotifCount} Tindakan
+                    </span>
+                  ) : (
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold">
+                      Semua Beres
+                    </span>
+                  )}
+                </div>
+                <a
+                  href="/admin/peminjaman"
+                  class="text-[11px] font-bold text-[#FF6B6B] hover:underline"
+                >
+                  Kelola Transaksi →
+                </a>
+              </div>
+
+              <!-- List of Notifications -->
+              <div class="max-h-80 overflow-y-auto divide-y divide-gray-50 py-1">
+                {adminNotifs.length === 0 ? (
+                  <div class="p-6 text-center space-y-1.5">
+                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto text-sm font-bold">
+                      ✓
+                    </div>
+                    <p class="text-xs font-bold text-[#1E1B3A]">Tidak ada notifikasi baru</p>
+                    <p class="text-[11px] text-gray-400">Semua permohonan telah diproses dan sirkulasi inventaris berjalan normal.</p>
+                  </div>
+                ) : (
+                  adminNotifs.map((n) => (
+                    <a
+                      href={n.link}
+                      class="px-4 py-3 hover:bg-[#F8FAFC] transition flex items-start gap-3 group block"
+                    >
+                      <div class={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold ${
+                        n.type === 'danger'
+                          ? 'bg-rose-50 text-rose-600 border border-rose-200/60'
+                          : n.type === 'warning'
+                          ? 'bg-amber-50 text-amber-600 border border-amber-200/60'
+                          : 'bg-blue-50 text-blue-600 border border-blue-200/60'
+                      }`}>
+                        {n.type === 'danger' ? '⚠️' : n.type === 'warning' ? '⏳' : '📦'}
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-1">
+                          <h4 class="text-xs font-bold text-[#1E1B3A] truncate group-hover:text-[#FF6B6B] transition">
+                            {n.title}
+                          </h4>
+                          <span class={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${
+                            n.type === 'danger'
+                              ? 'bg-rose-100 text-rose-700'
+                              : n.type === 'warning'
+                              ? 'bg-amber-100 text-amber-700'
+                              : 'bg-blue-100 text-blue-700'
+                          }`}>
+                            {n.badge}
+                          </span>
+                        </div>
+                        <p class="text-[11px] text-gray-500 line-clamp-2 mt-0.5 leading-snug">
+                          {n.message}
+                        </p>
+                      </div>
+                    </a>
+                  ))
+                )}
+              </div>
+
+              <!-- Dropdown Quick Shortcuts Footer -->
+              <div class="px-4 pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
+                <a href="/admin/peminjaman?tab=pending" class="hover:text-[#FF6B6B] font-semibold transition">
+                  • Menunggu ACC ({pendingBorrowings.length})
+                </a>
+                <a href="/admin/peminjaman?tab=aktif" class="hover:text-[#FF6B6B] font-semibold transition">
+                  • Terlambat ({overdueBorrowings.length})
+                </a>
+              </div>
+            </div>
           </div>
 
           <!-- User Avatar & Quick Info -->
@@ -328,9 +514,10 @@ if (user.role !== 'admin') {
       </div>
     </div>
 
-    <!-- Client Script for Drawer Toggle -->
+    <!-- Client Script for Drawer Toggle & Notifications Dropdown -->
     <script>
-      function setupDrawer() {
+      function setupAdminInteractions() {
+        // 1. Mobile Drawer
         const openBtn = document.getElementById('mobile-drawer-btn');
         const closeBtn = document.getElementById('close-drawer-btn');
         const drawer = document.getElementById('mobile-drawer');
@@ -346,9 +533,34 @@ if (user.role !== 'admin') {
             if (e.target === drawer) drawer.classList.add('hidden');
           };
         }
+
+        // 2. Notification Bell Dropdown
+        const bellBtn = document.getElementById('notif-bell-btn');
+        const dropdown = document.getElementById('notif-dropdown');
+
+        if (bellBtn && dropdown) {
+          bellBtn.onclick = (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('hidden');
+          };
+
+          document.addEventListener('click', (e) => {
+            const target = e.target as Node;
+            if (!dropdown.contains(target) && target !== bellBtn && !bellBtn.contains(target)) {
+              dropdown.classList.add('hidden');
+            }
+          });
+
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+              dropdown.classList.add('hidden');
+            }
+          });
+        }
       }
-      setupDrawer();
-      document.addEventListener('astro:page-load', setupDrawer);
+
+      setupAdminInteractions();
+      document.addEventListener('astro:page-load', setupAdminInteractions);
     </script>
   </body>
 </html>
