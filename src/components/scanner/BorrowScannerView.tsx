@@ -200,12 +200,12 @@ export const BorrowScannerView: React.FC<BorrowScannerViewProps> = ({
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs text-gray-500">
                   <span>Membuka formulir peminjaman...</span>
-                  <span className="font-bold text-[#FF6B6B]">{countdown} detik</span>
+                  <span className="font-bold text-primary">{countdown} detik</span>
                 </div>
                 {/* Visual Progress Bar */}
                 <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-[#FF6B6B] h-full transition-all duration-1000 ease-linear rounded-full"
+                    className="bg-primary h-full transition-all duration-1000 ease-linear rounded-full"
                     style={{ width: `${(countdown / 3) * 100}%` }}
                   />
                 </div>
@@ -252,10 +252,10 @@ export const BorrowScannerView: React.FC<BorrowScannerViewProps> = ({
         {/* Kolom Kiri: Header & Informasi & Input Manual */}
         <div className="lg:col-span-6 space-y-5">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1E1B3A] font-display tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-ink font-display tracking-tight">
               Peminjaman Barang & Buku
             </h1>
-            <div className="w-11 h-1 bg-[#FF6B6B] rounded-full mt-2"></div>
+            <div className="w-11 h-1 bg-primary rounded-full mt-2"></div>
             <p className="text-xs text-gray-500 mt-2.5">
               Pindai barcode pada buku atau peralatan inventaris menggunakan kamera di sebelah kanan.
             </p>
@@ -305,7 +305,7 @@ export const BorrowScannerView: React.FC<BorrowScannerViewProps> = ({
           {/* Panduan Pemindaian */}
           <div className="p-6 bg-white rounded-3xl border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] space-y-4">
             <div className="space-y-1">
-              <h3 className="font-bold text-sm text-[#1E1B3A]">Kamera Siap Memindai</h3>
+              <h3 className="font-bold text-sm text-ink">Kamera Siap Memindai</h3>
               <p className="text-xs text-gray-500">
                 Arahkan barcode atau kode QR barang ke bingkai kamera di sisi kanan.
               </p>
@@ -331,7 +331,7 @@ export const BorrowScannerView: React.FC<BorrowScannerViewProps> = ({
                   value={manualCode}
                   onChange={(e) => setManualCode(e.target.value)}
                   placeholder="Contoh: LIB-LAR-101 / LAB-CAM-001"
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-2xl text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-[#FF6B6B] focus:bg-white transition"
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-2xl text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-primary focus:bg-white transition"
                 />
                 <button
                   type="submit"
@@ -387,10 +387,10 @@ export const BorrowScannerView: React.FC<BorrowScannerViewProps> = ({
       {/* ============================================================== */}
       <div className="block lg:hidden space-y-4">
         <div className="text-center space-y-1">
-          <h2 className="text-xl font-extrabold font-display text-[#1E1B3A] tracking-tight">
+          <h2 className="text-xl font-extrabold font-display text-ink tracking-tight">
             Pindai Barcode Barang
           </h2>
-          <div className="w-11 h-1 bg-[#FF6B6B] rounded-full mx-auto mt-1"></div>
+          <div className="w-11 h-1 bg-primary rounded-full mx-auto mt-1"></div>
           <p className="text-xs text-gray-500 pt-1">
             Arahkan lensa kamera langsung ke kode barcode atau QR buku / inventaris
           </p>
@@ -421,7 +421,7 @@ export const BorrowScannerView: React.FC<BorrowScannerViewProps> = ({
               value={manualCode}
               onChange={(e) => setManualCode(e.target.value)}
               placeholder="LIB-LAR-101 / LAB-CAM-001"
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-2xl text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-[#FF6B6B] focus:bg-white transition"
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-2xl text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-primary focus:bg-white transition"
             />
             <button
               type="submit"

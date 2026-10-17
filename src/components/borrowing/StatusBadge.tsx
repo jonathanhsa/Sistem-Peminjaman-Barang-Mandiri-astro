@@ -1,8 +1,8 @@
 import React from 'react';
-import { Clock, CheckCircle2, AlertTriangle, BookOpen } from 'lucide-react';
+import { Clock, CheckCircle2, AlertTriangle, BookOpen, QrCode, XCircle } from 'lucide-react';
 
 export interface StatusBadgeProps {
-  status: 'pending' | 'borrowed' | 'returned' | 'overdue' | string;
+  status: 'pending' | 'borrowed' | 'return_pending' | 'returned' | 'overdue' | 'rejected' | string;
   size?: 'sm' | 'md' | 'lg';
 }
 
@@ -17,7 +17,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
     case 'pending':
       return (
         <span
-          className={`badge-tag bg-[#FFF8DB] text-[#8C6B00] border border-[#FFD23F] font-medium shadow-xs ${sizeClasses}`}
+          className={`badge-tag bg-sticker-light text-sticker-dark border border-sticker font-medium shadow-xs ${sizeClasses}`}
         >
           <Clock className="w-3.5 h-3.5 animate-pulse" />
           <span>Menunggu Persetujuan</span>
@@ -26,16 +26,25 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
     case 'borrowed':
       return (
         <span
-          className={`badge-tag bg-[#EAEBFC] text-[#24278F] border border-[#B8A9FF] font-medium shadow-xs ${sizeClasses}`}
+          className={`badge-tag bg-indigo-light text-indigo-900 border border-lilac font-medium shadow-xs ${sizeClasses}`}
         >
           <BookOpen className="w-3.5 h-3.5" />
           <span>Sedang Dipinjam</span>
         </span>
       );
+    case 'return_pending':
+      return (
+        <span
+          className={`badge-tag bg-amber-50 text-amber-800 border border-amber-300 font-semibold shadow-xs ${sizeClasses}`}
+        >
+          <QrCode className="w-3.5 h-3.5 animate-pulse text-amber-600" />
+          <span>Siap Dikembalikan (Scan di Loket)</span>
+        </span>
+      );
     case 'returned':
       return (
         <span
-          className={`badge-tag bg-[#E6FAF5] text-[#0E7F5F] border border-[#2EC4A0] font-medium shadow-xs ${sizeClasses}`}
+          className={`badge-tag bg-mint-light text-mint-dark border border-mint font-medium shadow-xs ${sizeClasses}`}
         >
           <CheckCircle2 className="w-3.5 h-3.5" />
           <span>Sudah Dikembalikan</span>
@@ -44,10 +53,19 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
     case 'overdue':
       return (
         <span
-          className={`badge-tag bg-[#FFF0F0] text-[#C93545] border border-[#FF6B6B] font-semibold animate-pulse shadow-xs ${sizeClasses}`}
+          className={`badge-tag bg-primary-light text-primary-dark border border-primary font-semibold animate-pulse shadow-xs ${sizeClasses}`}
         >
           <AlertTriangle className="w-3.5 h-3.5" />
           <span>Terlambat</span>
+        </span>
+      );
+    case 'rejected':
+      return (
+        <span
+          className={`badge-tag bg-gray-100 text-gray-600 border border-gray-300 font-medium shadow-xs ${sizeClasses}`}
+        >
+          <XCircle className="w-3.5 h-3.5 text-gray-500" />
+          <span>Pengajuan Ditolak</span>
         </span>
       );
     default:
@@ -58,3 +76,4 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
       );
   }
 };
+

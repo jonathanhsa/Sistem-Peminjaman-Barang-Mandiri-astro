@@ -20,3 +20,14 @@ export function calculateFine(
     isOverdue: true,
   };
 }
+
+export function calculateDueDate(
+  fromDateInput: string | Date = new Date(),
+  days: number = 7
+): string {
+  const date = typeof fromDateInput === 'string' ? new Date(fromDateInput) : new Date(fromDateInput.getTime());
+  date.setDate(date.getDate() + days);
+  date.setHours(23, 59, 59, 999);
+  return date.toISOString();
+}
+

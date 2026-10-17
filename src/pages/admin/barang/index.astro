@@ -27,7 +27,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
     <!-- Top Action & Filter Header Card -->
     <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1 class="text-xl font-extrabold text-[#1E1B3A] tracking-tight">Manajemen Inventaris & Stok</h1>
+        <h1 class="text-xl font-extrabold text-ink tracking-tight">Manajemen Inventaris & Stok</h1>
         <p class="text-xs text-gray-400 mt-0.5">Kelola katalog buku perpustakaan, peralatan laboratorium, dan logistik kampus</p>
       </div>
 
@@ -45,7 +45,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
 
         <a
           href="/admin/barang/create"
-          class="px-4 py-2 rounded-xl bg-[#FF6B6B] hover:bg-[#f75555] text-white text-xs font-bold shadow-md shadow-[#FF6B6B]/20 flex items-center gap-1.5 transition"
+          class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-bold shadow-md shadow-primary/20 flex items-center gap-1.5 transition"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -67,7 +67,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
               href={`/admin/barang?cat=${encodeURIComponent(c)}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
               class={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
                 category.toLowerCase() === c.toLowerCase()
-                  ? 'bg-[#FFF0F0] text-[#FF6B6B] font-bold shadow-xs'
+                  ? 'bg-primary-light text-primary font-bold shadow-xs'
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
               }`}
             >
@@ -87,7 +87,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
             name="q"
             value={search}
             placeholder="Cari kode atau nama..."
-            class="w-full pl-9 pr-3 py-1.5 bg-[#F8FAFC] border border-gray-200 rounded-xl text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#FF6B6B] focus:bg-white"
+            class="w-full pl-9 pr-3 py-1.5 bg-surface-soft border border-gray-200 rounded-xl text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-primary focus:bg-white"
           />
         </form>
       </div>
@@ -96,9 +96,9 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead>
-            <tr class="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider text-[11px] bg-[#F8FAFC]">
+            <tr class="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider text-[11px] bg-surface-soft">
               <th class="py-3.5 px-4 w-10">
-                <input type="checkbox" class="rounded accent-[#FF6B6B] focus:ring-0 w-3.5 h-3.5" />
+                <input type="checkbox" class="rounded accent-primary focus:ring-0 w-3.5 h-3.5" />
               </th>
               <th class="py-3.5 px-4">Kode Barang</th>
               <th class="py-3.5 px-4">Nama Inventaris</th>
@@ -110,11 +110,11 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
           </thead>
           <tbody class="divide-y divide-gray-50">
             {filteredItems.map((item) => (
-              <tr class="hover:bg-[#F8FAFC] transition">
+              <tr class="hover:bg-surface-soft transition">
                 <td class="py-3.5 px-4">
-                  <input type="checkbox" class="rounded accent-[#FF6B6B] focus:ring-0 w-3.5 h-3.5" />
+                  <input type="checkbox" class="rounded accent-primary focus:ring-0 w-3.5 h-3.5" />
                 </td>
-                <td class="py-3.5 px-4 font-mono font-bold text-[#FF6B6B]">
+                <td class="py-3.5 px-4 font-mono font-bold text-primary">
                   #{item.itemCode}
                 </td>
                 <td class="py-3.5 px-4">
@@ -122,7 +122,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
                     <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
                       <CategoryIcon category={item.category} size={16} />
                     </div>
-                    <span class="font-bold text-[#1E1B3A] max-w-xs block truncate" title={item.name}>
+                    <span class="font-bold text-ink max-w-xs block truncate" title={item.name}>
                       {item.name}
                     </span>
                   </div>
@@ -168,12 +168,12 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
                         name="stock"
                         value={item.stock}
                         min="0"
-                        class="w-14 px-2 py-1 text-center font-mono text-xs border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#FF6B6B]"
+                        class="w-14 px-2 py-1 text-center font-mono text-xs border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-primary"
                         title="Ubah stok fisik"
                       />
                       <button
                         type="submit"
-                        class="px-2 py-1 rounded-lg bg-[#FFF0F0] text-[#FF6B6B] hover:bg-[#FFE5E5] font-bold text-[11px] transition cursor-pointer"
+                        class="px-2 py-1 rounded-lg bg-primary-light text-primary hover:bg-primary-active font-bold text-[11px] transition cursor-pointer"
                       >
                         Simpan
                       </button>
@@ -210,7 +210,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
           <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">
             ‹
           </button>
-          <button class="w-7 h-7 rounded-lg flex items-center justify-center bg-[#FF6B6B] text-white shadow-xs">
+          <button class="w-7 h-7 rounded-lg flex items-center justify-center bg-primary text-white shadow-xs">
             1
           </button>
           <button class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 text-gray-500 cursor-pointer">

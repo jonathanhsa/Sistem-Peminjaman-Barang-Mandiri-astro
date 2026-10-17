@@ -2,21 +2,53 @@
 @theme {
   --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --color-ink: #1e1b3a;
-  --color-paper: #f6f5ff;
+
+  /* 1. Primary Brand (Coral / SIPEMBAR) */
   --color-primary: #ff6b6b;
   --color-primary-hover: #f75555;
-  --color-sticker: #ffd23f;
-  --color-sticker-shadow: #c69f1b;
-  --color-mint: #2ec4a0;
-  --color-mint-dark: #0e7f5f;
-  --color-mint-light: #e6faf5;
+  --color-primary-light: #fff0f0;
+  --color-primary-active: #ffe5e5;
+  --color-primary-dark: #c93545;
   --color-coral: #ff6b6b;
   --color-coral-dark: #c93545;
   --color-coral-light: #fff0f0;
+
+  /* 2. Deep Navy / Headings & Text */
+  --color-ink: #1e1b3a;
+  --color-ink-dark: #121124;
+  --color-ink-slate: #1e293b;
+  --color-ink-deep: #0f172a;
+  --color-ink-muted: #64748b;
+
+  /* 3. Indigo Brand (Action Buttons, Scanner, Loket) */
+  --color-indigo-brand: #3b3fd9;
+  --color-indigo-hover: #3235b8;
+  --color-indigo-light: #eaebfc;
+  --color-indigo-tint: #f8f7ff;
+
+  /* 4. Backgrounds & Surfaces */
+  --color-paper: #f6f5ff;
+  --color-surface-soft: #f8fafc;
+  --color-surface-tint: #f8f7ff;
+  --color-surface-card: #fbfbff;
+  --color-surface-admin: #f8f9fd;
+
+  /* 5. Sticker / Campus Accent Yellow */
+  --color-sticker: #ffd23f;
+  --color-sticker-shadow: #c69f1b;
+  --color-sticker-light: #fff8db;
+  --color-sticker-dark: #8c6b00;
+
+  /* 6. Mint / Emerald Success */
+  --color-mint: #2ec4a0;
+  --color-mint-dark: #0e7f5f;
+  --color-mint-light: #e6faf5;
+
+  /* 7. Lilac / Purple Accent */
   --color-lilac: #b8a9ff;
   --color-lilac-light: #f2efff;
 }
+
 html {
   scrollbar-gutter: stable;
   overflow-y: scroll;
@@ -193,4 +225,76 @@ h1, h2, h3, .font-display {
   transform: translate3d(0, 8px, 0);
   animation: scan-laser 2.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
 }
+
+/* ============================================================ */
+/* PROFESSIONAL PRINT STYLES FOR RECEIPTS & OFFICIAL DOCUMENTS  */
+/* ============================================================ */
+@page {
+  size: A4 portrait;
+  margin: 10mm 12mm;
+}
+
+@media print {
+  /* 1. Hide web navigation, buttons, drawers, and unnecessary screen decorations */
+  header,
+  nav,
+  aside,
+  button,
+  .no-print,
+  #mobile-drawer,
+  #notif-dropdown {
+    display: none !important;
+  }
+
+  /* 2. Reset body, html, and main wrappers to clean white document layout */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: auto !important;
+    width: 100% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* 3. Ensure no-break inside critical document sections */
+  .receipt-print-document,
+  .print-page-fit {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* 4. Display print-only elements and hide screen-only elements */
+  .print-only {
+    display: block !important;
+  }
+
+  .screen-only {
+    display: none !important;
+  }
+
+  /* 5. Clean borders, typography, and contrast for crisp paper printing */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  th,
+  td {
+    border-color: #d1d5db !important;
+  }
+}
+
 

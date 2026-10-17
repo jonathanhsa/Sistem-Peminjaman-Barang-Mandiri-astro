@@ -35,10 +35,10 @@ if (user.role !== 'admin' && record.borrower.id !== user.id) {
 let status = record.borrowing.status;
 let fineAmount = record.borrowing.fineAmount;
 
-if (status === 'borrowed') {
+if (status === 'borrowed' || status === 'overdue' || status === 'return_pending') {
   const calc = calculateFine(record.borrowing.dueDate);
   if (calc.isOverdue) {
-    status = 'overdue';
+    if (status === 'borrowed') status = 'overdue';
     fineAmount = Math.max(fineAmount, calc.fineAmount);
   }
 }
@@ -51,9 +51,9 @@ const borrowingData = {
 ---
 
 <StudentLayout title={`Bukti Peminjaman ${code}`} activeNav="riwayat">
-  <div class="max-w-xl mx-auto space-y-6">
-    <div class="flex items-center justify-between">
-      <a href="/riwayat" class="text-xs font-bold text-gray-500 hover:text-[#FF6B6B] flex items-center gap-1 transition">
+  <div class="max-w-xl md:max-w-4xl lg:max-w-5xl mx-auto space-y-6 print:max-w-none print:space-y-0 print:m-0">
+    <div class="flex items-center justify-between no-print">
+      <a href="/riwayat" class="text-xs font-bold text-gray-500 hover:text-primary flex items-center gap-1 transition">
         ← Kembali ke Riwayat
       </a>
       <span class="text-xs font-mono text-gray-400">ID #{borrowingData.id}</span>
@@ -67,15 +67,27 @@ const borrowingData = {
       item={record.item}
     />
 
-    {/* Helpful notice */}
-    <div class="bg-amber-50/80 border border-amber-200/70 rounded-3xl p-5 text-xs text-amber-900 space-y-1.5 shadow-2xs">
-      <h4 class="font-bold flex items-center gap-2 text-amber-950">
-        <span class="w-2 h-2 rounded-full bg-[#FF6B6B]"></span>
-        <span>Petunjuk Verifikasi di Loket:</span>
-      </h4>
-      <p class="leading-relaxed text-amber-900/80">
-        Bawa smartphone Anda ke loket petugas inventaris. Petugas akan memindai QR code ini menggunakan menu <strong>Verifikasi Scan QR</strong> untuk menyetujui peminjaman atau menyelesaikan pengembalian barang.
-      </p>
-    </div>
+    {/* Helpful notice (Screen only) */}
+    {borrowingData.status === 'returned' ? (
+      <div className="no-print bg-mint-light/60 border border-mint/40 rounded-3xl p-5 text-xs text-mint-dark space-y-1.5 shadow-2xs">
+        <h4 className="font-bold flex items-center gap-2 text-mint-dark">
+          <span className="w-2 h-2 rounded-full bg-mint"></span>
+          <span>Transaksi Sirkulasi Selesai:</span>
+        </h4>
+        <p className="leading-relaxed text-mint-dark/90">
+          Barang inventaris ini telah resmi diterima kembali oleh petugas loket inventaris. Anda dapat mengunduh atau mencetak <strong>Dokumen Resmi A4</strong> di atas sebagai arsip bukti pengembalian yang sah.
+        </p>
+      </div>
+    ) : (
+      <div className="no-print bg-amber-50/80 border border-amber-200/70 rounded-3xl p-5 text-xs text-amber-900 space-y-1.5 shadow-2xs">
+        <h4 className="font-bold flex items-center gap-2 text-amber-950">
+          <span className="w-2 h-2 rounded-full bg-primary"></span>
+          <span>Petunjuk Verifikasi di Loket:</span>
+        </h4>
+        <p className="leading-relaxed text-amber-900/80">
+          Bawa smartphone Anda ke loket petugas inventaris. Petugas akan memindai QR code ini menggunakan menu <strong>Verifikasi Scan QR</strong> untuk menyetujui peminjaman atau menyelesaikan pengembalian barang.
+        </p>
+      </div>
+    )}
   </div>
 </StudentLayout>

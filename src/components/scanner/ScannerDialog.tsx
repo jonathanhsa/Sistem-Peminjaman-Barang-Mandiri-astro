@@ -77,15 +77,15 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-[#1E1B3A]/20 flex flex-col max-h-[94vh]">
+      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-ink/20 flex flex-col max-h-[94vh]">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 px-6 border-b border-gray-100 bg-[#F6F5FF]">
+        <div className="flex items-center justify-between p-4 px-6 border-b border-gray-100 bg-paper">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#3B3FD9] text-white flex items-center justify-center shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-indigo-brand text-white flex items-center justify-center shadow-xs">
               <Camera className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#1E1B3A]">{title}</h3>
+              <h3 className="text-base font-bold text-ink">{title}</h3>
               <p className="text-xs text-gray-500">{description}</p>
             </div>
           </div>
@@ -101,7 +101,7 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
         </div>
 
         {/* Content Area */}
-        <div className="relative flex-1 bg-[#121124] flex flex-col items-center justify-center min-h-[360px] overflow-hidden">
+        <div className="relative flex-1 bg-ink-dark flex flex-col items-center justify-center min-h-[360px] overflow-hidden">
           {/* Hidden File Input for Image Upload */}
           <input
             ref={fileInputRef}
@@ -114,10 +114,10 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
           {manualMode ? (
             /* Manual Input Mode */
             <div className="w-full h-full bg-white p-6 flex flex-col items-center justify-center text-center">
-              <div className="w-14 h-14 bg-indigo-50 text-[#3B3FD9] rounded-2xl flex items-center justify-center mb-3">
+              <div className="w-14 h-14 bg-indigo-50 text-indigo-brand rounded-2xl flex items-center justify-center mb-3">
                 <Keyboard className="w-7 h-7" />
               </div>
-              <h4 className="font-bold text-[#1E1B3A] text-base mb-1">Ketik Kode Inventaris</h4>
+              <h4 className="font-bold text-ink text-base mb-1">Ketik Kode Inventaris</h4>
               <p className="text-xs text-gray-500 max-w-xs mb-4">
                 Masukkan kode serial yang tertera pada stiker barcode atau punggung buku.
               </p>
@@ -128,12 +128,12 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
                   onChange={(e) => setManualCode(e.target.value)}
                   placeholder={placeholder}
                   autoFocus
-                  className="w-full px-4 py-2.5 text-center text-sm font-mono tracking-wider font-semibold border-2 border-indigo-200 rounded-xl focus:border-[#3B3FD9] focus:outline-none uppercase"
+                  className="w-full px-4 py-2.5 text-center text-sm font-mono tracking-wider font-semibold border-2 border-indigo-200 rounded-xl focus:border-indigo-brand focus:outline-none uppercase"
                 />
                 <button
                   type="submit"
                   disabled={!manualCode.trim()}
-                  className="w-full py-2.5 px-4 bg-[#3B3FD9] text-white text-sm font-semibold rounded-xl disabled:opacity-50 hover:bg-[#3235b8] transition cursor-pointer"
+                  className="w-full py-2.5 px-4 bg-indigo-brand text-white text-sm font-semibold rounded-xl disabled:opacity-50 hover:bg-indigo-hover transition cursor-pointer"
                 >
                   Terapkan Kode
                 </button>
@@ -142,7 +142,7 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
               <div className="mt-5 pt-4 border-t border-gray-100 w-full max-w-xs text-center">
                 <a
                   href="/katalog"
-                  className="text-xs text-[#3B3FD9] font-bold hover:underline"
+                  className="text-xs text-indigo-brand font-bold hover:underline"
                 >
                   Belum tahu kode? Buka Katalog Inventaris →
                 </a>
@@ -155,7 +155,7 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
                 <Mascot mood="alert" size={72} />
               </div>
 
-              <h4 className="font-bold text-[#1E1B3A] text-base mb-1">
+              <h4 className="font-bold text-ink text-base mb-1">
                 {errorKind === 'permission_denied' ? 'Izin Kamera Diblokir di Browser' : 'Kamera Tidak Dapat Dibuka'}
               </h4>
 
@@ -189,7 +189,7 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
                 <button
                   type="button"
                   onClick={() => startCamera()}
-                  className="w-full py-2.5 px-4 bg-[#3B3FD9] text-white text-xs font-bold rounded-xl hover:bg-[#3235b8] transition flex items-center justify-center gap-2 shadow-xs"
+                  className="w-full py-2.5 px-4 bg-indigo-brand text-white text-xs font-bold rounded-xl hover:bg-indigo-hover transition flex items-center justify-center gap-2 shadow-xs"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Coba Nyalakan Kamera Lagi</span>
@@ -207,7 +207,7 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
                 <button
                   type="button"
                   onClick={() => setManualMode(true)}
-                  className="w-full py-2.5 px-4 bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold rounded-xl hover:brightness-105 transition flex items-center justify-center gap-2"
+                  className="w-full py-2.5 px-4 bg-sticker text-ink text-xs font-bold rounded-xl hover:brightness-105 transition flex items-center justify-center gap-2"
                 >
                   <Keyboard className="w-3.5 h-3.5" />
                   <span>Ketik Kode Secara Manual</span>
@@ -218,7 +218,7 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
               <div className="mt-4 pt-3 border-t border-gray-100 w-full max-w-xs text-center">
                 <a
                   href="/katalog"
-                  className="text-xs text-[#3B3FD9] font-bold hover:underline"
+                  className="text-xs text-indigo-brand font-bold hover:underline"
                 >
                   Cari kode barang di Katalog Inventaris →
                 </a>
@@ -280,7 +280,7 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
                       onClick={toggleFlash}
                       className={`p-2 rounded-full border transition ${
                         isFlashOn
-                          ? 'bg-[#FFD23F] text-[#1E1B3A] border-[#FFD23F]'
+                          ? 'bg-sticker text-ink border-sticker'
                           : 'bg-black/60 text-white border-white/20 hover:bg-black/80'
                       }`}
                       title="Nyalakan Lampu Senter"
@@ -293,16 +293,16 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
 
               {/* Slow Scan Helper Tip */}
               {isSlow && (
-                <div className="absolute bottom-16 inset-x-6 bg-[#1E1B3A]/90 backdrop-blur-md text-white text-xs p-2.5 rounded-xl flex items-center justify-center gap-2 border border-white/20 animate-bounce">
-                  <Sparkles className="w-3.5 h-3.5 text-[#FFD23F]" />
+                <div className="absolute bottom-16 inset-x-6 bg-ink/90 backdrop-blur-md text-white text-xs p-2.5 rounded-xl flex items-center justify-center gap-2 border border-white/20 animate-bounce">
+                  <Sparkles className="w-3.5 h-3.5 text-sticker" />
                   <span>Posisikan barcode tegak lurus atau unggah gambar</span>
                 </div>
               )}
 
               {/* Requesting Camera Permission Overlay */}
               {status === 'requesting' && (
-                <div className="absolute inset-0 bg-[#121124]/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center text-white z-20 animate-fade-in">
-                  <div className="w-16 h-16 rounded-3xl bg-[#3B3FD9]/30 border-2 border-[#3B3FD9] text-[#FFD23F] flex items-center justify-center mb-3 animate-pulse shadow-lg">
+                <div className="absolute inset-0 bg-ink-dark/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center text-white z-20 animate-fade-in">
+                  <div className="w-16 h-16 rounded-3xl bg-indigo-brand/30 border-2 border-indigo-brand text-sticker flex items-center justify-center mb-3 animate-pulse shadow-lg">
                     <Camera className="w-8 h-8" />
                   </div>
                   <h4 className="text-base font-bold text-white mb-1">Meminta Izin Kamera Browser</h4>
@@ -311,8 +311,8 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
                   </p>
 
                   <div className="bg-white/10 p-3.5 rounded-2xl border border-white/20 text-xs text-left max-w-sm mb-4 space-y-1.5">
-                    <div className="flex items-center gap-1.5 font-bold text-[#FFD23F]">
-                      <Sparkles className="w-3.5 h-3.5 text-[#FFD23F]" />
+                    <div className="flex items-center gap-1.5 font-bold text-sticker">
+                      <Sparkles className="w-3.5 h-3.5 text-sticker" />
                       <span>Petunjuk Cepat di Firefox:</span>
                     </div>
                     <p className="text-[11px] text-gray-200 leading-relaxed">
@@ -323,7 +323,7 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
                   <button
                     type="button"
                     onClick={() => startCamera()}
-                    className="py-2.5 px-5 bg-[#FFD23F] text-[#1E1B3A] text-xs font-bold rounded-xl hover:brightness-105 active:scale-95 transition shadow-lg flex items-center gap-2 cursor-pointer"
+                    className="py-2.5 px-5 bg-sticker text-ink text-xs font-bold rounded-xl hover:brightness-105 active:scale-95 transition shadow-lg flex items-center gap-2 cursor-pointer"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
                     <span>Klik Di Sini untuk Buka Kamera</span>
@@ -334,7 +334,7 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
               {/* Processing Overlay */}
               {status === 'processing' && (
                 <div className="absolute inset-0 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center text-white z-20">
-                  <RefreshCw className="w-8 h-8 animate-spin text-[#FFD23F] mb-2" />
+                  <RefreshCw className="w-8 h-8 animate-spin text-sticker mb-2" />
                   <span className="text-xs font-semibold">Menganalisis barcode & OCR...</span>
                 </div>
               )}
@@ -357,7 +357,7 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
             <button
               type="button"
               onClick={() => setManualMode(!manualMode)}
-              className="text-[#3B3FD9] font-semibold hover:underline flex items-center gap-1.5"
+              className="text-indigo-brand font-semibold hover:underline flex items-center gap-1.5"
             >
               {manualMode ? <Camera className="w-3.5 h-3.5" /> : <Keyboard className="w-3.5 h-3.5" />}
               {manualMode ? 'Beralih ke Kamera' : 'Ketik Manual'}

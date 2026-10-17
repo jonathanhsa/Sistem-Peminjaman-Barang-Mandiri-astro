@@ -74,7 +74,7 @@ export const LiveCameraScanner: React.FC<LiveCameraScannerProps> = ({
   };
 
   return (
-    <div className="relative w-full rounded-3xl overflow-hidden bg-[#121124] border-2 border-[#1E1B3A]/15 shadow-xl flex flex-col min-h-[380px] sm:min-h-[440px]">
+    <div className="relative w-full rounded-3xl overflow-hidden bg-ink-dark border-2 border-ink/15 shadow-xl flex flex-col min-h-[380px] sm:min-h-[440px]">
       {/* Hidden File Input for Image Upload */}
       <input
         ref={fileInputRef}
@@ -215,7 +215,7 @@ export const LiveCameraScanner: React.FC<LiveCameraScannerProps> = ({
             <div className="mb-2">
               <Mascot mood="alert" size={64} />
             </div>
-            <h4 className="font-bold text-base text-[#1E1B3A] mb-1">
+            <h4 className="font-bold text-base text-ink mb-1">
               {errorKind === 'permission_denied' ? 'Izin Kamera Diblokir Browser' : 'Kamera Tidak Tersedia'}
             </h4>
             <p className="text-xs text-gray-500 max-w-xs mb-4">
@@ -228,7 +228,7 @@ export const LiveCameraScanner: React.FC<LiveCameraScannerProps> = ({
               <button
                 type="button"
                 onClick={() => startCamera()}
-                className="w-full py-2.5 px-4 bg-[#3B3FD9] text-white text-xs font-bold rounded-xl hover:bg-[#3235b8] transition flex items-center justify-center gap-2"
+                className="w-full py-2.5 px-4 bg-indigo-brand text-white text-xs font-bold rounded-xl hover:bg-indigo-hover transition flex items-center justify-center gap-2"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Coba Lagi</span>
@@ -248,7 +248,7 @@ export const LiveCameraScanner: React.FC<LiveCameraScannerProps> = ({
               <button
                 type="button"
                 onClick={onManualInputClick}
-                className="mt-3 text-xs text-[#3B3FD9] font-bold hover:underline"
+                className="mt-3 text-xs text-indigo-brand font-bold hover:underline"
               >
                 Ketik Kode Manual Saja →
               </button>

@@ -38,7 +38,7 @@ const libraryBooks = allItems.filter((i) => i.itemCode.startsWith('LIB-'));
       }
     </style>
   </head>
-  <body class="bg-[#F6F5FF] text-[#1E1B3A] p-4 sm:p-8 min-h-screen">
+  <body class="bg-paper text-ink p-4 sm:p-8 min-h-screen">
     <div class="max-w-6xl mx-auto space-y-6">
       {/* Top Bar / Print Action */}
       <div class="no-print bg-white p-6 sm:p-8 rounded-3xl border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] flex flex-col sm:flex-row items-center justify-between gap-5">
@@ -47,10 +47,10 @@ const libraryBooks = allItems.filter((i) => i.itemCode.startsWith('LIB-'));
             <Mascot mood="scanning" size={40} />
           </div>
           <div>
-            <div class="inline-block bg-[#FF6B6B] text-white text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider mb-1.5 shadow-[0_2px_10px_rgba(255,107,107,0.35)]">
+            <div class="inline-block bg-primary text-white text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider mb-1.5 shadow-[0_2px_10px_rgba(255,107,107,0.35)]">
               Lembar Cetak Label Fisik Inventaris
             </div>
-            <h1 class="text-xl sm:text-2xl font-extrabold font-display text-[#1E1B3A] tracking-tight">
+            <h1 class="text-xl sm:text-2xl font-extrabold font-display text-ink tracking-tight">
               Katalog Label Barcode Perpustakaan (Code 128 + QR Code + OCR)
             </h1>
             <p class="text-xs text-gray-500 mt-0.5">
@@ -62,7 +62,7 @@ const libraryBooks = allItems.filter((i) => i.itemCode.startsWith('LIB-'));
         <div class="flex items-center gap-2.5 shrink-0">
           <a
             href="/pinjam"
-            class="px-4 py-2.5 rounded-2xl bg-rose-50 border border-rose-200 text-[#FF6B6B] text-xs font-bold hover:bg-rose-100 transition shadow-2xs"
+            class="px-4 py-2.5 rounded-2xl bg-rose-50 border border-rose-200 text-primary text-xs font-bold hover:bg-rose-100 transition shadow-2xs"
           >
             ← Buka Scanner Pinjam
           </a>
@@ -81,25 +81,25 @@ const libraryBooks = allItems.filter((i) => i.itemCode.startsWith('LIB-'));
       {/* Grid of 10 Books */}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {libraryBooks.map((item, index) => (
-          <div class="page-break bg-white rounded-3xl p-6 border-2 border-[#1E1B3A]/15 shadow-md flex flex-col justify-between hover:shadow-lg transition">
+          <div class="page-break bg-white rounded-3xl p-6 border-2 border-ink/15 shadow-md flex flex-col justify-between hover:shadow-lg transition">
             <!-- Header Info -->
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-[#FFF0F0] text-[#FF6B6B] border border-[#FF6B6B]/20">
+                <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-primary-light text-primary border border-primary/20">
                   #{index + 1} • {item.itemCode}
                 </span>
                 <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                   Stok: {item.stock} eks.
                 </span>
               </div>
-              <h3 class="text-base font-bold text-[#1E1B3A] font-display line-clamp-2">
+              <h3 class="text-base font-bold text-ink font-display line-clamp-2">
                 {item.name}
               </h3>
               <p class="text-xs text-gray-500 mt-0.5">Kategori: {item.category}</p>
             </div>
 
             <!-- Codes Visualization Box -->
-            <div class="mt-4 pt-4 border-t-2 border-dashed border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center bg-[#F6F5FF] p-4 rounded-2xl">
+            <div class="mt-4 pt-4 border-t-2 border-dashed border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center bg-paper p-4 rounded-2xl">
               <!-- QR Code Column -->
               <div class="flex flex-col items-center justify-center bg-white p-3 rounded-xl border border-gray-200 shadow-xs">
                 <span class="text-[10px] uppercase font-bold text-gray-500 mb-1.5 tracking-wider">
@@ -128,7 +128,7 @@ const libraryBooks = allItems.filter((i) => i.itemCode.startsWith('LIB-'));
               <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
                 Target Teks OCR:
               </span>
-              <span class="font-mono text-sm font-extrabold tracking-widest text-[#1E1B3A] bg-amber-100 px-2.5 py-0.5 rounded border border-amber-300">
+              <span class="font-mono text-sm font-extrabold tracking-widest text-ink bg-amber-100 px-2.5 py-0.5 rounded border border-amber-300">
                 {item.itemCode}
               </span>
             </div>

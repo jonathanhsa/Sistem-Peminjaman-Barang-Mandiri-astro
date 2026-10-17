@@ -29,6 +29,8 @@ export const AdminVerification: React.FC = () => {
         setError(data.message || 'Data transaksi tidak ditemukan.');
       } else {
         setTransaction(data);
+        // Jika ada denda yang belum lunas, wajibkan petugas mencentang manual sebagai verifikasi kasir
+        setMarkFinePaid(!(data.fine_amount > 0 && !data.fine_paid_at));
       }
     } catch (err: any) {
       setError('Gagal menghubungi server.');
@@ -88,7 +90,7 @@ export const AdminVerification: React.FC = () => {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError('Gagal menyetujui peminjaman.');
+        setError(data.error || 'Gagal menyetujui peminjaman.');
       } else {
         try {
           confetti({
@@ -119,7 +121,7 @@ export const AdminVerification: React.FC = () => {
       {/* Search & Camera Input Card */}
       <div className="bg-white rounded-2xl p-6 sm:p-7 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4">
         <div>
-          <h2 className="text-lg font-bold text-[#0F172A]">Verifikasi QR Bukti Transaksi Mahasiswa</h2>
+          <h2 className="text-lg font-bold text-ink-deep">Verifikasi QR Bukti Transaksi Mahasiswa</h2>
           <p className="text-xs text-gray-400 mt-1">
             Pindai QR receipt dari layar mahasiswa atau masukkan nomor tracking transaksi (PJM-...)
           </p>
@@ -131,7 +133,7 @@ export const AdminVerification: React.FC = () => {
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             placeholder="PJM-YYYYMMDD-XXXX"
-            className="flex-1 px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs font-mono tracking-wider focus:outline-none focus:border-[#3B3FD9] focus:bg-white uppercase transition"
+            className="flex-1 px-3.5 py-2.5 rounded-xl border border-gray-200 bg-surface-soft text-xs font-mono tracking-wider focus:outline-none focus:border-indigo-brand focus:bg-white uppercase transition"
           />
 
           <div className="flex gap-2">
@@ -148,7 +150,7 @@ export const AdminVerification: React.FC = () => {
               type="button"
               onClick={() => fetchTransaction(code)}
               disabled={!code.trim() || isLoading}
-              className="px-4 py-2.5 rounded-xl bg-[#3B3FD9] hover:bg-[#3235b8] text-white text-xs font-bold shadow-md shadow-indigo-500/20 whitespace-nowrap transition cursor-pointer disabled:opacity-50"
+              className="px-4 py-2.5 rounded-xl bg-indigo-brand hover:bg-indigo-hover text-white text-xs font-bold shadow-md shadow-indigo-500/20 whitespace-nowrap transition cursor-pointer disabled:opacity-50"
             >
               {isLoading ? 'Mencari...' : 'Verifikasi'}
             </button>
@@ -177,21 +179,30 @@ export const AdminVerification: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 gap-3">
             <div>
               <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Kode Bukti Transaksi</span>
-              <h3 className="text-lg font-bold font-mono text-[#3B3FD9]">#{transaction.borrowing_code}</h3>
+              <h3 className="text-lg font-bold font-mono text-indigo-brand">#{transaction.borrowing_code}</h3>
             </div>
             <div>
               <StatusBadge status={transaction.status} size="md" />
             </div>
           </div>
 
+          {transaction.status === 'return_pending' && (
+            <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs flex items-center gap-2.5 font-medium">
+              <CheckCircle2 className="w-4 h-4 text-indigo-brand shrink-0" />
+              <span>
+                <strong>Pengajuan Pengembalian Aktif:</strong> Mahasiswa telah menyiapkan QR pengembalian ini. Periksa kondisi fisik barang dan pastikan denda (jika ada) dilunasi sebelum konfirmasi.
+              </span>
+            </div>
+          )}
+
           {/* Identity & Item Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Student Info Card */}
-            <div className="p-4 rounded-xl bg-[#F8FAFC] border border-gray-100 space-y-1.5">
-              <span className="text-[10px] uppercase font-bold text-indigo-600 flex items-center gap-1.5">
+            <div className="p-4 rounded-xl bg-surface-soft border border-gray-100 space-y-1.5">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400 flex items-center gap-1.5">
                 <User className="w-3.5 h-3.5" /> Identitas Mahasiswa
               </span>
-              <h4 className="font-bold text-sm text-[#0F172A]">{transaction.user.name}</h4>
+              <h4 className="font-bold text-sm text-ink-deep">{transaction.user.name}</h4>
               <p className="text-xs font-mono text-gray-600">NIM: {transaction.user.nim_nip}</p>
               {transaction.user.email && (
                 <p className="text-xs text-gray-400">{transaction.user.email}</p>
@@ -199,20 +210,20 @@ export const AdminVerification: React.FC = () => {
             </div>
 
             {/* Item Info Card */}
-            <div className="p-4 rounded-xl bg-[#F8FAFC] border border-gray-100 space-y-1.5">
-              <span className="text-[10px] uppercase font-bold text-indigo-600 flex items-center gap-1.5">
+            <div className="p-4 rounded-xl bg-surface-soft border border-gray-100 space-y-1.5">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400 flex items-center gap-1.5">
                 <Package className="w-3.5 h-3.5" /> Barang Inventaris
               </span>
-              <h4 className="font-bold text-sm text-[#0F172A]">{transaction.item.name}</h4>
+              <h4 className="font-bold text-sm text-ink-deep">{transaction.item.name}</h4>
               <p className="text-xs font-mono text-gray-600">Kode: #{transaction.item.item_code}</p>
               <p className="text-xs text-gray-400">Kategori: {transaction.item.category}</p>
             </div>
           </div>
 
           {/* Time & Fine Calculation Details */}
-          <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-gray-100 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div className="p-3.5 rounded-xl bg-surface-soft border border-gray-100 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div>
-              <span className="text-gray-400 block text-[10px] uppercase font-bold">Tanggal Pengajuan</span>
+              <span className="text-gray-400 block text-[10px] uppercase font-bold">Tanggal Pinjam</span>
               <span className="font-semibold text-gray-700">
                 {new Date(transaction.borrow_date).toLocaleDateString('id-ID', {
                   day: 'numeric',
@@ -235,8 +246,8 @@ export const AdminVerification: React.FC = () => {
               <span className="text-gray-400 block text-[10px] uppercase font-bold">Perhitungan Denda</span>
               <span className={`font-bold ${transaction.fine_amount > 0 ? 'text-rose-600' : 'text-emerald-700'}`}>
                 {transaction.fine_amount > 0
-                  ? `Rp ${transaction.fine_amount.toLocaleString('id-ID')}`
-                  : 'Rp 0'}
+                  ? `Rp ${transaction.fine_amount.toLocaleString('id-ID')}${transaction.fine_paid_at ? ' (Lunas)' : ''}`
+                  : 'Rp 0 (Tidak Ada Denda)'}
               </span>
             </div>
           </div>
@@ -260,33 +271,47 @@ export const AdminVerification: React.FC = () => {
               </div>
             )}
 
-            {(transaction.status === 'borrowed' || transaction.status === 'overdue') && (
+            {(transaction.status === 'borrowed' ||
+              transaction.status === 'overdue' ||
+              transaction.status === 'return_pending') && (
               <div className="space-y-3">
-                {transaction.fine_amount > 0 && (
-                  <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                    <div>
-                      <span className="font-bold text-amber-900 block">Denda Terhitung:</span>
-                      <span className="text-amber-800">
-                        Rp {transaction.fine_amount.toLocaleString('id-ID')}
-                      </span>
+                {transaction.fine_amount > 0 && !transaction.fine_paid_at && (
+                  <div className="p-4 bg-amber-50 rounded-xl border border-amber-300 space-y-2.5 text-xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div>
+                        <span className="font-bold text-amber-950 block">
+                          Wajib Pelunasan Denda Keterlambatan:
+                        </span>
+                        <span className="text-sm font-extrabold text-rose-600">
+                          Rp {transaction.fine_amount.toLocaleString('id-ID')}
+                        </span>
+                      </div>
+                      <label className="flex items-center gap-2 cursor-pointer font-bold text-amber-950 bg-white px-3 py-2 rounded-lg border border-amber-300 shadow-2xs">
+                        <input
+                          type="checkbox"
+                          checked={markFinePaid}
+                          onChange={(e) => setMarkFinePaid(e.target.checked)}
+                          className="w-4 h-4 rounded accent-indigo-brand"
+                        />
+                        <span>Denda Telah Dibayar Lunas oleh Mahasiswa</span>
+                      </label>
                     </div>
-                    <label className="flex items-center gap-2 cursor-pointer font-bold text-amber-950">
-                      <input
-                        type="checkbox"
-                        checked={markFinePaid}
-                        onChange={(e) => setMarkFinePaid(e.target.checked)}
-                        className="w-4 h-4 rounded text-indigo-600"
-                      />
-                      <span>Tandai Denda Telah Diterima Tunai</span>
-                    </label>
+                    {!markFinePaid && (
+                      <p className="text-[11px] text-rose-700 font-semibold">
+                        * Barang yang terlambat wajib dilunasi dendanya terlebih dahulu. Centang konfirmasi di atas setelah menerima pembayaran dari mahasiswa.
+                      </p>
+                    )}
                   </div>
                 )}
 
                 <button
                   type="button"
                   onClick={handleReturnAction}
-                  disabled={isProcessingAction}
-                  className="w-full py-3 px-4 rounded-xl bg-[#3B3FD9] hover:bg-[#3235b8] text-white font-bold text-xs shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2 cursor-pointer"
+                  disabled={
+                    isProcessingAction ||
+                    (transaction.fine_amount > 0 && !transaction.fine_paid_at && !markFinePaid)
+                  }
+                  className="w-full py-3 px-4 rounded-xl bg-indigo-brand hover:bg-indigo-hover text-white font-bold text-xs shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition"
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   <span>Konfirmasi Penerimaan Pengembalian Barang</span>
@@ -299,13 +324,19 @@ export const AdminVerification: React.FC = () => {
                 Barang ini sudah dikembalikan pada {new Date(transaction.return_date || Date.now()).toLocaleDateString('id-ID')}.
               </div>
             )}
+
+            {transaction.status === 'rejected' && (
+              <div className="p-3.5 rounded-xl bg-gray-100 border border-gray-200 text-gray-700 text-center font-bold text-xs">
+                Permohonan peminjaman ini telah ditolak oleh petugas.
+              </div>
+            )}
           </div>
 
           <div className="text-center pt-2 border-t border-gray-100">
             <button
               type="button"
               onClick={resetAll}
-              className="text-xs font-bold text-gray-400 hover:text-[#3B3FD9] underline cursor-pointer"
+              className="text-xs font-bold text-gray-400 hover:text-indigo-brand underline cursor-pointer"
             >
               Scan Transaksi Lainnya
             </button>

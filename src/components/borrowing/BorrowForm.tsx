@@ -228,7 +228,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
           <a
             href={`/riwayat/${borrowResult.borrowingCode}`}
-            className="w-full sm:w-auto px-6 py-3.5 bg-[#3B3FD9] hover:bg-[#3235b8] text-white text-sm font-bold rounded-2xl shadow-md flex items-center justify-center gap-2 transition"
+            className="w-full sm:w-auto px-6 py-3.5 bg-indigo-brand hover:bg-indigo-hover text-white text-sm font-bold rounded-2xl shadow-md flex items-center justify-center gap-2 transition"
           >
             <BookOpen className="w-4 h-4" />
             <span>Lihat di Riwayat Peminjaman</span>
@@ -273,7 +273,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
           
           {/* Header Title */}
           <div>
-            <h1 className="text-2xl font-bold text-[#1E1B3A] font-display">
+            <h1 className="text-2xl font-bold text-ink font-display">
               Peminjaman Barang & Buku
             </h1>
             <p className="text-xs text-gray-500 mt-1">
@@ -315,7 +315,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
               {/* Petunjuk Arah Kamera */}
               <div className="p-5 bg-white rounded-2xl border border-gray-200/80 shadow-xs space-y-4">
                 <div className="space-y-1">
-                  <h3 className="font-bold text-sm text-[#1E1B3A]">Kamera Siap Memindai</h3>
+                  <h3 className="font-bold text-sm text-ink">Kamera Siap Memindai</h3>
                   <p className="text-xs text-gray-500">
                     Arahkan barcode atau kode QR barang ke bingkai kamera di sisi kanan.
                   </p>
@@ -341,12 +341,12 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
                       value={manualCodeInput}
                       onChange={(e) => setManualCodeInput(e.target.value)}
                       placeholder="Contoh: LIB-LAR-101 / LAB-CAM-001"
-                      className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-[#3B3FD9] focus:bg-white"
+                      className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-indigo-brand focus:bg-white"
                     />
                     <button
                       type="submit"
                       disabled={!manualCodeInput.trim() || isSearching}
-                      className="px-4 py-2 bg-[#3B3FD9] text-white text-xs font-bold rounded-xl hover:bg-[#3235b8] disabled:opacity-50 transition shrink-0 flex items-center gap-1.5"
+                      className="px-4 py-2 bg-indigo-brand text-white text-xs font-bold rounded-xl hover:bg-indigo-hover disabled:opacity-50 transition shrink-0 flex items-center gap-1.5"
                     >
                       {isSearching ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
                       <span>Cari</span>
@@ -456,7 +456,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
                   onChange={(e) => setNotes(e.target.value)}
                   rows={2}
                   placeholder="Tulis alasan peminjaman atau kegiatan..."
-                  className="w-full p-3 text-xs rounded-xl border border-gray-200 focus:border-[#3B3FD9] focus:outline-none transition resize-none text-gray-800"
+                  className="w-full p-3 text-xs rounded-xl border border-gray-200 focus:border-indigo-brand focus:outline-none transition resize-none text-gray-800"
                 />
 
                 <div className="flex flex-wrap gap-1.5 pt-0.5">
@@ -467,7 +467,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
                       onClick={() => setNotes(preset)}
                       className={`text-[11px] px-2.5 py-1 rounded-lg border transition cursor-pointer ${
                         notes === preset
-                          ? 'bg-[#3B3FD9] text-white border-[#3B3FD9] font-semibold'
+                          ? 'bg-indigo-brand text-white border-indigo-brand font-semibold'
                           : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
                       }`}
                     >
@@ -484,7 +484,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
                   id="agree-desktop"
                   checked={agreement}
                   onChange={(e) => setAgreement(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 rounded text-[#3B3FD9] accent-[#3B3FD9] cursor-pointer"
+                  className="mt-0.5 w-4 h-4 rounded text-indigo-brand accent-indigo-brand cursor-pointer"
                 />
                 <label htmlFor="agree-desktop" className="text-xs text-gray-600 leading-snug cursor-pointer select-none">
                   Saya memahami dan menyetujui ketentuan peminjaman inventaris serta bersedia mengembalikan sebelum batas waktu yang ditentukan.
@@ -503,7 +503,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
                 <button
                   type="submit"
                   disabled={!agreement || hasUnpaidFine || isLimitReached || isSubmitting}
-                  className="flex-1 py-3 px-5 bg-[#3B3FD9] hover:bg-[#3235b8] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 py-3 px-5 bg-indigo-brand hover:bg-indigo-hover text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>
@@ -566,7 +566,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
             
             {/* Header Mobile Ringkas */}
             <div className="text-center space-y-1">
-              <h2 className="text-lg font-bold font-display text-[#1E1B3A]">
+              <h2 className="text-lg font-bold font-display text-ink">
                 Pindai Barcode Barang
               </h2>
               <p className="text-xs text-gray-500">
@@ -592,12 +592,12 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
                   value={manualCodeInput}
                   onChange={(e) => setManualCodeInput(e.target.value)}
                   placeholder="LIB-LAR-101 / LAB-CAM-001"
-                  className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-[#3B3FD9]"
+                  className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-indigo-brand"
                 />
                 <button
                   type="submit"
                   disabled={!manualCodeInput.trim() || isSearching}
-                  className="px-4 py-2 bg-[#3B3FD9] text-white text-xs font-bold rounded-xl disabled:opacity-50 transition shrink-0"
+                  className="px-4 py-2 bg-indigo-brand text-white text-xs font-bold rounded-xl disabled:opacity-50 transition shrink-0"
                 >
                   {isSearching ? '...' : 'Cari'}
                 </button>
@@ -619,7 +619,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
               <button
                 type="button"
                 onClick={handleResetScan}
-                className="text-xs font-semibold text-[#3B3FD9] flex items-center gap-1 hover:underline"
+                className="text-xs font-semibold text-indigo-brand flex items-center gap-1 hover:underline"
               >
                 ← Pindai Ulang
               </button>
@@ -688,7 +688,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
                 placeholder="Tulis alasan peminjaman..."
-                className="w-full p-3 text-xs rounded-xl border border-gray-200 focus:border-[#3B3FD9] focus:outline-none resize-none"
+                className="w-full p-3 text-xs rounded-xl border border-gray-200 focus:border-indigo-brand focus:outline-none resize-none"
               />
 
               <div className="flex flex-wrap gap-1.5 pt-1">
@@ -699,7 +699,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
                     onClick={() => setNotes(preset)}
                     className={`text-[10px] px-2.5 py-1 rounded-lg border transition ${
                       notes === preset
-                        ? 'bg-[#3B3FD9] text-white border-[#3B3FD9] font-semibold'
+                        ? 'bg-indigo-brand text-white border-indigo-brand font-semibold'
                         : 'bg-gray-50 text-gray-600 border-gray-200'
                     }`}
                   >
@@ -716,7 +716,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
                 id="agree-mobile"
                 checked={agreement}
                 onChange={(e) => setAgreement(e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded text-[#3B3FD9] accent-[#3B3FD9]"
+                className="mt-0.5 w-4 h-4 rounded text-indigo-brand accent-indigo-brand"
               />
               <label htmlFor="agree-mobile" className="text-xs text-gray-600">
                 Saya menyetujui ketentuan peminjaman dan bersedia mengembalikan sebelum batas jatuh tempo.
@@ -733,7 +733,7 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
             <button
               type="submit"
               disabled={!agreement || hasUnpaidFine || isLimitReached || isSubmitting}
-              className="w-full py-3 px-5 bg-[#3B3FD9] hover:bg-[#3235b8] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3 px-5 bg-indigo-brand hover:bg-indigo-hover text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>

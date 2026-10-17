@@ -17,12 +17,12 @@ const error = Astro.url.searchParams.get('error');
           <span>/</span>
           <span class="text-gray-600 font-medium">Tambah Baru</span>
         </div>
-        <h1 class="text-xl font-extrabold text-[#1E1B3A] tracking-tight">Formulir Tambah Inventaris</h1>
+        <h1 class="text-xl font-extrabold text-ink tracking-tight">Formulir Tambah Inventaris</h1>
       </div>
 
       <a
         href="/admin/barang"
-        class="text-xs font-bold text-gray-500 hover:text-[#FF6B6B] px-3 py-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition"
+        class="text-xs font-bold text-gray-500 hover:text-primary px-3 py-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition"
       >
         ← Kembali
       </a>
@@ -48,7 +48,7 @@ const error = Astro.url.searchParams.get('error');
             type="text"
             required
             placeholder="Contoh: LIB-NEW-101 atau LAB-CAM-004"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs font-mono tracking-wider focus:outline-none focus:border-[#FF6B6B] focus:bg-white uppercase transition"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-surface-soft text-xs font-mono tracking-wider focus:outline-none focus:border-primary focus:bg-white uppercase transition"
           />
           <div class="flex items-center gap-2 mt-2 flex-wrap">
             <span class="text-[11px] text-gray-400">Pilihan cepat:</span>
@@ -86,7 +86,7 @@ const error = Astro.url.searchParams.get('error');
             type="text"
             required
             placeholder="Contoh: Buku Artificial Intelligence & Deep Learning"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs focus:outline-none focus:border-[#FF6B6B] focus:bg-white transition"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-surface-soft text-xs focus:outline-none focus:border-primary focus:bg-white transition"
           />
         </div>
 
@@ -98,7 +98,7 @@ const error = Astro.url.searchParams.get('error');
             <select
               id="category"
               name="category"
-              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs focus:outline-none focus:border-[#FF6B6B] focus:bg-white transition cursor-pointer"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-surface-soft text-xs focus:outline-none focus:border-primary focus:bg-white transition cursor-pointer"
             >
               <option value="Perpustakaan">Perpustakaan</option>
               <option value="Lab Komputer">Lab Komputer</option>
@@ -117,7 +117,7 @@ const error = Astro.url.searchParams.get('error');
               min="0"
               value="5"
               required
-              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs focus:outline-none focus:border-[#FF6B6B] focus:bg-white transition"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-surface-soft text-xs focus:outline-none focus:border-primary focus:bg-white transition"
             />
           </div>
         </div>
@@ -129,7 +129,7 @@ const error = Astro.url.searchParams.get('error');
           <select
             id="status"
             name="status"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-[#F8FAFC] text-xs focus:outline-none focus:border-[#FF6B6B] focus:bg-white transition cursor-pointer"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-surface-soft text-xs focus:outline-none focus:border-primary focus:bg-white transition cursor-pointer"
           >
             <option value="available">Tersedia (Siap Dipinjam)</option>
             <option value="maintenance">Maintenance / Perbaikan</option>
@@ -146,7 +146,7 @@ const error = Astro.url.searchParams.get('error');
           </a>
           <button
             type="submit"
-            class="px-5 py-2.5 rounded-xl bg-[#FF6B6B] hover:bg-[#f75555] text-white text-xs font-bold shadow-md shadow-[#FF6B6B]/20 transition cursor-pointer"
+            class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-bold shadow-md shadow-primary/20 transition cursor-pointer"
           >
             Simpan Barang ke Inventaris
           </button>

@@ -20,6 +20,14 @@ export const CountdownBadge: React.FC<CountdownBadgeProps> = ({
     );
   }
 
+  if (status === 'rejected') {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 border border-gray-200">
+        ✕ Ditolak
+      </span>
+    );
+  }
+
   if (status === 'pending') {
     return (
       <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">

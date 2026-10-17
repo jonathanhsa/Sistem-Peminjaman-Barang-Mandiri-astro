@@ -68,7 +68,7 @@ const error = Astro.url.searchParams.get('error');
       }
     </style>
   </head>
-  <body class="bg-[#F8F7FF] text-[#1E1B3A] min-h-screen antialiased selection:bg-[#FF6B6B] selection:text-white">
+  <body class="bg-surface-tint text-ink min-h-screen antialiased selection:bg-primary selection:text-white">
     <div class="min-h-screen w-full flex flex-col lg:flex-row">
       
       <!-- ============================================================ -->
@@ -111,11 +111,11 @@ const error = Astro.url.searchParams.get('error');
           
           <!-- Title & Coral Accent Line -->
           <div data-animate="fade-up" class="mb-7">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-[#1E1B3A] tracking-tight font-display">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-ink tracking-tight font-display">
               Masuk
             </h1>
             <!-- Accent Coral Underline Bar (Matches reference mockup) -->
-            <div class="w-11 h-1 bg-[#FF6B6B] rounded-full mt-2"></div>
+            <div class="w-11 h-1 bg-primary rounded-full mt-2"></div>
             <p class="text-xs sm:text-sm text-gray-500 mt-3 font-normal">
               Masukkan akun kampus Anda untuk mulai meminjam barang & buku.
             </p>
@@ -199,7 +199,7 @@ const error = Astro.url.searchParams.get('error');
                 <input
                   type="checkbox"
                   name="remember"
-                  class="w-4 h-4 rounded text-[#FF6B6B] accent-[#FF6B6B] border-gray-300 focus:ring-[#FF6B6B] cursor-pointer"
+                  class="w-4 h-4 rounded text-primary accent-primary border-gray-300 focus:ring-primary cursor-pointer"
                 />
                 <span>Ingat Saya</span>
               </label>
@@ -207,7 +207,7 @@ const error = Astro.url.searchParams.get('error');
               <button
                 type="button"
                 id="forgot-password-btn"
-                class="text-[#FF6B6B] hover:text-[#e85b4b] font-semibold transition-colors focus:outline-none cursor-pointer"
+                class="text-primary hover:text-primary-hover font-semibold transition-colors focus:outline-none cursor-pointer"
               >
                 Lupa Kata Sandi?
               </button>
@@ -228,7 +228,7 @@ const error = Astro.url.searchParams.get('error');
           <!-- Sign Up Link (Footer of Form) -->
           <div class="mt-8 text-center text-xs text-gray-500">
             <span>Belum punya akun? </span>
-            <a href="/register" class="text-[#FF6B6B] font-bold hover:underline transition-colors">
+            <a href="/register" class="text-primary font-bold hover:underline transition-colors">
               Daftar Sekarang
             </a>
           </div>
@@ -263,7 +263,7 @@ const error = Astro.url.searchParams.get('error');
       class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4"
     >
       <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-gray-100 text-center space-y-4 animate-scale-in">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-rose-50 text-[#FF6B6B] flex items-center justify-center text-2xl">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-rose-50 text-primary flex items-center justify-center text-2xl">
           🔑
         </div>
         <div>

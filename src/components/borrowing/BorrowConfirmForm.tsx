@@ -139,10 +139,10 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
   if (borrowResult) {
     return (
       <div className="space-y-6 animate-fade-in max-w-2xl mx-auto py-2">
-        <div className="bg-[#1E1B3A] text-white rounded-3xl p-7 sm:p-9 shadow-2xl text-center space-y-3 relative overflow-hidden border border-white/10">
+        <div className="bg-ink text-white rounded-3xl p-7 sm:p-9 shadow-2xl text-center space-y-3 relative overflow-hidden border border-white/10">
           {/* Subtle Ambient Light */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-[#FF6B6B]/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#3B3FD9]/30 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-brand/30 rounded-full blur-3xl pointer-events-none" />
 
           <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center mx-auto border border-white/20">
             <Mascot mood="happy" size={42} />
@@ -151,14 +151,14 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
           <h2 className="text-2xl sm:text-3xl font-extrabold font-display tracking-tight">
             Peminjaman Berhasil Diajukan!
           </h2>
-          <div className="w-12 h-1 bg-[#FF6B6B] rounded-full mx-auto" />
+          <div className="w-12 h-1 bg-primary rounded-full mx-auto" />
 
           <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto pt-1 font-normal">
             Notifikasi otomatis telah dikirim dan transaksi tersimpan di riwayat. Tunjukkan bukti QR ini ke petugas saat pengambilan barang.
           </p>
 
           <div className="pt-2">
-            <span className="px-4 py-1.5 rounded-full bg-white/10 text-[#FFD23F] font-mono text-xs font-bold tracking-wider border border-white/15">
+            <span className="px-4 py-1.5 rounded-full bg-white/10 text-sticker font-mono text-xs font-bold tracking-wider border border-white/15">
               Kode Transaksi: {borrowResult.borrowingCode}
             </span>
           </div>
@@ -220,7 +220,7 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
       <div className="flex items-center justify-between">
         <a
           href="/pinjam"
-          className="text-xs font-semibold text-gray-500 hover:text-[#FF6B6B] flex items-center gap-1.5 transition"
+          className="text-xs font-semibold text-gray-500 hover:text-primary flex items-center gap-1.5 transition"
         >
           ← Kembali ke Scanner
         </a>
@@ -247,11 +247,11 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
               <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">SIPEMBAR Kampus</span>
             </div>
             
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E1B3A] tracking-tight font-display">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-ink tracking-tight font-display">
               Formulir Pinjam
             </h1>
             {/* Signature Coral Accent Bar */}
-            <div className="w-12 h-1 bg-[#FF6B6B] rounded-full mt-2" />
+            <div className="w-12 h-1 bg-primary rounded-full mt-2" />
             <p className="text-xs sm:text-sm text-gray-500 mt-2.5 font-normal">
               Lengkapi keperluan peminjaman Anda untuk menerbitkan tiket bukti transaksi digital.
             </p>
@@ -281,7 +281,7 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
           <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] space-y-5">
             
             {/* Detail Barang Terpilih */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#F8F7FF] border border-gray-100/90 space-y-3">
+            <div className="p-4 sm:p-5 rounded-2xl bg-surface-tint border border-gray-100/90 space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3.5">
                   <div className="w-12 h-12 rounded-2xl bg-white border border-gray-200/80 text-gray-700 flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
@@ -309,7 +309,7 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
 
                 <a
                   href="/pinjam"
-                  className="p-2 rounded-xl text-gray-400 hover:text-[#FF6B6B] hover:bg-white transition shrink-0"
+                  className="p-2 rounded-xl text-gray-400 hover:text-primary hover:bg-white transition shrink-0"
                   title="Ganti Barang"
                 >
                   <RefreshCw className="w-4 h-4" />
@@ -332,7 +332,7 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
               </label>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-3.5 rounded-2xl bg-[#F8F7FF] border border-gray-100">
+                <div className="p-3.5 rounded-2xl bg-surface-tint border border-gray-100">
                   <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block">
                     Waktu Pinjam (Sekarang)
                   </span>
@@ -345,13 +345,13 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-rose-50/50 border border-rose-100">
-                  <span className="text-[10px] font-semibold text-[#FF6B6B] uppercase tracking-wider block">
+                  <span className="text-[10px] font-semibold text-primary uppercase tracking-wider block">
                     Tenggat Kembali (7 Hari)
                   </span>
                   <p className="text-xs font-bold text-gray-900 mt-0.5">
                     {returnTime.dayName}, {returnTime.dateString}
                   </p>
-                  <p className="text-[11px] text-[#FF6B6B] font-semibold mt-0.5">
+                  <p className="text-[11px] text-primary font-semibold mt-0.5">
                     Pukul 17:00 WIB
                   </p>
                 </div>
@@ -369,7 +369,7 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
                 placeholder="Tulis alasan peminjaman atau kegiatan perkuliahan..."
-                className="w-full p-3.5 text-xs rounded-2xl border border-gray-200 focus:border-[#FF6B6B] focus:ring-2 focus:ring-[#FF6B6B]/20 focus:outline-none transition resize-none text-gray-800 bg-[#F8F7FF]/50"
+                className="w-full p-3.5 text-xs rounded-2xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition resize-none text-gray-800 bg-surface-tint/50"
               />
 
               {/* Tag Preset Keperluan */}
@@ -381,8 +381,8 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
                     onClick={() => setNotes(preset)}
                     className={`text-[11px] px-3 py-1 rounded-full border transition cursor-pointer font-medium ${
                       notes === preset
-                        ? 'bg-[#FF6B6B] text-white border-[#FF6B6B] shadow-xs font-semibold'
-                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-[#FF6B6B] hover:text-[#FF6B6B]'
+                        ? 'bg-primary text-white border-primary shadow-xs font-semibold'
+                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
                     }`}
                   >
                     {preset}
@@ -392,13 +392,13 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
             </div>
 
             {/* Persetujuan Ketentuan Peminjaman */}
-            <div className="p-3.5 rounded-2xl bg-[#F8F7FF] border border-gray-200/80 flex items-start gap-3">
+            <div className="p-3.5 rounded-2xl bg-surface-tint border border-gray-200/80 flex items-start gap-3">
               <input
                 type="checkbox"
                 id="agree"
                 checked={agreement}
                 onChange={(e) => setAgreement(e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded text-[#FF6B6B] accent-[#FF6B6B] cursor-pointer"
+                className="mt-0.5 w-4 h-4 rounded text-primary accent-primary cursor-pointer"
               />
               <label htmlFor="agree" className="text-xs text-gray-600 leading-snug cursor-pointer select-none">
                 Saya memahami dan menyetujui ketentuan peminjaman inventaris kampus serta bersedia mengembalikan sebelum batas jatuh tempo.
@@ -476,7 +476,7 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
                   <Mascot mood="happy" size={24} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-[#1E1B3A]">Ringkasan Peminjam</h3>
+                  <h3 className="font-bold text-sm text-ink">Ringkasan Peminjam</h3>
                   <p className="text-[11px] text-gray-400">Verifikasi akun & data transaksi</p>
                 </div>
               </div>
@@ -514,13 +514,13 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
 
                 <div className="flex items-center justify-between pt-1 border-t border-gray-100">
                   <span className="text-gray-500">Denda Keterlambatan:</span>
-                  <span className="font-bold text-[#FF6B6B]">Rp 1.000 / hari</span>
+                  <span className="font-bold text-primary">Rp 1.000 / hari</span>
                 </div>
               </div>
 
               {/* Pesan Edukasi Kampus */}
-              <div className="p-3.5 rounded-2xl bg-[#F8F7FF] border border-gray-100 flex items-start gap-2.5 text-[11px] text-gray-500 leading-relaxed">
-                <ShieldCheck className="w-4 h-4 shrink-0 text-indigo-600 mt-0.5" />
+              <div className="p-3.5 rounded-2xl bg-surface-tint border border-gray-100 flex items-start gap-2.5 text-[11px] text-gray-500 leading-relaxed">
+                <ShieldCheck className="w-4 h-4 shrink-0 text-indigo-brand mt-0.5" />
                 <span>
                   Pengembalian tepat waktu membantu rekan mahasiswa lain dapat memanfaatkan buku dan peralatan inventaris secara adil.
                 </span>

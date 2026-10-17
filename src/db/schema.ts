@@ -32,7 +32,7 @@ export const borrowings = sqliteTable('borrowings', {
   borrowDate: text('borrow_date').notNull(),
   dueDate: text('due_date').notNull(),
   returnDate: text('return_date'),
-  status: text('status', { enum: ['pending', 'borrowed', 'returned', 'overdue'] }).notNull().default('pending'),
+  status: text('status', { enum: ['pending', 'borrowed', 'return_pending', 'returned', 'overdue', 'rejected'] }).notNull().default('pending'),
   fineAmount: integer('fine_amount').notNull().default(0), // Rp 1.000 / hari keterlambatan
   finePaidAt: text('fine_paid_at'),
   notes: text('notes'),

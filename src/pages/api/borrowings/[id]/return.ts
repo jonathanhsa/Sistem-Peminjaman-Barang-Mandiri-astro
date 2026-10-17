@@ -36,6 +36,22 @@ export const POST: APIRoute = async ({ params, request, cookies, redirect }) => 
     });
   }
 
+  if (
+    borrowing.status !== 'borrowed' &&
+    borrowing.status !== 'overdue' &&
+    borrowing.status !== 'return_pending'
+  ) {
+    return new Response(
+      JSON.stringify({
+        error: 'Transaksi ini belum disetujui atau telah ditolak, sehingga tidak dapat diproses sebagai pengembalian.',
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
   const contentType = request.headers.get('content-type') || '';
   let markFinePaid = false;
 
@@ -56,7 +72,20 @@ export const POST: APIRoute = async ({ params, request, cookies, redirect }) => 
   const { fineAmount } = calculateFine(borrowing.dueDate, now);
   const finalFine = Math.max(borrowing.fineAmount, fineAmount);
 
-  const finePaidAt = finalFine > 0 && markFinePaid ? returnDate : borrowing.finePaidAt;
+  // Wajib lunas saat pengembalian jika ada denda keterlambatan
+  if (finalFine > 0 && !borrowing.finePaidAt && !markFinePaid) {
+    return new Response(
+      JSON.stringify({
+        error: `Terdapat denda keterlambatan sebesar Rp ${finalFine.toLocaleString('id-ID')}. Denda wajib dilunasi terlebih dahulu kepada petugas sebelum pengembalian dapat diselesaikan.`,
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
+  const finePaidAt = finalFine > 0 ? (borrowing.finePaidAt || returnDate) : borrowing.finePaidAt;
 
   // 1. Update borrowing to returned
   await db.update(schema.borrowings)
@@ -69,13 +98,11 @@ export const POST: APIRoute = async ({ params, request, cookies, redirect }) => 
     .where(eq(schema.borrowings.id, id))
     .run();
 
-  // 2. Increase item stock by 1 (only if it was borrowed / overdue)
-  if (borrowing.status === 'borrowed' || borrowing.status === 'overdue') {
-    await db.update(schema.items)
-      .set({ stock: sql`stock + 1` })
-      .where(eq(schema.items.id, borrowing.itemId))
-      .run();
-  }
+  // 2. Increase item stock by 1
+  await db.update(schema.items)
+    .set({ stock: sql`stock + 1` })
+    .where(eq(schema.items.id, borrowing.itemId))
+    .run();
 
   // 3. Notify student
   const item = await db.select().from(schema.items).where(eq(schema.items.id, borrowing.itemId)).get();
@@ -84,7 +111,7 @@ export const POST: APIRoute = async ({ params, request, cookies, redirect }) => 
       userId: borrowing.userId,
       title: 'Pengembalian Barang Berhasil',
       message: `Barang ${item?.name || ''} (${borrowing.borrowingCode}) telah sukses dikembalikan ke petugas inventaris.${
-        finalFine > 0 ? ` Total denda: Rp ${finalFine.toLocaleString('id-ID')}` : ''
+        finalFine > 0 ? ` Denda keterlambatan Rp ${finalFine.toLocaleString('id-ID')} telah lunas.` : ''
       }`,
       type: 'success',
       isRead: false,

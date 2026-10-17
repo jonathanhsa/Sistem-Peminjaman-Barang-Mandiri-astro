@@ -68,7 +68,7 @@ const error = Astro.url.searchParams.get('error');
       }
     </style>
   </head>
-  <body class="bg-[#F8F7FF] text-[#1E1B3A] min-h-screen antialiased selection:bg-[#FF6B6B] selection:text-white">
+  <body class="bg-surface-tint text-ink min-h-screen antialiased selection:bg-primary selection:text-white">
     <div class="min-h-screen w-full flex flex-col lg:flex-row">
       
       <!-- ============================================================ -->
@@ -111,11 +111,11 @@ const error = Astro.url.searchParams.get('error');
           
           <!-- Title & Coral Accent Line -->
           <div data-animate="fade-up" class="mb-6">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-[#1E1B3A] tracking-tight font-display">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-ink tracking-tight font-display">
               Daftar
             </h1>
             <!-- Accent Coral Underline Bar -->
-            <div class="w-11 h-1 bg-[#FF6B6B] rounded-full mt-2"></div>
+            <div class="w-11 h-1 bg-primary rounded-full mt-2"></div>
             <p class="text-xs sm:text-sm text-gray-500 mt-2.5 font-normal">
               Daftarkan akun kampus Anda untuk mulai meminjam barang & buku.
             </p>
@@ -251,7 +251,7 @@ const error = Astro.url.searchParams.get('error');
           <!-- Sign In Link (Footer of Form) -->
           <div class="mt-6 sm:mt-7 text-center text-xs text-gray-500">
             <span>Sudah punya akun? </span>
-            <a href="/login" class="text-[#FF6B6B] font-bold hover:underline transition-colors">
+            <a href="/login" class="text-primary font-bold hover:underline transition-colors">
               Masuk
             </a>
           </div>
