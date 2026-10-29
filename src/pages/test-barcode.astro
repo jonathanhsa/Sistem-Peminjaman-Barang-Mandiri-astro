@@ -1,11 +1,20 @@
 ---
 import '../styles/global.css';
+import { getCurrentUser } from '../lib/auth';
 import { db, schema } from '../db';
 import { BarcodeSvg } from '../components/scanner/BarcodeSvg';
 import { QRCodeSVG } from 'qrcode.react';
 import { Mascot } from '../components/illustrations/Mascot';
 
-// Fetch the 10 library books for barcode testing
+const user = await getCurrentUser(Astro.cookies);
+if (!user) {
+  return Astro.redirect('/login');
+}
+if (user.role !== 'admin') {
+  return Astro.redirect('/katalog');
+}
+
+// Fetch the 10 library books for barcode printing
 const allItems = await db.select().from(schema.items).all();
 const libraryBooks = allItems.filter((i) => i.itemCode.startsWith('LIB-'));
 ---
@@ -61,10 +70,10 @@ const libraryBooks = allItems.filter((i) => i.itemCode.startsWith('LIB-'));
 
         <div class="flex items-center gap-2.5 shrink-0">
           <a
-            href="/pinjam"
+            href="/admin/barang"
             class="px-4 py-2.5 rounded-2xl bg-rose-50 border border-rose-200 text-[#FF6B6B] text-xs font-bold hover:bg-rose-100 transition shadow-2xs"
           >
-            ← Buka Scanner Pinjam
+            ← Kembali ke Portal Admin
           </a>
           <button
             onclick="window.print()"
@@ -73,7 +82,7 @@ const libraryBooks = allItems.filter((i) => i.itemCode.startsWith('LIB-'));
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
             </svg>
-            Cetak Lembar Uji
+            Cetak Label Fisik
           </button>
         </div>
       </div>

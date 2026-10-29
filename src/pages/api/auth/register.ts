@@ -99,14 +99,14 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     if (!contentType.includes('application/json')) {
       return new Response(null, {
         status: 302,
-        headers: { Location: '/dashboard' },
+        headers: { Location: '/katalog' },
       });
     }
 
     return new Response(
       JSON.stringify({
         success: true,
-        redirectUrl: '/dashboard',
+        redirectUrl: '/katalog',
         user: { id: insertResult.id, name: insertResult.name },
       }),
       { status: 201, headers: { 'Content-Type': 'application/json' } }

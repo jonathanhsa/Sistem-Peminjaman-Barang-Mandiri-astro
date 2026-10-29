@@ -157,7 +157,6 @@ export const BorrowScannerView: React.FC<BorrowScannerViewProps> = ({
             {/* Header Status */}
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
                   Data Barang Berhasil Terbaca
                 </span>
@@ -366,7 +365,6 @@ export const BorrowScannerView: React.FC<BorrowScannerViewProps> = ({
         <div className="lg:col-span-6 sticky top-24 space-y-2.5">
           <div className="flex items-center justify-between text-xs text-gray-600 px-1">
             <span className="flex items-center gap-2 font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
               <span>Kamera Pemindai</span>
             </span>
             <span className="text-[11px] text-gray-400">Arahkan barcode atau QR ke lensa</span>

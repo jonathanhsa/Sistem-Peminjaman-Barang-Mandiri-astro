@@ -241,9 +241,8 @@ export const ScannerDialog: React.FC<ScannerDialogProps> = ({
 
               {/* Top Controls Overlay */}
               <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-auto">
-                <div className="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-xs font-medium flex items-center gap-1.5 border border-white/20">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  Dual Engine Scanner
+                <div className="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl text-white text-xs font-medium flex items-center gap-1.5 border border-white/20">
+                  Pemindai Kamera
                 </div>
 
                 <div className="flex items-center gap-2">

@@ -7,7 +7,7 @@ import { ClientRouter } from 'astro:transitions';
 const user = await getCurrentUser(Astro.cookies);
 if (user) {
   if (user.role === 'admin') return Astro.redirect('/admin/dashboard');
-  return Astro.redirect('/dashboard');
+  return Astro.redirect('/katalog');
 }
 
 const error = Astro.url.searchParams.get('error');

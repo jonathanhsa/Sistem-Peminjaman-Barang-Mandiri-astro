@@ -14,7 +14,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
-      exclude: ['qrcode.react', '@zxing/library', '@zxing/browser', 'tesseract.js'],
+      exclude: ['lucide-react', 'qrcode.react', '@zxing/library', '@zxing/browser', 'tesseract.js'],
     },
     ssr: {
       noExternal: ['lucide-react', 'qrcode.react', '@zxing/library', '@zxing/browser'],

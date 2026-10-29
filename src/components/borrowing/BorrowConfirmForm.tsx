@@ -192,10 +192,10 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
           </a>
 
           <a
-            href="/dashboard"
+            href="/katalog"
             className="w-full sm:w-auto px-6 py-3.5 bg-white border border-gray-200 text-gray-800 hover:bg-gray-50 text-xs font-bold rounded-full shadow-xs flex items-center justify-center gap-2 transition"
           >
-            <span>Kembali ke Beranda</span>
+            <span>Kembali ke Katalog</span>
           </a>
 
           <a
@@ -225,7 +225,6 @@ export const BorrowConfirmForm: React.FC<BorrowConfirmFormProps> = ({
           ← Kembali ke Scanner
         </a>
         <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/60 inline-flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span>Barcode Terverifikasi</span>
         </span>
       </div>

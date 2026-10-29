@@ -235,10 +235,10 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
           </a>
 
           <a
-            href="/dashboard"
+            href="/katalog"
             className="w-full sm:w-auto px-6 py-3.5 bg-white border border-gray-200 text-gray-800 hover:bg-gray-50 text-sm font-bold rounded-2xl shadow-xs flex items-center justify-center gap-2 transition"
           >
-            <span>Kembali ke Beranda</span>
+            <span>Kembali ke Katalog</span>
           </a>
 
           <button
@@ -535,7 +535,6 @@ export const BorrowForm: React.FC<BorrowFormProps> = ({
         <div className="lg:col-span-6 sticky top-24 space-y-2.5">
           <div className="flex items-center justify-between text-xs text-gray-600 px-1">
             <span className="flex items-center gap-2 font-medium">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
               <span>Kamera Pemindai</span>
             </span>
             <span className="text-[11px] text-gray-400">Arahkan barcode atau QR ke lensa</span>

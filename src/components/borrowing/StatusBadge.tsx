@@ -19,7 +19,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
         <span
           className={`badge-tag bg-[#FFF8DB] text-[#8C6B00] border border-[#FFD23F] font-medium shadow-xs ${sizeClasses}`}
         >
-          <Clock className="w-3.5 h-3.5 animate-pulse" />
+          <Clock className="w-3.5 h-3.5" />
           <span>Menunggu Persetujuan</span>
         </span>
       );
@@ -44,7 +44,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
     case 'overdue':
       return (
         <span
-          className={`badge-tag bg-[#FFF0F0] text-[#C93545] border border-[#FF6B6B] font-semibold animate-pulse shadow-xs ${sizeClasses}`}
+          className={`badge-tag bg-[#FFF0F0] text-[#C93545] border border-[#FF6B6B] font-semibold shadow-xs ${sizeClasses}`}
         >
           <AlertTriangle className="w-3.5 h-3.5" />
           <span>Terlambat</span>

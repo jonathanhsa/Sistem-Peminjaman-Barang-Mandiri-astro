@@ -7,7 +7,7 @@ import { ClientRouter } from 'astro:transitions';
 const user = await getCurrentUser(Astro.cookies);
 if (user) {
   if (user.role === 'admin') return Astro.redirect('/admin/dashboard');
-  return Astro.redirect('/dashboard');
+  return Astro.redirect('/katalog');
 }
 
 const error = Astro.url.searchParams.get('error');
@@ -149,7 +149,7 @@ const error = Astro.url.searchParams.get('error');
                   name="identifier"
                   type="text"
                   required
-                  placeholder="demo@email.com"
+                  placeholder="NIM / NIP atau Email Kampus"
                   class="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
                   autocomplete="username"
                 />

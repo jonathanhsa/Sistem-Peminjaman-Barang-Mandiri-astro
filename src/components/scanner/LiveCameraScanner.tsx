@@ -87,27 +87,15 @@ export const LiveCameraScanner: React.FC<LiveCameraScannerProps> = ({
       {/* Top Controls Bar */}
       <div className="absolute top-0 left-0 right-0 z-30 p-3 sm:p-4 flex items-center justify-between bg-gradient-to-b from-black/75 via-black/40 to-transparent pointer-events-auto">
         {/* Status Indicator */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white text-xs font-semibold">
+        <div className="flex items-center px-3 py-1.5 rounded-xl bg-black/55 backdrop-blur-md border border-white/15 text-white text-xs font-semibold">
           {isPaused ? (
-            <>
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              <span>Terdeteksi</span>
-            </>
+            <span>Terdeteksi</span>
           ) : status === 'scanning' ? (
-            <>
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-              <span>Scanning...</span>
-            </>
+            <span>Memindai Barcode...</span>
           ) : status === 'requesting' ? (
-            <>
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
-              <span>Menyiapkan Kamera...</span>
-            </>
+            <span>Menyiapkan Kamera...</span>
           ) : (
-            <>
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
-              <span>Kamera Off</span>
-            </>
+            <span>Kamera Nonaktif</span>
           )}
         </div>
 

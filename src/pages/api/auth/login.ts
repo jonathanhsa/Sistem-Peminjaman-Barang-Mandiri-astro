@@ -46,7 +46,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     createSession(cookies, authResult.user);
 
-    const redirectUrl = authResult.user.role === 'admin' ? '/admin/dashboard' : '/dashboard';
+    const redirectUrl = authResult.user.role === 'admin' ? '/admin/dashboard' : '/katalog';
 
     // If form submit without AJAX, redirect directly
     if (!contentType.includes('application/json')) {

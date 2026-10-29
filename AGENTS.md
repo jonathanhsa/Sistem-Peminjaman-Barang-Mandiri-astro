@@ -1,3 +1,9 @@
+## UI & Design Rules (Peraturan Paten)
+
+- **DILARANG KERAS Menggunakan Bulatan Indikator "Live" (Status Dots)**:
+  - Jangan pernah menambahkan elemen bulatan kecil seperti `<span class="w-1.5 h-1.5 rounded-full ...">`, `w-2 h-2 rounded-full`, `w-2.5 h-2.5 rounded-full`, `animate-ping`, atau `animate-pulse` di dalam badge status (contoh: `● Aktif`, `● Menunggu ACC`), di sudut avatar profil, di samping label statistik, ataupun di header komponen.
+  - Pola bulatan indikator seperti itu memberikan kesan *vibe coding* / template AI generik dan dilarang secara permanen di seluruh proyek ini. Gunakan tipografi yang bersih, warna teks, atau garis aksen tanpa titik bulatan.
+
 ## Development
 
 When starting the dev server, use background mode:
