@@ -29,8 +29,8 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
     <div data-animate="fade-up" class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] space-y-5">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold font-display text-[#1E1B3A] tracking-tight">Katalog Inventaris Kampus</h1>
-          <div class="w-11 h-1 bg-[#FF6B6B] rounded-full mt-2"></div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold font-display text-ink tracking-tight">Katalog Inventaris Kampus</h1>
+          <div class="w-11 h-1 bg-primary rounded-full mt-2"></div>
           <p class="text-xs text-gray-500 mt-2">Cari buku referensi, peralatan lab, dan perlengkapan kegiatan mahasiswa</p>
         </div>
 
@@ -43,7 +43,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
               name="q"
               value={search}
               placeholder="Cari nama barang atau kode..."
-              class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-gray-50 border border-gray-200 text-xs focus:outline-none focus:border-[#FF6B6B] focus:bg-white transition"
+              class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-gray-50 border border-gray-200 text-xs focus:outline-none focus:border-primary focus:bg-white transition"
             />
             <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -62,8 +62,8 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
             href={`/katalog?cat=${encodeURIComponent(cat)}${search ? `&q=${encodeURIComponent(search)}` : ''}`}
             class={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition ${
               selectedCategory.toLowerCase() === cat.toLowerCase()
-                ? 'bg-[#FF6B6B] text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
-                : 'bg-gray-100 text-gray-600 hover:text-[#FF6B6B] hover:bg-gray-200'
+                ? 'bg-primary text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
+                : 'bg-gray-100 text-gray-600 hover:text-primary hover:bg-gray-200'
             }`}
           >
             {cat}
@@ -75,14 +75,14 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
     <!-- Items Grid -->
     {filteredItems.length === 0 ? (
       <div data-animate="fade-in" class="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-[0_10px_35px_rgba(30,27,58,0.06)] space-y-3">
-        <div class="w-16 h-16 rounded-full bg-rose-50 text-[#FF6B6B] flex items-center justify-center mx-auto text-2xl font-bold">
+        <div class="w-16 h-16 rounded-full bg-rose-50 text-primary flex items-center justify-center mx-auto text-2xl font-bold">
           🔍
         </div>
-        <h3 class="text-base font-bold text-[#1E1B3A]">Barang tidak ditemukan</h3>
+        <h3 class="text-base font-bold text-ink">Barang tidak ditemukan</h3>
         <p class="text-xs text-gray-500 max-w-sm mx-auto">
           Tidak ada barang yang cocok dengan kata kunci "{search}". Coba gunakan kata kunci lain atau pilih kategori Semua.
         </p>
-        <a href="/katalog" class="inline-block text-xs font-bold text-[#FF6B6B] hover:underline">
+        <a href="/katalog" class="inline-block text-xs font-bold text-primary hover:underline">
           Reset Pencarian
         </a>
       </div>
@@ -119,7 +119,7 @@ const categories = ['Semua', 'Perpustakaan', 'Lab Komputer', 'Himpunan'];
                     <CategoryIcon category={item.category} size={20} />
                   </div>
                   <div>
-                    <h3 class="font-bold text-sm text-[#1E1B3A] line-clamp-2 leading-snug" title={item.name}>
+                    <h3 class="font-bold text-sm text-ink line-clamp-2 leading-snug" title={item.name}>
                       {item.name}
                     </h3>
                     <span class="text-[11px] text-gray-500">{item.category}</span>

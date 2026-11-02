@@ -52,15 +52,15 @@ const processedBorrowings = userBorrowings.map(({ borrowing, item }) => {
   let status = borrowing.status;
   let fine = borrowing.fineAmount;
 
-  if (status === 'borrowed') {
+  if (status === 'borrowed' || status === 'overdue' || status === 'return_pending') {
     const calc = calculateFine(borrowing.dueDate);
     if (calc.isOverdue) {
-      status = 'overdue';
+      if (status === 'borrowed') status = 'overdue';
       fine = Math.max(fine, calc.fineAmount);
     }
   }
 
-  if (status === 'borrowed' || status === 'overdue') activeCount++;
+  if (status === 'borrowed' || status === 'overdue' || status === 'return_pending') activeCount++;
   else if (status === 'pending') pendingCount++;
   else if (status === 'returned') returnedCount++;
 
@@ -77,7 +77,7 @@ const processedBorrowings = userBorrowings.map(({ borrowing, item }) => {
 });
 
 const activeBorrowings = processedBorrowings.filter(
-  (b) => b.status === 'borrowed' || b.status === 'overdue' || b.status === 'pending'
+  (b) => b.status === 'borrowed' || b.status === 'overdue' || b.status === 'pending' || b.status === 'return_pending'
 );
 
 const userInitials = user.name
@@ -125,9 +125,9 @@ function getDueBadge(dateStr: string) {
     <script src="../../scripts/motion.ts"></script>
     <ClientRouter />
   </head>
-  <body class="bg-[#F6F5FF] text-[#1E1B3A] min-h-screen flex flex-col pb-24 md:pb-8">
+  <body class="bg-paper text-ink min-h-screen flex flex-col pb-24 md:pb-8">
     <!-- Top Header -->
-    <header transition:name="student-header" class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#1E1B3A]/10 shadow-xs">
+    <header transition:name="student-header" class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-ink/10 shadow-xs">
       <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Brand Logo & Mascot */}
         <a href="/katalog" class="flex items-center gap-3 group">
@@ -135,19 +135,19 @@ function getDueBadge(dateStr: string) {
             <Mascot mood="happy" size={28} />
           </div>
           <div>
-            <span class="font-display text-lg font-bold tracking-tight text-[#1E1B3A] block leading-none">SIPEMBAR</span>
+            <span class="font-display text-lg font-bold tracking-tight text-ink block leading-none">SIPEMBAR</span>
             <span class="text-[10px] text-gray-500 font-medium">Peminjaman Mandiri</span>
           </div>
         </a>
 
         {/* Desktop Navigation */}
-        <nav class="hidden md:flex items-center gap-1.5 bg-[#F6F5FF] p-1 rounded-2xl border border-[#1E1B3A]/10">
+        <nav class="hidden md:flex items-center gap-1.5 bg-paper p-1 rounded-2xl border border-ink/10">
           <a
             href="/katalog"
             class={`px-4 py-2 rounded-xl text-xs font-bold transition ${
               activeNav === 'katalog'
-                ? 'bg-[#FF6B6B] text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
-                : 'text-gray-600 hover:text-[#FF6B6B] hover:bg-white/80'
+                ? 'bg-primary text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
+                : 'text-gray-600 hover:text-primary hover:bg-white/80'
             }`}
           >
             Katalog
@@ -156,8 +156,8 @@ function getDueBadge(dateStr: string) {
             href="/pinjam"
             class={`px-4 py-2 rounded-xl text-xs font-bold transition ${
               activeNav === 'pinjam'
-                ? 'bg-[#FF6B6B] text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
-                : 'text-gray-600 hover:text-[#FF6B6B] hover:bg-white/80'
+                ? 'bg-primary text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
+                : 'text-gray-600 hover:text-primary hover:bg-white/80'
             }`}
           >
             Pinjam Mandiri
@@ -166,8 +166,8 @@ function getDueBadge(dateStr: string) {
             href="/riwayat"
             class={`px-4 py-2 rounded-xl text-xs font-bold transition ${
               activeNav === 'riwayat'
-                ? 'bg-[#FF6B6B] text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
-                : 'text-gray-600 hover:text-[#FF6B6B] hover:bg-white/80'
+                ? 'bg-primary text-white shadow-[0_2px_10px_rgba(255,107,107,0.35)]'
+                : 'text-gray-600 hover:text-primary hover:bg-white/80'
             }`}
           >
             Riwayat
@@ -179,14 +179,14 @@ function getDueBadge(dateStr: string) {
           <!-- Notification Bell -->
           <a
             href="/notifikasi"
-            class="relative p-2.5 rounded-xl bg-[#F6F5FF] text-gray-700 hover:bg-gray-100 transition border border-[#1E1B3A]/10"
+            class="relative p-2.5 rounded-xl bg-paper text-gray-700 hover:bg-gray-100 transition border border-ink/10"
             title="Notifikasi"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
             {unreadCount > 0 && (
-              <span class="absolute -top-1 -right-1 w-4 h-4 bg-[#FF6B6B] text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
+              <span class="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                 {unreadCount}
               </span>
             )}
@@ -349,22 +349,31 @@ function getDueBadge(dateStr: string) {
                   <div class="space-y-2 max-h-56 overflow-y-auto pr-0.5">
                     {activeBorrowings.map((b) => {
                       const due = getDueBadge(b.dueDate);
+                      const isOverdue = b.status === 'overdue';
+                      const isPending = b.status === 'pending';
+                      const isReturnPending = b.status === 'return_pending';
                       const accentColor =
-                        b.status === 'overdue'
+                        isOverdue
                           ? 'border-l-rose-500'
-                          : b.status === 'pending'
+                          : isReturnPending
+                          ? 'border-l-amber-500'
+                          : isPending
                           ? 'border-l-amber-400'
                           : 'border-l-emerald-500';
                       const statusTextColor =
-                        b.status === 'overdue'
+                        isOverdue
                           ? 'text-rose-600'
-                          : b.status === 'pending'
+                          : isReturnPending
+                          ? 'text-amber-700'
+                          : isPending
                           ? 'text-amber-600'
                           : 'text-emerald-600';
                       const statusLabel =
-                        b.status === 'overdue'
+                        isOverdue
                           ? 'Terlambat'
-                          : b.status === 'pending'
+                          : isReturnPending
+                          ? 'Siap Dikembalikan'
+                          : isPending
                           ? 'Menunggu ACC'
                           : 'Sedang Dipinjam';
 

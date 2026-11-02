@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { db, schema } from '../../../db';
 import { eq, and, inArray, isNull, gt } from 'drizzle-orm';
 import { getCurrentUser } from '../../../lib/auth';
+import { calculateFine, calculateDueDate } from '../../../lib/fine';
 
 function generateBorrowingCode(): string {
   const now = new Date();
@@ -74,7 +75,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
-    // 3. Check unpaid fines
+    // 3. Check unpaid fines in DB
     const unpaidFine = await db
       .select()
       .from(schema.borrowings)
@@ -97,17 +98,31 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
-    // 4. Check active borrowing limit (max 3 active: pending, borrowed, overdue)
+    // 4. Check active borrowings (pending, borrowed, return_pending, overdue)
     const activeBorrowings = await db
       .select()
       .from(schema.borrowings)
       .where(
         and(
           eq(schema.borrowings.userId, user.id),
-          inArray(schema.borrowings.status, ['pending', 'borrowed', 'overdue'])
+          inArray(schema.borrowings.status, ['pending', 'borrowed', 'return_pending', 'overdue'])
         )
       )
       .all();
+
+    // Block new borrowing if any active item is currently overdue
+    const hasActiveOverdue = activeBorrowings.some(
+      (b) => b.status !== 'pending' && (b.status === 'overdue' || calculateFine(b.dueDate).isOverdue)
+    );
+    if (hasActiveOverdue) {
+      return new Response(
+        JSON.stringify({
+          error:
+            'Anda memiliki barang pinjaman yang telah melewati batas waktu pengembalian (terlambat). Silakan kembalikan barang dan lunasi denda di loket petugas terlebih dahulu.',
+        }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
     if (activeBorrowings.length >= 3) {
       return new Response(
@@ -118,10 +133,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
-    // 5. Generate dates: standard 7 calendar days
+    // 5. Generate dates: standard 7 calendar days (end of day 23:59:59)
     const now = new Date();
     const borrowDate = now.toISOString();
-    const dueDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const dueDate = calculateDueDate(now, 7);
 
     let borrowingCode = generateBorrowingCode();
     // Ensure uniqueness

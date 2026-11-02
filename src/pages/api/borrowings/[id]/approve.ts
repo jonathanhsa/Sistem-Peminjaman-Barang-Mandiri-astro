@@ -2,8 +2,9 @@ import type { APIRoute } from 'astro';
 import { db, schema } from '../../../../db';
 import { eq, sql } from 'drizzle-orm';
 import { getCurrentUser } from '../../../../lib/auth';
+import { calculateDueDate } from '../../../../lib/fine';
 
-export const POST: APIRoute = async ({ params, cookies, redirect }) => {
+export const POST: APIRoute = async ({ params, request, cookies, redirect }) => {
   const user = await getCurrentUser(cookies);
   if (!user || user.role !== 'admin') {
     return new Response(JSON.stringify({ error: 'Akses hanya untuk petugas inventaris.' }), {
@@ -44,9 +45,17 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
     });
   }
 
-  // Approve: update status to 'borrowed' and decrease stock by 1
+  const now = new Date();
+  const borrowDate = now.toISOString();
+  const dueDate = calculateDueDate(now, 7);
+
+  // Approve: update status to 'borrowed', set borrowDate & end-of-day dueDate, and decrease stock by 1
   await db.update(schema.borrowings)
-    .set({ status: 'borrowed' })
+    .set({
+      status: 'borrowed',
+      borrowDate,
+      dueDate,
+    })
     .where(eq(schema.borrowings.id, id))
     .run();
 
@@ -66,5 +75,19 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
     })
     .run();
 
+  const contentType = request.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: 'Peminjaman berhasil disetujui.',
+        borrowDate,
+        dueDate,
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
   return redirect('/admin/peminjaman', 302);
 };
+

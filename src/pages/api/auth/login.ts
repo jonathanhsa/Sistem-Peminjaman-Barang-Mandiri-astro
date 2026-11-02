@@ -75,3 +75,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     });
   }
 };
+
+export const GET: APIRoute = async ({ redirect }) => {
+  return redirect('/login', 302);
+};

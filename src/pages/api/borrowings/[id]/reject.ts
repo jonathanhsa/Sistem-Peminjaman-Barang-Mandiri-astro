@@ -28,11 +28,17 @@ export const POST: APIRoute = async ({ params, cookies, redirect }) => {
     });
   }
 
-  // Reject sets status to returned or cancels without modifying stock
+  if (borrowing.status !== 'pending') {
+    return new Response(JSON.stringify({ error: 'Hanya permohonan berstatus menunggu yang dapat ditolak.' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Reject sets status to 'rejected' without modifying stock
   await db.update(schema.borrowings)
     .set({
-      status: 'returned',
-      returnDate: new Date().toISOString(),
+      status: 'rejected',
       notes: (borrowing.notes ? borrowing.notes + ' - ' : '') + '[DITOLAK PETUGAS]',
     })
     .where(eq(schema.borrowings.id, id))

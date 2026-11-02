@@ -18,7 +18,7 @@ const error = Astro.url.searchParams.get('error');
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign up — SIPEMBAR Kampus</title>
+    <title>Daftar — SIPEMBAR Kampus</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -68,7 +68,7 @@ const error = Astro.url.searchParams.get('error');
       }
     </style>
   </head>
-  <body class="bg-[#F8F7FF] text-[#1E1B3A] min-h-screen antialiased selection:bg-[#FF6B6B] selection:text-white">
+  <body class="bg-surface-tint text-ink min-h-screen antialiased selection:bg-primary selection:text-white">
     <div class="min-h-screen w-full flex flex-col lg:flex-row">
       
       <!-- ============================================================ -->
@@ -111,11 +111,11 @@ const error = Astro.url.searchParams.get('error');
           
           <!-- Title & Coral Accent Line -->
           <div data-animate="fade-up" class="mb-6">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-[#1E1B3A] tracking-tight font-display">
-              Sign up
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-ink tracking-tight font-display">
+              Daftar
             </h1>
             <!-- Accent Coral Underline Bar -->
-            <div class="w-11 h-1 bg-[#FF6B6B] rounded-full mt-2"></div>
+            <div class="w-11 h-1 bg-primary rounded-full mt-2"></div>
             <p class="text-xs sm:text-sm text-gray-500 mt-2.5 font-normal">
               Daftarkan akun kampus Anda untuk mulai meminjam barang & buku.
             </p>
@@ -215,7 +215,7 @@ const error = Astro.url.searchParams.get('error');
                   type="password"
                   required
                   placeholder="Minimal 6 karakter"
-                  class="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                  class="flex-1 min-w-0 bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
                   autocomplete="new-password"
                 />
                 <!-- Eye Toggle Button -->
@@ -223,13 +223,13 @@ const error = Astro.url.searchParams.get('error');
                   type="button"
                   id="toggle-password"
                   aria-label="Tampilkan atau sembunyikan kata sandi"
-                  class="text-gray-400 hover:text-gray-600 p-1 focus:outline-none transition-colors"
+                  class="text-gray-400 hover:text-gray-600 p-1 focus:outline-none transition-colors cursor-pointer select-none shrink-0"
                 >
-                  <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg id="eye-icon" class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
-                  <svg id="eye-off-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg id="eye-off-icon" class="w-5 h-5 hidden pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
                   </svg>
                 </button>
@@ -243,16 +243,16 @@ const error = Astro.url.searchParams.get('error');
                 id="submit-btn"
                 class="w-full py-3.5 px-6 btn-coral rounded-full text-sm font-bold tracking-wide flex items-center justify-center gap-2 transition"
               >
-                <span>Sign up</span>
+                <span>Daftar Sekarang</span>
               </button>
             </div>
           </form>
 
           <!-- Sign In Link (Footer of Form) -->
           <div class="mt-6 sm:mt-7 text-center text-xs text-gray-500">
-            <span>Already have an Account ? </span>
-            <a href="/login" class="text-[#FF6B6B] font-bold hover:underline transition-colors">
-              Sign in
+            <span>Sudah punya akun? </span>
+            <a href="/login" class="text-primary font-bold hover:underline transition-colors">
+              Masuk
             </a>
           </div>
 
@@ -278,36 +278,75 @@ const error = Astro.url.searchParams.get('error');
 
     <!-- Client Script for Interactive Password Toggle & Submit State -->
     <script>
-      // Toggle Password Visibility
-      const togglePasswordBtn = document.getElementById('toggle-password');
-      const passwordInput = document.getElementById('password') as HTMLInputElement | null;
-      const eyeIcon = document.getElementById('eye-icon');
-      const eyeOffIcon = document.getElementById('eye-off-icon');
+      function setupRegisterInteractions() {
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const registerForm = document.getElementById('register-form');
+        const submitBtn = document.getElementById('submit-btn');
 
-      if (togglePasswordBtn && passwordInput && eyeIcon && eyeOffIcon) {
-        togglePasswordBtn.addEventListener('click', () => {
-          const isPassword = passwordInput.type === 'password';
-          passwordInput.type = isPassword ? 'text' : 'password';
-          eyeIcon.classList.toggle('hidden', isPassword);
-          eyeOffIcon.classList.toggle('hidden', !isPassword);
-        });
+        if (togglePasswordBtn) {
+          togglePasswordBtn.onclick = (e) => {
+            e.preventDefault();
+            const pwd = document.getElementById('password') as HTMLInputElement | null;
+            const eye = document.getElementById('eye-icon');
+            const eyeOff = document.getElementById('eye-off-icon');
+            if (!pwd || !eye || !eyeOff) return;
+
+            const isPassword = pwd.type === 'password';
+            pwd.type = isPassword ? 'text' : 'password';
+            if (isPassword) {
+              eye.classList.add('hidden');
+              eyeOff.classList.remove('hidden');
+            } else {
+              eye.classList.remove('hidden');
+              eyeOff.classList.add('hidden');
+            }
+          };
+        }
+
+        if (registerForm && submitBtn) {
+          registerForm.onsubmit = () => {
+            submitBtn.setAttribute('disabled', 'true');
+            submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+            submitBtn.innerHTML = `
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Mendaftarkan Akun...</span>
+            `;
+          };
+        }
       }
 
-      // Loading state on submit
-      const registerForm = document.getElementById('register-form');
-      const submitBtn = document.getElementById('submit-btn');
-      if (registerForm && submitBtn) {
-        registerForm.addEventListener('submit', () => {
-          submitBtn.setAttribute('disabled', 'true');
-          submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
-          submitBtn.innerHTML = `
-            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span>Mendaftarkan Akun...</span>
-          `;
-        });
+      // Event delegation fallback on document (bulletproof across ViewTransitions & dynamic DOM)
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement | null;
+        if (!target) return;
+
+        if (target.closest('#toggle-password')) {
+          e.preventDefault();
+          const pwd = document.getElementById('password') as HTMLInputElement | null;
+          const eye = document.getElementById('eye-icon');
+          const eyeOff = document.getElementById('eye-off-icon');
+          if (pwd && eye && eyeOff) {
+            const isPassword = pwd.type === 'password';
+            pwd.type = isPassword ? 'text' : 'password';
+            if (isPassword) {
+              eye.classList.add('hidden');
+              eyeOff.classList.remove('hidden');
+            } else {
+              eye.classList.remove('hidden');
+              eyeOff.classList.add('hidden');
+            }
+          }
+        }
+      });
+
+      document.addEventListener('astro:page-load', setupRegisterInteractions);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupRegisterInteractions);
+      } else {
+        setupRegisterInteractions();
       }
     </script>
   </body>
